@@ -1,2 +1,2 @@
 # cpcrogue
-Juego tipo "roguelike" con representacion ASCII estilo "Nethack"
+Roguelike Game with ASCII visuals
