@@ -7,23 +7,41 @@ Symbol Table
     .__.ABS.                                                    =  0000 G
     .__.CPU.                                                    =  0000 L
     .__.H$L.                                                    =  0000 L
-  0 ___str_0                                                       01B6 R
-  0 ___str_1                                                       01DF R
-  0 ___str_10                                                      0350 R
-  0 ___str_11                                                      0379 R
-  0 ___str_2                                                       0208 R
-  0 ___str_3                                                       0231 R
-  0 ___str_4                                                       025A R
-  0 ___str_5                                                       0283 R
-  0 ___str_6                                                       02AC R
-  0 ___str_7                                                       02D5 R
-  0 ___str_8                                                       02FE R
-  0 ___str_9                                                       0327 R
+  0 _InitializeCharacter                                           00A2 GR
+  0 _PrintCharacterStats                                           01B3 GR
+    ___fs2uint                                                     **** GX
+    ___fsadd                                                       **** GX
+    ___fsmul                                                       **** GX
+    ___sint2fs                                                     **** GX
+  0 ___str_0                                                       02D2 R
+  0 ___str_1                                                       02D7 R
+  0 ___str_10                                                      0511 R
+  0 ___str_11                                                      0539 R
+  0 ___str_12                                                      0561 R
+  0 ___str_13                                                      0589 R
+  0 ___str_14                                                      05B1 R
+  0 ___str_15                                                      05D9 R
+  0 ___str_16                                                      0601 R
+  0 ___str_17                                                      0629 R
+  0 ___str_18                                                      0651 R
+  0 ___str_19                                                      0679 R
+  0 ___str_2                                                       02DD R
+  0 ___str_3                                                       02E2 R
+  0 ___str_4                                                       02E7 R
+  0 ___str_5                                                       02EE R
+  0 ___str_6                                                       02F3 R
+  0 ___str_7                                                       02F8 R
+  0 ___str_8                                                       04C1 R
+  0 ___str_9                                                       04E9 R
+    ___uchar2fs                                                    **** GX
   0 _border                                                        004E GR
+  0 _cls                                                           0099 GR
+    _cpct_isKeyPressed                                             **** GX
+    _cpct_scanKeyboard                                             **** GX
     _cpct_setVideoMode                                             **** GX
   0 _ink                                                           0021 GR
   0 _locate                                                        0000 GR
-  0 _main                                                          0099 GR
+  0 _main                                                          02FD GR
   0 _paper                                                         006F GR
   0 _pen                                                           0084 GR
     _printf                                                        **** GX
@@ -35,7 +53,7 @@ Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE                                      size  38E   flags    0
+   0 _CODE                                      size  68E   flags    0
    1 _DATA                                      size    0   flags    0
    2 _INITIALIZED                               size    0   flags    0
    3 _DABS                                      size    0   flags    8
