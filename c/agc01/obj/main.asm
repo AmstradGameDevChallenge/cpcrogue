@@ -9,8 +9,12 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
+	.globl _TakeDamage
+	.globl _CalculateDamage
+	.globl _ClearStatusLine
 	.globl _PrintCharacterStats
 	.globl _InitializeCharacter
+	.globl _PrintAt
 	.globl _cls
 	.globl _pen
 	.globl _paper
@@ -18,7 +22,9 @@
 	.globl _ink
 	.globl _locate
 	.globl _putchar
+	.globl _sprintf
 	.globl _printf
+	.globl _cpct_getRandom_mxor_u8
 	.globl _cpct_setVideoMode
 	.globl _cpct_isKeyPressed
 	.globl _cpct_scanKeyboard
@@ -53,17 +59,17 @@
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;src/main.c:50: void locate (u8 x, u8 y)
+;src/main.c:52: void locate (u8 x, u8 y)
 ;	---------------------------------
 ; Function locate
 ; ---------------------------------
 _locate::
-;src/main.c:52: putchar(US);
+;src/main.c:54: putchar(US);
 	ld	hl, #0x001f
 	push	hl
 	call	_putchar
 	pop	af
-;src/main.c:53: putchar (x); putchar (y);
+;src/main.c:55: putchar (x); putchar (y);
 	ld	hl, #2+0
 	add	hl, sp
 	ld	c, (hl)
@@ -79,17 +85,17 @@ _locate::
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:55: void ink (u8 tinta, u8 color1, u8 color2)
+;src/main.c:57: void ink (u8 tinta, u8 color1, u8 color2)
 ;	---------------------------------
 ; Function ink
 ; ---------------------------------
 _ink::
-;src/main.c:57: putchar (FS);
+;src/main.c:59: putchar (FS);
 	ld	hl, #0x001c
 	push	hl
 	call	_putchar
 	pop	af
-;src/main.c:58: putchar (tinta); putchar (color1); putchar (color2);
+;src/main.c:60: putchar (tinta); putchar (color1); putchar (color2);
 	ld	hl, #2+0
 	add	hl, sp
 	ld	c, (hl)
@@ -112,17 +118,17 @@ _ink::
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:60: void border (u8 color1, u8 color2)
+;src/main.c:62: void border (u8 color1, u8 color2)
 ;	---------------------------------
 ; Function border
 ; ---------------------------------
 _border::
-;src/main.c:62: putchar (GS);
+;src/main.c:64: putchar (GS);
 	ld	hl, #0x001d
 	push	hl
 	call	_putchar
 	pop	af
-;src/main.c:63: putchar (color1); putchar (color2);
+;src/main.c:65: putchar (color1); putchar (color2);
 	ld	hl, #2+0
 	add	hl, sp
 	ld	c, (hl)
@@ -138,17 +144,17 @@ _border::
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:66: void paper (u8 color1)
+;src/main.c:68: void paper (u8 color1)
 ;	---------------------------------
 ; Function paper
 ; ---------------------------------
 _paper::
-;src/main.c:68: putchar (SO);
+;src/main.c:70: putchar (SO);
 	ld	hl, #0x000e
 	push	hl
 	call	_putchar
 	pop	af
-;src/main.c:69: putchar (color1);
+;src/main.c:71: putchar (color1);
 	ld	hl, #2+0
 	add	hl, sp
 	ld	c, (hl)
@@ -157,17 +163,17 @@ _paper::
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:71: void pen (u8 tinta)
+;src/main.c:73: void pen (u8 tinta)
 ;	---------------------------------
 ; Function pen
 ; ---------------------------------
 _pen::
-;src/main.c:73: putchar (SI);
+;src/main.c:75: putchar (SI);
 	ld	hl, #0x000f
 	push	hl
 	call	_putchar
 	pop	af
-;src/main.c:74: putchar (tinta);
+;src/main.c:76: putchar (tinta);
 	ld	hl, #2+0
 	add	hl, sp
 	ld	c, (hl)
@@ -176,18 +182,58 @@ _pen::
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:76: void cls ()
+;src/main.c:78: void cls ()
 ;	---------------------------------
 ; Function cls
 ; ---------------------------------
 _cls::
-;src/main.c:78: putchar (FF);
+;src/main.c:80: putchar (FF);
 	ld	hl, #0x000c
 	push	hl
 	call	_putchar
 	pop	af
 	ret
-;src/main.c:83: void InitializeCharacter (struct TCharacter *c,
+;src/main.c:85: void PrintAt (u8 x, u8 y, char text[], u8 color)
+;	---------------------------------
+; Function PrintAt
+; ---------------------------------
+_PrintAt::
+;src/main.c:87: locate (x, y);
+	ld	hl, #3+0
+	add	hl, sp
+	ld	a, (hl)
+	push	af
+	inc	sp
+	ld	hl, #3+0
+	add	hl, sp
+	ld	a, (hl)
+	push	af
+	inc	sp
+	call	_locate
+	pop	af
+;src/main.c:88: if (color != 0xff) pen (color);
+	ld	iy, #6
+	add	iy, sp
+	ld	a, 0 (iy)
+	inc	a
+	jr	Z,00102$
+	ld	a, 0 (iy)
+	push	af
+	inc	sp
+	call	_pen
+	inc	sp
+00102$:
+;src/main.c:89: printf (text);
+	ld	hl, #4
+	add	hl, sp
+	ld	c, (hl)
+	inc	hl
+	ld	b, (hl)
+	push	bc
+	call	_printf
+	pop	af
+	ret
+;src/main.c:94: void InitializeCharacter (struct TCharacter *c,
 ;	---------------------------------
 ; Function InitializeCharacter
 ; ---------------------------------
@@ -198,7 +244,7 @@ _InitializeCharacter::
 	ld	hl, #-10
 	add	hl, sp
 	ld	sp, hl
-;src/main.c:86: c->_hp = hp;
+;src/main.c:98: c->_hp = hp;
 	ld	c,4 (ix)
 	ld	b,5 (ix)
 	ld	l, c
@@ -208,14 +254,14 @@ _InitializeCharacter::
 	inc	hl
 	ld	a, 7 (ix)
 	ld	(hl), a
-;src/main.c:87: c->_str = str;
+;src/main.c:99: c->_str = str;
 	ld	e, c
 	ld	d, b
 	inc	de
 	inc	de
 	ld	a, 8 (ix)
 	ld	(de), a
-;src/main.c:88: c->_destr = destr;
+;src/main.c:100: c->_destr = destr;
 	ld	e, c
 	ld	d, b
 	inc	de
@@ -223,21 +269,23 @@ _InitializeCharacter::
 	inc	de
 	ld	a, 9 (ix)
 	ld	(de), a
-;src/main.c:89: c->_refl = refl;
+;src/main.c:101: c->_refl = refl;
 	ld	hl, #0x0004
 	add	hl, bc
 	ld	a, 10 (ix)
 	ld	(hl), a
-;src/main.c:90: c->_spr = spr;
+;src/main.c:102: c->_spr[0] = spr; c->_spr[1] = '\0';
 	ld	hl, #0x0009
 	add	hl, bc
 	ld	a, 11 (ix)
 	ld	(hl), a
-;src/main.c:91: c->_atk = 1.5 * c->_str + c->_destr;
+	ld	hl, #0x000a
+	add	hl, bc
+	ld	(hl), #0x00
+;src/main.c:103: c->_atk = 1.5 * c->_str + c->_destr;
 	ld	hl, #0x0005
 	add	hl,bc
-	ld	-2 (ix), l
-	ld	-1 (ix), h
+	ex	(sp), hl
 	push	bc
 	ld	a, 8 (ix)
 	push	af
@@ -256,10 +304,10 @@ _InitializeCharacter::
 	pop	af
 	pop	af
 	pop	af
-	ld	-3 (ix), d
-	ld	-4 (ix), e
-	ld	-5 (ix), h
-	ld	-6 (ix), l
+	ld	-1 (ix), d
+	ld	-2 (ix), e
+	ld	-3 (ix), h
+	ld	-4 (ix), l
 	pop	bc
 	ld	e, 9 (ix)
 	ld	d, #0x00
@@ -270,11 +318,11 @@ _InitializeCharacter::
 	ex	de, hl
 	push	hl
 	push	de
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
+	push	hl
 	ld	l,-4 (ix)
 	ld	h,-3 (ix)
-	push	hl
-	ld	l,-6 (ix)
-	ld	h,-5 (ix)
 	push	hl
 	call	___fsadd
 	pop	af
@@ -288,16 +336,17 @@ _InitializeCharacter::
 	pop	af
 	ex	de,hl
 	pop	bc
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	pop	hl
+	push	hl
 	ld	(hl), e
 	inc	hl
 	ld	(hl), d
-;src/main.c:92: c->_defense = 1.5 * c->_destr + c->_refl;
+;src/main.c:104: c->_defense = 1.5 * c->_destr + c->_refl;
 	ld	hl, #0x0007
 	add	hl,bc
-	ld	-6 (ix), l
-	ld	-5 (ix), h
+	ld	-4 (ix), l
+	ld	-3 (ix), h
+	push	bc
 	ld	a, 9 (ix)
 	push	af
 	inc	sp
@@ -315,23 +364,25 @@ _InitializeCharacter::
 	pop	af
 	pop	af
 	pop	af
-	ld	-7 (ix), d
-	ld	-8 (ix), e
-	ld	-9 (ix), h
-	ld	-10 (ix), l
-	ld	c, 10 (ix)
-	ld	b, #0x00
+	ld	-5 (ix), d
+	ld	-6 (ix), e
+	ld	-7 (ix), h
+	ld	-8 (ix), l
+	pop	bc
+	ld	e, 10 (ix)
+	ld	d, #0x00
 	push	bc
+	push	de
 	call	___sint2fs
 	pop	af
 	ex	de, hl
 	push	hl
 	push	de
+	ld	l,-6 (ix)
+	ld	h,-5 (ix)
+	push	hl
 	ld	l,-8 (ix)
 	ld	h,-7 (ix)
-	push	hl
-	ld	l,-10 (ix)
-	ld	h,-9 (ix)
 	push	hl
 	call	___fsadd
 	pop	af
@@ -343,17 +394,28 @@ _InitializeCharacter::
 	call	___fs2uint
 	pop	af
 	pop	af
-	ld	c, l
-	ld	b, h
-	ld	l,-6 (ix)
-	ld	h,-5 (ix)
-	ld	(hl), c
+	ex	de,hl
+	pop	bc
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
+	ld	(hl), e
 	inc	hl
-	ld	(hl), b
+	ld	(hl), d
+;src/main.c:105: strcpy (c->name, name);
+	ld	hl, #0x000b
+	add	hl,bc
+	ex	de,hl
+	ld	l,12 (ix)
+	ld	h,13 (ix)
+	xor	a, a
+00103$:
+	cp	a, (hl)
+	ldi
+	jr	NZ, 00103$
 	ld	sp, ix
 	pop	ix
 	ret
-;src/main.c:97: void PrintCharacterStats (struct TCharacter *c,
+;src/main.c:110: void PrintCharacterStats (struct TCharacter *c, u8 y,
 ;	---------------------------------
 ; Function PrintCharacterStats
 ; ---------------------------------
@@ -361,173 +423,374 @@ _PrintCharacterStats::
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-	push	af
-;src/main.c:100: pen (color1);printf ("STR "); pen (color2);printf ("[%d] ", c->_str);
-	ld	a, 6 (ix)
-	push	af
-	inc	sp
-	call	_pen
-	inc	sp
-	ld	hl, #___str_0
-	push	hl
-	call	_printf
-	pop	af
-	ld	a, 7 (ix)
-	push	af
-	inc	sp
-	call	_pen
-	inc	sp
+	ld	hl, #-14
+	add	hl, sp
+	ld	sp, hl
+;src/main.c:114: PrintAt (10,y, c->name, color1); PrintAt (21,y, c->_spr, color2);
 	ld	a, 4 (ix)
 	ld	-2 (ix), a
 	ld	a, 5 (ix)
 	ld	-1 (ix), a
-	pop	hl
-	push	hl
-	inc	hl
-	inc	hl
-	ld	c, (hl)
-	ld	b, #0x00
-	push	bc
-	ld	hl, #___str_1
-	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;src/main.c:101: pen (color1);printf ("DES "); pen (color2);printf ("[%d] ", c->_destr);
-	ld	a, 6 (ix)
+	ld	a, -2 (ix)
+	add	a, #0x0b
+	ld	c, a
+	ld	a, -1 (ix)
+	adc	a, #0x00
+	ld	b, a
+	ld	a, 7 (ix)
 	push	af
 	inc	sp
-	call	_pen
+	push	bc
+	ld	d, 6 (ix)
+	ld	e,#0x0a
+	push	de
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	ld	a, -2 (ix)
+	add	a, #0x09
+	ld	c, a
+	ld	a, -1 (ix)
+	adc	a, #0x00
+	ld	b, a
+	ld	a, 8 (ix)
+	push	af
+	inc	sp
+	push	bc
+	ld	d, 6 (ix)
+	ld	e,#0x15
+	push	de
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:115: PrintAt (1, y+1, "STR ",color1);
+	ld	b, 6 (ix)
+	inc	b
+	push	bc
+	ld	a, 7 (ix)
+	push	af
+	inc	sp
+	ld	hl, #___str_0
+	push	hl
+	push	bc
+	inc	sp
+	ld	a, #0x01
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:116: PrintAt (10,y+1, "DES ",color1);
+	push	bc
+	ld	a, 7 (ix)
+	push	af
+	inc	sp
+	ld	hl, #___str_1
+	push	hl
+	push	bc
+	inc	sp
+	ld	a, #0x0a
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:117: PrintAt (20,y+1, "REF ",color1);
+	push	bc
+	ld	a, 7 (ix)
+	push	af
 	inc	sp
 	ld	hl, #___str_2
 	push	hl
-	call	_printf
-	pop	af
-	ld	a, 7 (ix)
-	push	af
-	inc	sp
-	call	_pen
-	inc	sp
-	pop	hl
-	push	hl
-	inc	hl
-	inc	hl
-	inc	hl
-	ld	c, (hl)
-	ld	b, #0x00
 	push	bc
-	ld	hl, #___str_1
-	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;src/main.c:102: pen (color1);printf ("REF "); pen (color2);printf ("[%d]\r\n", c->_refl);
-	ld	a, 6 (ix)
+	inc	sp
+	ld	a, #0x14
 	push	af
 	inc	sp
-	call	_pen
-	inc	sp
-	ld	hl, #___str_3
-	push	hl
-	call	_printf
+	call	_PrintAt
 	pop	af
-	ld	a, 7 (ix)
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:118: sprintf (num, "[%d] ", c->_str);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
+	inc	hl
+	inc	hl
+	ld	e, (hl)
+	ld	d, #0x00
+	ld	hl, #0x0000
+	add	hl, sp
+	ld	-4 (ix), l
+	ld	-3 (ix), h
+	push	bc
+	push	de
+	ld	de, #___str_3
+	push	de
+	push	hl
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:119: PrintAt (5,y+1, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	push	bc
+	ld	a, 8 (ix)
 	push	af
 	inc	sp
-	call	_pen
+	push	de
+	push	bc
 	inc	sp
-	pop	hl
+	ld	a, #0x05
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:120: sprintf (num, "[%d] ", c->_destr);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
+	inc	hl
+	inc	hl
+	inc	hl
+	ld	e, (hl)
+	ld	d, #0x00
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
+	push	bc
+	push	de
+	ld	de, #___str_3
+	push	de
 	push	hl
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:121: PrintAt (15,y+1, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	push	bc
+	ld	a, 8 (ix)
+	push	af
+	inc	sp
+	push	de
+	push	bc
+	inc	sp
+	ld	a, #0x0f
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:122: sprintf (num, "[%d] ", c->_refl);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	de, #0x0004
 	add	hl, de
-	ld	c, (hl)
-	ld	b, #0x00
+	ld	e, (hl)
+	ld	d, #0x00
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	push	bc
-	ld	hl, #___str_4
+	push	de
+	ld	de, #___str_3
+	push	de
 	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;src/main.c:104: pen (color1);printf ("ATK "); pen (color2);printf ("[%d] ", c->_atk);
-	ld	a, 6 (ix)
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:123: PrintAt (25,y+1, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	ld	a, 8 (ix)
 	push	af
 	inc	sp
-	call	_pen
+	push	de
+	push	bc
+	inc	sp
+	ld	a, #0x19
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:125: PrintAt (1, y+2, "ATK ", color1);
+	ld	b, 6 (ix)
+	inc	b
+	inc	b
+	push	bc
+	ld	a, 7 (ix)
+	push	af
+	inc	sp
+	ld	hl, #___str_4
+	push	hl
+	push	bc
+	inc	sp
+	ld	a, #0x01
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:126: PrintAt (10,y+2, "DEF ", color1);
+	push	bc
+	ld	a, 7 (ix)
+	push	af
 	inc	sp
 	ld	hl, #___str_5
 	push	hl
-	call	_printf
+	push	bc
+	inc	sp
+	ld	a, #0x0a
+	push	af
+	inc	sp
+	call	_PrintAt
 	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:127: PrintAt (20,y+2, " HP ", color1);
+	push	bc
 	ld	a, 7 (ix)
 	push	af
-	inc	sp
-	call	_pen
-	inc	sp
-	pop	hl
-	push	hl
-	ld	de, #0x0005
-	add	hl, de
-	ld	c, (hl)
-	inc	hl
-	ld	b, (hl)
-	push	bc
-	ld	hl, #___str_1
-	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;src/main.c:105: pen (color1);printf ("DEF "); pen (color2);printf("[%d] ",c->_defense);
-	ld	a, 6 (ix)
-	push	af
-	inc	sp
-	call	_pen
 	inc	sp
 	ld	hl, #___str_6
 	push	hl
-	call	_printf
-	pop	af
-	ld	a, 7 (ix)
+	push	bc
+	inc	sp
+	ld	a, #0x14
 	push	af
 	inc	sp
-	call	_pen
+	call	_PrintAt
+	pop	af
+	pop	af
 	inc	sp
-	pop	hl
+	pop	bc
+;src/main.c:128: sprintf (num, "[%d] ", c->_atk);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
+	ld	de, #0x0005
+	add	hl, de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
+	push	bc
+	push	de
+	ld	de, #___str_3
+	push	de
 	push	hl
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:129: PrintAt (5,y+2, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	push	bc
+	ld	a, 8 (ix)
+	push	af
+	inc	sp
+	push	de
+	push	bc
+	inc	sp
+	ld	a, #0x05
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:130: sprintf (num, "[%d] ",c->_defense);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	de, #0x0007
 	add	hl, de
-	ld	c, (hl)
+	ld	e, (hl)
 	inc	hl
-	ld	b, (hl)
+	ld	d, (hl)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	push	bc
-	ld	hl, #___str_1
+	push	de
+	ld	de, #___str_3
+	push	de
 	push	hl
-	call	_printf
-	pop	af
-	pop	af
-;src/main.c:106: pen (color1);printf (" HP "); pen (color2);printf ("[%d]\r\n", c->_hp);
-	ld	a, 6 (ix)
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:131: PrintAt (15,y+2, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	push	bc
+	ld	a, 8 (ix)
 	push	af
 	inc	sp
-	call	_pen
+	push	de
+	push	bc
 	inc	sp
-	ld	hl, #___str_7
-	push	hl
-	call	_printf
-	pop	af
-	ld	a, 7 (ix)
+	ld	a, #0x0f
 	push	af
 	inc	sp
-	call	_pen
+	call	_PrintAt
+	pop	af
+	pop	af
 	inc	sp
-	pop	hl
-	push	hl
-	ld	c, (hl)
+	pop	bc
+;src/main.c:132: sprintf (num, "[%d]\r\n", c->_hp);
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
+	ld	e, (hl)
 	inc	hl
-	ld	b, (hl)
+	ld	d, (hl)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	push	bc
-	ld	hl, #___str_4
+	push	de
+	ld	de, #___str_7
+	push	de
 	push	hl
-	call	_printf
+	call	_sprintf
+	ld	hl, #6
+	add	hl, sp
+	ld	sp, hl
+	pop	bc
+;src/main.c:133: PrintAt (25,y+2, num, color2);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	ld	a, 8 (ix)
+	push	af
+	inc	sp
+	push	de
+	push	bc
+	inc	sp
+	ld	a, #0x19
+	push	af
+	inc	sp
+	call	_PrintAt
 	ld	sp,ix
 	pop	ix
 	ret
@@ -535,38 +798,146 @@ ___str_0:
 	.ascii "STR "
 	.db 0x00
 ___str_1:
-	.ascii "[%d] "
-	.db 0x00
-___str_2:
 	.ascii "DES "
 	.db 0x00
-___str_3:
+___str_2:
 	.ascii "REF "
 	.db 0x00
+___str_3:
+	.ascii "[%d] "
+	.db 0x00
 ___str_4:
+	.ascii "ATK "
+	.db 0x00
+___str_5:
+	.ascii "DEF "
+	.db 0x00
+___str_6:
+	.ascii " HP "
+	.db 0x00
+___str_7:
 	.ascii "[%d]"
 	.db 0x0d
 	.db 0x0a
 	.db 0x00
-___str_5:
-	.ascii "ATK "
+;src/main.c:138: void ClearStatusLine()
+;	---------------------------------
+; Function ClearStatusLine
+; ---------------------------------
+_ClearStatusLine::
+;src/main.c:141: for (row = 20; row <=23; ++row) {
+	ld	b, #0x14
+00102$:
+;src/main.c:142: PrintAt (1,row, "                                        ", 0xff);
+	push	bc
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_8
+	push	hl
+	push	bc
+	inc	sp
+	ld	a, #0x01
+	push	af
+	inc	sp
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+	pop	bc
+;src/main.c:141: for (row = 20; row <=23; ++row) {
+	inc	b
+	ld	a, #0x17
+	sub	a, b
+	jr	NC,00102$
+	ret
+___str_8:
+	.ascii "                                        "
 	.db 0x00
-___str_6:
-	.ascii "DEF "
-	.db 0x00
-___str_7:
-	.ascii " HP "
-	.db 0x00
-;src/main.c:111: void main(void) {
+;src/main.c:148: u8 CalculateDamage (struct TCharacter *c)
+;	---------------------------------
+; Function CalculateDamage
+; ---------------------------------
+_CalculateDamage::
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;src/main.c:150: return (c->_atk*c->_atk)/(5*c->_defense);
+	ld	c,4 (ix)
+	ld	b,5 (ix)
+	ld	l, c
+	ld	h, b
+	ld	de, #0x0005
+	add	hl, de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	push	bc
+	push	de
+	push	de
+	call	__mulint
+	pop	af
+	pop	af
+	ex	de,hl
+	pop	hl
+	ld	bc, #0x0007
+	add	hl, bc
+	ld	c, (hl)
+	inc	hl
+	ld	b, (hl)
+	ld	l, c
+	ld	h, b
+	add	hl, hl
+	add	hl, hl
+	add	hl, bc
+	push	hl
+	push	de
+	call	__divuint
+	pop	af
+	pop	af
+	pop	ix
+	ret
+;src/main.c:155: void TakeDamage (struct TCharacter *c, u8 dmg)
+;	---------------------------------
+; Function TakeDamage
+; ---------------------------------
+_TakeDamage::
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;src/main.c:157: c->_hp -= dmg;
+	ld	l,4 (ix)
+	ld	h,5 (ix)
+	push	hl
+	ld	c, (hl)
+	inc	hl
+	ld	b, (hl)
+	pop	hl
+	ld	e, 6 (ix)
+	ld	d, #0x00
+	ld	a, c
+	sub	a, e
+	ld	c, a
+	ld	a, b
+	sbc	a, d
+	ld	b, a
+	ld	(hl), c
+	inc	hl
+	ld	(hl), b
+	pop	ix
+	ret
+;src/main.c:162: void main(void) {
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
 _main::
 	push	ix
-	ld	hl, #-20
+	ld	ix,#0
+	add	ix,sp
+	ld	hl, #-56
 	add	hl, sp
 	ld	sp, hl
-;src/main.c:117: ink (0,0,0); ink (1,0,0); ink (2,0,0);    // Black used palette colors
+;src/main.c:170: ink (0,0,0); ink (1,0,0); ink (2,0,0);    // Black used palette colors
 	ld	hl, #0x0000
 	push	hl
 	xor	a, a
@@ -589,11 +960,11 @@ _main::
 	call	_ink
 	pop	af
 	inc	sp
-;src/main.c:118: cpct_setVideoMode (1);                    // Set Vide Mode 1 (40x25)
+;src/main.c:171: cpct_setVideoMode (1);                    // Set Vide Mode 1 (40x25)
 	ld	l, #0x01
 	call	_cpct_setVideoMode
-;src/main.c:119: border (0,0); paper (0); pen (1);
-	ld	hl, #0x0000
+;src/main.c:172: border (1,1); paper (0); pen (1);
+	ld	hl, #0x0101
 	push	hl
 	call	_border
 	pop	af
@@ -607,97 +978,151 @@ _main::
 	inc	sp
 	call	_pen
 	inc	sp
-;src/main.c:121: locate (0,4);printf ("      )   ___    _____    )   ___      ");
-	ld	hl, #0x0400
-	push	hl
-	call	_locate
-	ld	hl, #___str_8
-	ex	(sp),hl
-	call	_printf
-;src/main.c:122: locate (0,5);printf ("     (__/_____) (, /   ) (__/_____)    ");
-	ld	hl, #0x0500
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_9
-	ex	(sp),hl
-	call	_printf
-;src/main.c:123: locate (0,6);printf ("       /         _/__ /    /           ");
-	ld	hl, #0x0600
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_10
-	ex	(sp),hl
-	call	_printf
-;src/main.c:124: locate (0,7);printf ("      /          /        /            ");
-	ld	hl, #0x0700
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_11
-	ex	(sp),hl
-	call	_printf
-;src/main.c:125: locate (0,8);printf ("     (______) ) /        (______)      ");
-	ld	hl, #0x0800
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_12
-	ex	(sp),hl
-	call	_printf
-;src/main.c:126: locate (0,9);printf ("            _(_/_                      ");
-	ld	hl, #0x0900
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_13
-	ex	(sp),hl
-	call	_printf
-;src/main.c:127: locate (0,10);printf ("           (, /   )                    ");
-	ld	hl, #0x0a00
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_14
-	ex	(sp),hl
-	call	_printf
-;src/main.c:128: locate (0,11);printf ("             /__ / ___      _          ");
-	ld	hl, #0x0b00
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_15
-	ex	(sp),hl
-	call	_printf
-;src/main.c:131: locate (0,12);printf ("          ) /   \\_(_(_/(_(_(/_         ");
-	ld	hl, #0x0c00
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_16
-	ex	(sp),hl
-	call	_printf
-;src/main.c:132: locate (0,13);printf ("         (_/       .-/                 ");
-	ld	hl, #0x0d00
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_17
-	ex	(sp),hl
-	call	_printf
-;src/main.c:133: locate (0,14);printf ("                  (_/                  ");
-	ld	hl, #0x0e00
-	ex	(sp),hl
-	call	_locate
-	ld	hl, #___str_18
-	ex	(sp),hl
-	call	_printf
-;src/main.c:134: locate (10, 18); pen (2); printf ("PRESS ENTER TO START");
-	ld	hl, #0x120a
-	ex	(sp),hl
-	call	_locate
-	ld	h,#0x02
-	ex	(sp),hl
+;src/main.c:174: PrintAt (1,5, "      )   ___    _____    )   ___      ", 0xff);
+	ld	a, #0xff
+	push	af
 	inc	sp
-	call	_pen
+	ld	hl, #___str_9
+	push	hl
+	ld	hl, #0x0501
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:175: PrintAt (1,6, "     (__/_____) (, /   ) (__/_____)    ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_10
+	push	hl
+	ld	hl, #0x0601
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:176: PrintAt (1,7, "       /         _/__ /    /           ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_11
+	push	hl
+	ld	hl, #0x0701
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:177: PrintAt (1,8, "      /          /        /            ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_12
+	push	hl
+	ld	hl, #0x0801
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:178: PrintAt (1,9, "     (______) ) /        (______)      ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_13
+	push	hl
+	ld	hl, #0x0901
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:179: PrintAt (1,10, "            _(_/_                      ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_14
+	push	hl
+	ld	hl, #0x0a01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:180: PrintAt (1,11, "           (, /   )                    ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_15
+	push	hl
+	ld	hl, #0x0b01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:181: PrintAt (1,12, "             /__ / ___      _          ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_16
+	push	hl
+	ld	hl, #0x0c01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:184: PrintAt (1,13, "          ) /   \\_(_(_/(_(_(/_         ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_17
+	push	hl
+	ld	hl, #0x0d01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:185: PrintAt (1,14, "         (_/       .-/                 ", 0xff);
+	ld	a, #0xff
+	push	af
+	inc	sp
+	ld	hl, #___str_18
+	push	hl
+	ld	hl, #0x0e01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:186: PrintAt (1,15, "                  (_/                  ", 0xff);
+	ld	a, #0xff
+	push	af
 	inc	sp
 	ld	hl, #___str_19
 	push	hl
-	call	_printf
-;src/main.c:135: ink (0, 3,3); ink (1, 6,15); ink (2, 16,16); border (3,3);
-	ld	hl, #0x0303
+	ld	hl, #0x0f01
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:187: PrintAt (10, 18, "PRESS ENTER TO START", 2);
+	ld	a, #0x02
+	push	af
+	inc	sp
+	ld	hl, #___str_20
+	push	hl
+	ld	hl, #0x120a
+	push	hl
+	call	_PrintAt
+	pop	af
+;src/main.c:188: ink (0, 3,3); ink (1, 6,15); ink (2, 16,16); border (3,3);
+	inc	sp
+	ld	hl,#0x0303
 	ex	(sp),hl
 	xor	a, a
 	push	af
@@ -722,18 +1147,18 @@ _main::
 	ex	(sp),hl
 	call	_border
 	pop	af
-;src/main.c:138: while (!cpct_isKeyPressed (Key_Return)) {
+;src/main.c:191: while (!cpct_isKeyPressed (Key_Return)) {
 00101$:
 	ld	hl, #0x0402
 	call	_cpct_isKeyPressed
 	ld	a, l
 	or	a, a
 	jr	NZ,00103$
-;src/main.c:139: cpct_scanKeyboard ();
+;src/main.c:192: cpct_scanKeyboard ();
 	call	_cpct_scanKeyboard
 	jr	00101$
 00103$:
-;src/main.c:143: border (0,0); ink (0, 0,0); ink (1, 25,25); ink (2, 20,20);
+;src/main.c:196: border (0,0); ink (0, 0,0); ink (1, 25,25); ink (2, 20,20);
 	ld	hl, #0x0000
 	push	hl
 	call	_border
@@ -759,7 +1184,7 @@ _main::
 	call	_ink
 	pop	af
 	inc	sp
-;src/main.c:144: paper (0); pen (2); cls ();
+;src/main.c:197: paper (0); pen (2); cls ();
 	xor	a, a
 	push	af
 	inc	sp
@@ -771,99 +1196,283 @@ _main::
 	call	_pen
 	inc	sp
 	call	_cls
-;src/main.c:147: InitializeCharacter (&player, 150, 17, 14, 12, '@');
-	ld	hl, #0x000a
+;src/main.c:200: InitializeCharacter (&player, 150, 17, 14, 12, '@', "Player");
+	ld	de, #___str_21+0
+	ld	hl, #0x001a
 	add	hl, sp
+	ld	-2 (ix), l
+	ld	-1 (ix), h
 	ld	c, l
 	ld	b, h
-	ld	e, c
-	ld	d, b
-	push	bc
+	push	de
 	ld	hl, #0x400c
 	push	hl
 	ld	hl, #0x0e11
 	push	hl
 	ld	hl, #0x0096
 	push	hl
-	push	de
+	push	bc
 	call	_InitializeCharacter
-	ld	hl, #8
+	ld	hl, #10
 	add	hl, sp
 	ld	sp, hl
-	pop	bc
-;src/main.c:148: InitializeCharacter (&goblin, 100, 12, 13, 11, 'g');
+;src/main.c:201: InitializeCharacter (&goblin, 100, 12, 13, 11, 'g', "Goblin");
+	ld	de, #___str_22+0
 	ld	hl, #0x0000
 	add	hl, sp
+	ld	-4 (ix), l
+	ld	-3 (ix), h
+	ld	c, l
+	ld	b, h
+	push	de
+	ld	hl, #0x670b
 	push	hl
-	pop	iy
+	ld	hl, #0x0d0c
+	push	hl
+	ld	hl, #0x0064
 	push	hl
 	push	bc
-	ld	de, #0x670b
-	push	de
-	ld	de, #0x0d0c
-	push	de
-	ld	de, #0x0064
-	push	de
-	push	iy
 	call	_InitializeCharacter
-	ld	hl, #8
+	ld	hl, #10
 	add	hl, sp
 	ld	sp, hl
-	pop	bc
-	ld	de, #0x0201
-	push	de
-	push	bc
-	call	_PrintCharacterStats
-	pop	af
-	pop	af
-	pop	hl
-;src/main.c:152: PrintCharacterStats (&goblin, 1,2);
-	ld	bc, #0x0201
-	push	bc
+;src/main.c:204: do {
+00111$:
+;src/main.c:205: locate (1,1);
+	ld	hl, #0x0101
 	push	hl
+	call	_locate
+	pop	af
+;src/main.c:207: PrintCharacterStats (&player, 1, 1,2);
+	ld	c,-2 (ix)
+	ld	b,-1 (ix)
+	ld	hl, #0x0201
+	push	hl
+	ld	a, #0x01
+	push	af
+	inc	sp
+	push	bc
 	call	_PrintCharacterStats
 	pop	af
 	pop	af
-;src/main.c:155: while (1);
-00105$:
-	jr	00105$
-___str_8:
+	inc	sp
+;src/main.c:208: PrintCharacterStats (&goblin, 5, 1,2);
+	ld	c,-4 (ix)
+	ld	b,-3 (ix)
+	ld	hl, #0x0201
+	push	hl
+	ld	a, #0x05
+	push	af
+	inc	sp
+	push	bc
+	call	_PrintCharacterStats
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:211: PrintAt (1,20, "ACTION? ", 1);
+	ld	a, #0x01
+	push	af
+	inc	sp
+	ld	hl, #___str_23
+	push	hl
+	ld	hl, #0x1401
+	push	hl
+	call	_PrintAt
+	pop	af
+	pop	af
+	inc	sp
+;src/main.c:213: cpct_scanKeyboard();
+	call	_cpct_scanKeyboard
+;src/main.c:214: while (!cpct_isKeyPressed (Key_A)) {
+00104$:
+	ld	hl, #0x2008
+	call	_cpct_isKeyPressed
+	ld	a, l
+	or	a, a
+	jr	NZ,00106$
+;src/main.c:215: cpct_scanKeyboard();
+	call	_cpct_scanKeyboard
+	jr	00104$
+00106$:
+;src/main.c:218: ClearStatusLine();
+	call	_ClearStatusLine
+;src/main.c:220: if (cpct_isKeyPressed (Key_A)) {
+	ld	hl, #0x2008
+	call	_cpct_isKeyPressed
+	ld	a, l
+	or	a, a
+	jr	Z,00108$
+;src/main.c:221: dmg=CalculateDamage (&player);
+	ld	c,-2 (ix)
+	ld	b,-1 (ix)
+	push	bc
+	call	_CalculateDamage
+	pop	af
+	ld	b, l
+;src/main.c:222: TakeDamage (&goblin, dmg);
+	ld	e,-4 (ix)
+	ld	d,-3 (ix)
+	push	bc
+	push	bc
+	inc	sp
+	push	de
+	call	_TakeDamage
+	inc	sp
+	ld	hl,#0x1501
+	ex	(sp),hl
+	call	_locate
+	ld	h,#0x01
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	pop	bc
+	ld	de, #___str_24
+	push	bc
+	push	de
+	call	_printf
+	ld	h,#0x03
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	pop	bc
+	ld	c, b
+	ld	b, #0x00
+	push	bc
+	ld	hl, #___str_25
+	push	hl
+	call	_printf
+	pop	af
+;src/main.c:225: pen (1); printf (" hit points");
+	ld	h,#0x01
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	ld	hl, #___str_26
+	push	hl
+	call	_printf
+	pop	af
+00108$:
+;src/main.c:228: if (cpct_rand() < 64) {
+	call	_cpct_getRandom_mxor_u8
+	ld	a, l
+	sub	a, #0x40
+	jp	NC, 00111$
+;src/main.c:229: dmg=CalculateDamage (&goblin);
+	ld	c,-4 (ix)
+	ld	b,-3 (ix)
+	push	bc
+	call	_CalculateDamage
+	pop	af
+	ld	b, l
+;src/main.c:230: TakeDamage (&player, dmg);
+	ld	e,-2 (ix)
+	ld	d,-1 (ix)
+	push	bc
+	push	bc
+	inc	sp
+	push	de
+	call	_TakeDamage
+	inc	sp
+	ld	hl,#0x1601
+	ex	(sp),hl
+	call	_locate
+	ld	h,#0x01
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	ld	hl, #___str_27
+	push	hl
+	call	_printf
+	ld	h,#0x03
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	pop	bc
+	ld	c, b
+	ld	b, #0x00
+	push	bc
+	ld	hl, #___str_25
+	push	hl
+	call	_printf
+	pop	af
+;src/main.c:233: pen (1); printf (" hit points from goblin");
+	ld	h,#0x01
+	ex	(sp),hl
+	inc	sp
+	call	_pen
+	inc	sp
+	ld	hl, #___str_28
+	push	hl
+	call	_printf
+	pop	af
+;src/main.c:235: } while (1);
+	jp	00111$
+___str_9:
 	.ascii "      )   ___    _____    )   ___      "
 	.db 0x00
-___str_9:
+___str_10:
 	.ascii "     (__/_____) (, /   ) (__/_____)    "
 	.db 0x00
-___str_10:
+___str_11:
 	.ascii "       /         _/__ /    /           "
 	.db 0x00
-___str_11:
+___str_12:
 	.ascii "      /          /        /            "
 	.db 0x00
-___str_12:
+___str_13:
 	.ascii "     (______) ) /        (______)      "
 	.db 0x00
-___str_13:
+___str_14:
 	.ascii "            _(_/_                      "
 	.db 0x00
-___str_14:
+___str_15:
 	.ascii "           (, /   )                    "
 	.db 0x00
-___str_15:
+___str_16:
 	.ascii "             /__ / ___      _          "
 	.db 0x00
-___str_16:
+___str_17:
 	.ascii "          ) /   "
 	.db 0x5c
 	.ascii "_(_(_/(_(_(/_         "
 	.db 0x00
-___str_17:
+___str_18:
 	.ascii "         (_/       .-/                 "
 	.db 0x00
-___str_18:
+___str_19:
 	.ascii "                  (_/                  "
 	.db 0x00
-___str_19:
+___str_20:
 	.ascii "PRESS ENTER TO START"
+	.db 0x00
+___str_21:
+	.ascii "Player"
+	.db 0x00
+___str_22:
+	.ascii "Goblin"
+	.db 0x00
+___str_23:
+	.ascii "ACTION? "
+	.db 0x00
+___str_24:
+	.ascii "goblin takes "
+	.db 0x00
+___str_25:
+	.ascii "%d"
+	.db 0x00
+___str_26:
+	.ascii " hit points"
+	.db 0x00
+___str_27:
+	.ascii "you take "
+	.db 0x00
+___str_28:
+	.ascii " hit points from goblin"
 	.db 0x00
 	.area _CODE
 	.area _INITIALIZER
