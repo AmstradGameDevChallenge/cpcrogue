@@ -1,0 +1,171 @@
+ASxxxx Linker V03.00 + NoICE + sdld,  page 1.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+.  .ABS.                            00000000    00000000 =           0. bytes (ABS,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00000000  .__.ABS.                           
+     00000000  l__CABS                         
+     00000000  l__DABS                         
+     00000000  l__DATA                         
+     00000000  l__GSFINAL                      
+     00000000  l__GSINIT                       
+     00000000  l__INITIALIZED                  
+     00000000  l__INITIALIZER                  
+     00000000  s__CABS                         
+     00000000  s__DABS                         
+     00000AE0  l__HOME                         
+     000019AA  l__CODE                         
+     00004000  s__CODE                         
+     000059AA  s__DATA                         
+     000059AA  s__HOME                         
+     000059AA  s__INITIALIZED                  
+     0000648A  s__GSFINAL                      
+     0000648A  s__GSINIT                       
+     0000648A  s__INITIALIZER                  
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_CODE                               00004000    000019AA =        6570. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     00004000  _map_create                        main
+     00004089  _locate                            main
+     000040AA  _ink                               main
+     000040D7  _border                            main
+     000040F8  _paper                             main
+     0000410D  _pen                               main
+     00004122  _cls                               main
+     0000412B  _PrintAt                           main
+     0000415F  _InitializeCharacter               main
+     000042A1  _InitEntities                      main
+     000042CF  _draw_map                          main
+     000043B7  _InitColors                        main
+     000043F7  _PrintCharacterStats               main
+     00004676  _ClearStatusLine                   main
+     000046BE  _CalculateDamage                   main
+     000046F5  _TakeDamage                        main
+     0000471D  _main                              main
+     00004C7A  __divuint                          
+     00004C82  __divuchar                         
+     00004C89  __divu8                            
+     00004C8C  __divu16                           
+     00004CBB  _cpct_isKeyPressed                 cpct_keyboard
+     00004CBB  cpct_isKeyPressed_asm              cpct_keyboard
+     00004CC7  _putchar                           cpct_strings
+     00004CC7  _putchar_rr_s                      cpct_strings
+     00004CD0  _putchar_rr_dbs                    cpct_strings
+     00004CD5  _cpct_keyboardStatusBuffer         cpct_keyboard
+     00004CDF  __mulint                           
+     00004CE5  __mul16                            
+     00004D19  _vsprintf                          sprintf
+     00004D4E  _sprintf                           sprintf
+     00004D83  _cpct_setVideoMode                 cpct_video
+     00004D9E  _vprintf                           vprintf
+     00004DBE  _printf                            vprintf
+     00004DDB  _cpct_getRandom_mxor_u8            cpct_random
+     00004DDB  cpct_getRandom_mxor_u8_asm         cpct_random
+     00004DDC  cpct_randomIdx_mxor_u8             cpct_random
+     00004E00  _cpct_mode_rom_status              cpct_firmware
+     00004E01  _cpct_scanKeyboard                 cpct_keyboard
+     00004E01  cpct_scanKeyboard_asm              cpct_keyboard
+     00004E32  _cpct_mxor32_seed                  cpct_random
+     00004F35  __print_format                     printf_large
+     00005977  _cpct_nextRandom_mxor_u32          cpct_random
+     00005977  cpct_nextRandom_mxor_u32_asm       cpct_random
+     0000599A  ___sdcc_call_hl                    
+     0000599B  _strlen                            
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+_HOME                               000059AA    00000AE0 =        2784. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     000059AA  ___fsmul                           _fsmul
+     00005D0F  ___fsadd                           _fsadd
+     000060D8  ___sint2fs                         _sint2fs
+     000060F3  ___fs2uint                         _fs2uint
+     00006122  ___uchar2fs                        _uchar2fs
+     00006134  __mullong                          _mullong
+     000062B0  ___slong2fs                        _slong2fs
+     000062F8  ___ulong2fs                        _ulong2fs
+     000063D8  ___fs2ulong                        _fs2ulong
+ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
+
+Files Linked                              [ module(s) ]
+
+obj/main.rel                              [ main ]
+
+
+Libraries Linked                          [ object file ]
+
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ divunsigned.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_isKeyPressed.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _fsmul.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_putChar.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ keyboard.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ mul.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _fsadd.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ sprintf.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _sint2fs.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _fs2uint.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_setVideoMode_cbindings.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ vprintf.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_getRandom_mxor_u8.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _uchar2fs.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _mullong.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpc_mode_rom_status.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_scanKeyboard.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _slong2fs.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _ulong2fs.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ _fs2ulong.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_mxor32_seed.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ printf_large.rel ]
+/home/andriu/.local/cpctelera/cpctelera/cpctelera.lib
+                                          [ cpct_nextRandom_mxor_u32.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ __sdcc_call_hl.rel ]
+/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80/z80.lib
+                                          [ strlen.rel ]
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
+
+User Base Address Definitions
+
+_CODE = 0x4000
+_DATA = 0x0000
+
+
