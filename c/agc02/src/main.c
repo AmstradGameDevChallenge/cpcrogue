@@ -63,54 +63,49 @@
 #define   PEN_ENTITY      1
 #define   PEN_TILE        2
 #define   PEN_EXLORED     3
+
+/****************************************************************************
+ * Enumerations
+ ***************************************************************************/
+enum TActions {
+  NONE, PLAYER_MOVED, ATTACK
+};
+
 /****************************************************************************
  * Data structures
  ***************************************************************************/
-struct TCharacter {
-  u8 x, y;
-  u8 spr[2];
-  u8 color;
-  u8 name[15];
-  u16 hp;
-  u8 str;
-  u8 destr;
-  u8 refl;
-  u16 atk;
-  u16 defense;
+struct TEntity {
+  u8 x, y;      // Current position
+  u8 px, py;    // Previous position
+  u8 spr[2];    // ASCII char to draw this entity
+  u8 color;     // Color to draw this entity
+  u8 name[15];  // Name to display in messages
+
+  u16 max_hp;   // Max health
+  u16 hp;       // Current health
+  u8 str;       // Current strength
+  u8 destr;     // Current dexterity
+  u8 refl;      // Current reflexes
+  u16 atk;      // Current attack
+  u16 defense;  // Current defense
 };
+//---------------------------------------------------------------------------
 struct TTile {
   u8 blocked;
 };
+//---------------------------------------------------------------------------
 struct TRect {
   u8 x1;
   u8 y1;
   u8 x2;
   u8 y2;
 };
+//---------------------------------------------------------------------------
 struct TMap {
   u8 width;
   u8 height;
   struct TTile tiles[MAP_HEIGHT][MAP_WIDTH];
 };
-
-/****************************************************************************
- * Map fns
- ***************************************************************************/
-void map_create (struct TMap *map, u8 width, u8 height)
-{
-
-  u8 j,i;
-  map->width = width;
-  map->height = height;
-  for (i=0; i!=map->height; ++i)
-    for (j=0; j!=map->width; ++j)
-      map->tiles[i][j].blocked = FALSE;
-
-  // Tiles are referenced first vertical (Y), then horizontal (X)
-  map->tiles[12][3].blocked = TRUE;
-  map->tiles[3][10].blocked = TRUE;
-}
-
 /****************************************************************************
  * Video fn: LOCATE, INK, PAPER, BORDER, PEN, CLS
  ***************************************************************************/
@@ -140,7 +135,6 @@ void pen (u8 tinta)
    putchar (tinta);
 }
 void cls () { putchar (FF); }
-
 /****************************************************************************
  *                      PrintAt
  ***************************************************************************/
@@ -151,48 +145,35 @@ void PrintAt (u8 x, u8 y, char text[], u8 color)
   printf (text);
 }
 /****************************************************************************
- *                      Character Initialization
+ * Map fns
  ***************************************************************************/
-void InitializeCharacter (struct TCharacter *c,
-   u8 x, u8 y, u8 spr[], u8 color, u8 name[],
-   u16 hp, u8 str, u8 destr, u8 refl)
+void MapCreate (struct TMap *map, u8 width, u8 height)
 {
-  c->x = x; c->y = y;
-  strcpy (c->spr, spr);
-  c->color = color;
-  strcpy (c->name, name);
+  int i, j;
+  map->width = width;
+  map->height = height;
+  for (i=0; i < map->height; ++i)
+    for (j=0; j < map->width; ++j)
+      map->tiles[i][j].blocked = FALSE;
 
-  c->hp = hp;
-  c->str = str;
-  c->destr = destr;
-  c->refl = refl;
-
-  c->atk = 1.5 * c->str + c->destr;
-  c->defense = 1.5 * c->destr + c->refl;
-
+  // Tiles are referenced first vertical (Y), then horizontal (X)
+  map->tiles[12][3].blocked = TRUE;
+  map->tiles[3][1].blocked = TRUE;
 }
-/****************************************************************************
- *                      Initialize Entities
- ***************************************************************************/
-void InitEntities (struct TCharacter* entities[])
+//---------------------------------------------------------------------------
+u8 MapCanMove (struct TMap *map, u8 x, u8 y)
 {
-  i8 i=MAX_ENTITIES-1;
-  do {
-    entities[i--] = NULL;
-  } while (i != 0);
-  entities[0] = NULL;
+  return !(map->tiles[y][x].blocked);
 }
-/****************************************************************************
- *                      Draw Map
- ***************************************************************************/
-void draw_map (struct TMap *map)
+//---------------------------------------------------------------------------
+void DrawMap (struct TMap *map)
 {
   int i,j;
   u8 is_wall;
 
   // Draw Map
-  for (i=0; i!=map->height; ++i) {
-    for (j=0; j!=map->width; ++j) {
+  for (i=0; i < map->height; ++i) {
+    for (j=0; j < map->width; ++j) {
       is_wall = map->tiles[i][j].blocked;
 
       if (is_wall) {
@@ -207,9 +188,9 @@ void draw_map (struct TMap *map)
 /*
   This functions is not used yet, it's buggy!!
 
-void draw_entities (struct TCharacter* entities[])
+void draw_entities (struct TEntity* entities[])
 {
-  struct TCharacter* e;
+  struct TEntity* e;
 
   u8 i = 0;
   while ( (e = entities[i++]) != NULL ) {
@@ -217,6 +198,55 @@ void draw_entities (struct TCharacter* entities[])
   }
 }
 */
+
+/****************************************************************************
+ *                      Character Initialization
+ ***************************************************************************/
+void CharacterInit (struct TEntity *c,
+   u8 x, u8 y, u8 spr[], u8 color, u8 name[],
+   u16 hp, u8 str, u8 destr, u8 refl)
+{
+  c->x = x;         // current posX
+  c->y = y;         // current posY
+  c->px = c->x;     // Previous posX to current posX
+  c->py = c->y;     // Previous posY to current posY
+  strcpy (c->spr, spr);
+  c->color = color;
+  strcpy (c->name, name);
+
+  c->max_hp = hp;
+  c->hp = hp;
+  c->str = str;
+  c->destr = destr;
+  c->refl = refl;
+
+  c->atk = 1.5 * c->str + c->destr;
+  c->defense = 1.5 * c->destr + c->refl;
+}
+//---------------------------------------------------------------------------
+u8 CharacterMove (struct TMap *gm, struct TEntity *c, i8 dx, i8 dy)
+{
+  if (MapCanMove (gm, c->x+dx, c->y+dy)) {
+    c->px = c->x;   // Save old positions
+    c->py = c->y;
+    c->x = c->x+dx;     // Update to new position
+    c->y = c->y+dy;
+    return TRUE;    // Flag we could move to the new position
+  }
+  return FALSE;
+}
+/****************************************************************************
+ *                      Initialize Entities
+ ***************************************************************************/
+void InitEntities (struct TEntity* entities[])
+{
+  i8 i=MAX_ENTITIES-1;
+  do {
+    entities[i--] = NULL;
+  } while (i != 0);
+  entities[0] = NULL;
+}
+
 /****************************************************************************
  *                      Initialize Colors
  ***************************************************************************/
@@ -233,30 +263,34 @@ void InitColors()
 /****************************************************************************
  *                      Display Character Stats
  ***************************************************************************/
-void PrintCharacterStats (struct TCharacter *c, u8 y,
+void PrintCharacterStats (struct TEntity *c, u8 y,
    u8 color1, u8 color2)
 {
-  char num[10];
-  PrintAt (10,y, c->name, color1); PrintAt (21,y, c->spr, color2);
-  PrintAt (1, y+1, "STR ",color1);
-  PrintAt (10,y+1, "DES ",color1);
-  PrintAt (20,y+1, "REF ",color1);
-  sprintf (num, "[%d] ", c->str);
+  u8 num[5];
+  PrintAt (3,y, "Movement: i:UP, k:DN, j:LT, k:RT", color2);
+  PrintAt (1, y+1, "STR: ",color1);
+  PrintAt (10,y+1, "DES: ",color1);
+  PrintAt (20,y+1, "REF: ",color1);
+  sprintf (num, "%d ", c->str);
   PrintAt (5,y+1, num, color2);
-  sprintf (num, "[%d] ", c->destr);
+  sprintf (num, "%d ", c->destr);
   PrintAt (15,y+1, num, color2);
-  sprintf (num, "[%d] ", c->refl);
+  sprintf (num, "%d ", c->refl);
   PrintAt (25,y+1, num, color2);
 
-  PrintAt (1, y+2, "ATK ", color1);
-  PrintAt (10,y+2, "DEF ", color1);
-  PrintAt (20,y+2, " HP ", color1);
-  sprintf (num, "[%d] ", c->atk);
+  PrintAt (1, y+2, "ATK: ", color1);
+  PrintAt (10,y+2, "DEF: ", color1);
+  PrintAt (20,y+2, " HP: ", color1);
+  PrintAt (28,y+2, "/", color1);
+
+  sprintf (num, "%d ", c->atk);
   PrintAt (5,y+2, num, color2);
-  sprintf (num, "[%d] ",c->defense);
+  sprintf (num, "%d ",c->defense);
   PrintAt (15,y+2, num, color2);
-  sprintf (num, "[%d]\r\n", c->hp);
+  sprintf (num, "%d", c->hp);
   PrintAt (25,y+2, num, color2);
+  sprintf (num, "%d", c->max_hp);
+  PrintAt (29,y+2, num, color2);
 }
 /****************************************************************************
  *                      Clar Status Line
@@ -271,16 +305,38 @@ void ClearStatusLine()
 /***************************************************************************
  *                      Calculate Damage
  ***************************************************************************/
-u8 CalculateDamage (struct TCharacter *c)
+u8 CalculateDamage (struct TEntity *c)
 {
    return (c->atk*c->atk)/(5*c->defense);
 }
 /***************************************************************************
  *                      Take Damage
  ***************************************************************************/
-void TakeDamage (struct TCharacter *c, u8 dmg)
+void TakeDamage (struct TEntity *c, u8 dmg)
 {
    c->hp -= dmg;
+}
+/****************************************************************************
+ *                            Handle Keyboard
+ ***************************************************************************/
+enum TActions HandleKeyboard (i8 *dx, i8 *dy)
+{
+  if (cpct_isKeyPressed (Key_I)) {  // i: UP
+    *dx = 0; *dy = -1; return PLAYER_MOVED;
+  }
+  if (cpct_isKeyPressed (Key_K)) {  // k: DOWN
+    *dx = 0; *dy = 1; return PLAYER_MOVED;
+  }
+  if (cpct_isKeyPressed (Key_J)) {  // j: LEFT
+    *dx = -1; *dy = 0; return PLAYER_MOVED;
+  }
+  if (cpct_isKeyPressed (Key_L)) {  // l: RIGHT
+    *dx = 1; *dy = 0; return PLAYER_MOVED;
+  }
+  if (cpct_isKeyPressed (Key_S)) {  // s: WAIT
+    return PLAYER_MOVED;
+  }
+  return NONE;
 }
 /****************************************************************************
  *                            --- MAIN ---
@@ -288,17 +344,27 @@ void TakeDamage (struct TCharacter *c, u8 dmg)
 void main(void) {
 
   // Player and Enemy variables
-  struct TCharacter player;
-  struct TCharacter goblin;
+  struct TEntity player;
+  struct TEntity enemy;
+
+  // Player actions
+  enum TActions player_action=NONE;
+
+  // Array of 'dirty' flags, signals if entity needs to be drawn
+  //i8 dirty[2] = {TRUE, TRUE};
+  u8 dirty0 = TRUE;
 
   // Entities in the game, not used yet, it's buggy!!
-  //struct TCharacter* entities[MAX_ENTITIES];
+  //struct TEntity* entities[MAX_ENTITIES];
 
   // Current level map
   struct TMap game_map;
 
   // Damage dealt on attacks
-  u8 dmg;
+  u8 dmg=0;
+
+  // Move displacement for movement (either player or enemy)
+  i8 dx=0, dy=0;
 
   ink (0,0,0); ink (1,0,0); ink (2,0,0);    // Black used palette colors
   cpct_setVideoMode (1);                    // Set Vide Mode 1 (40x25)
@@ -330,54 +396,61 @@ void main(void) {
   // Clear Screen
   cls();
 
-  // Initial values for player/goblin
-  InitializeCharacter (&player, 3, 3,
+  // Initial values for player/enemy
+  CharacterInit (&player, 3, 3,
     SPR_PLAYER, PEN_ENTITY, "Player",
-    150, 17, 14, 12);
+    20, 17, 14, 12);
 
-  InitializeCharacter (&goblin, 12, 3,
+  CharacterInit (&enemy, 12, 3,
     SPR_GOBLIN, PEN_ENTITY, "Goblin",
-    100, 12, 13, 11);
+    10, 12, 13, 11);
 
   // Initialize Entities, not used yet, it's buggy!!
   //InitEntities (entities);
   //entities[0] = &player;
-  //entities[1] = &goblin;
+  //entities[1] = &enemy;
 
   // Create map
-  map_create (&game_map, MAP_WIDTH, MAP_HEIGHT);
-  draw_map(&game_map);
+  MapCreate (&game_map, MAP_WIDTH, MAP_HEIGHT);
+  DrawMap(&game_map);
+  PrintCharacterStats (&player, 1, 2, 1);
 
   // Loop forever
   do {
-    PrintCharacterStats (&player, 1, 1, 1);
-    PrintAt (PLAY_X+player.x, PLAY_Y+player.y, player.spr, player.color);
-    PrintAt (PLAY_X+goblin.x, PLAY_Y+goblin.y, goblin.spr, goblin.color);
+    if (dirty0) {
+      PrintAt (PLAY_X+player.px, PLAY_Y+player.py, SPR_FLOOR, PEN_TILE);
+      PrintAt (PLAY_X+player.x, PLAY_Y+player.y, player.spr, player.color);
+      dirty0 = FALSE;
+    }
+    PrintAt (PLAY_X+enemy.px, PLAY_Y+enemy.py, SPR_FLOOR, PEN_TILE);
+    PrintAt (PLAY_X+enemy.x, PLAY_Y+enemy.y, enemy.spr, enemy.color);
 
     // Re-scan keyboard
+    do
+      cpct_scanKeyboard();
+      // Moves with i,k,j,l
+      // s: Wait 1 turn
+      while (!cpct_isKeyPressed (Key_I) && !cpct_isKeyPressed (Key_K) &&
+      !cpct_isKeyPressed (Key_J) && !cpct_isKeyPressed (Key_L) &&
+      !cpct_isKeyPressed (Key_S));
 
-    cpct_scanKeyboard();
-    while (!cpct_isKeyPressed (Key_A)) {
-       cpct_scanKeyboard();
-    }
-
-    ClearStatusLine();
+    // ClearStatusLine();
     // Player actions
-    if (cpct_isKeyPressed (Key_A)) {
-      dmg=CalculateDamage (&player);
-      TakeDamage (&goblin, dmg);
-      locate (1,21);pen (1);printf ("goblin takes ");
-      pen (3); printf ("%d",dmg);
-      pen (1); printf (" hit points");
-    }
-    // Enemy actions
-    if (cpct_rand() < 64) {
-      dmg=CalculateDamage (&goblin);
-      TakeDamage (&player, dmg);
-      locate (1,22);pen (1);printf ("you take ");
-      pen (3); printf ("%d", dmg);
-      pen (1); printf (" hit points from goblin");
-    }
+    dx = dy = 0;
+    do {
+      player_action = HandleKeyboard(&dx, &dy);
+    } while (!player_action);
 
+    if (player_action == PLAYER_MOVED) {
+      player_action = CharacterMove (&game_map, &player, dx, dy) ?
+        PLAYER_MOVED : NONE;
+    }
+    dirty0 = (player_action == PLAYER_MOVED);
+
+    if (player_action) {
+    // Enemy actions
+      dx = -1; dy = 0;
+      CharacterMove (&game_map, &enemy, dx, dy);
+    }
   } while (1);
 }
