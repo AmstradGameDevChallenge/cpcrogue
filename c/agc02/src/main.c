@@ -51,10 +51,10 @@
 #define PLAY_Y            4
 
 // Game Sprites
-#define   SPR_WALL    "#"
-#define   SPR_FLOOR   "."
-#define   SPR_PLAYER  "@"
-#define   SPR_GOBLIN  "g"
+#define   SPR_WALL    '#'
+#define   SPR_FLOOR   '.'
+#define   SPR_PLAYER  '@'
+#define   SPR_GOBLIN  'g'
 
 // Sprite Colors
 #define   INK_DARK_TILE   1
@@ -77,7 +77,7 @@ enum TActions {
 struct TEntity {
   u8 x, y;      // Current position
   u8 px, py;    // Previous position
-  u8 spr[2];    // ASCII char to draw this entity
+  u8 spr;       // ASCII char to draw this entity
   u8 color;     // Color to draw this entity
   u8 name[15];  // Name to display in messages
 
@@ -111,7 +111,7 @@ struct TMap {
  ***************************************************************************/
 void locate (u8 x, u8 y)
 {
-   putchar(US);
+   putchar(31);
    putchar (x); putchar (y);
 }
 void ink (u8 tinta, u8 color1, u8 color2)
@@ -140,9 +140,11 @@ void cls () { putchar (FF); }
  ***************************************************************************/
 void PrintAt (u8 x, u8 y, char text[], u8 color)
 {
+  u8 i = 0, ch;
+
   locate (x, y);
   if (color != 0xff) pen (color);
-  printf (text);
+  while ( (ch=text[i++])) putchar(ch);
 }
 /****************************************************************************
  * Map fns
@@ -174,13 +176,14 @@ void DrawMap (struct TMap *map)
   // Draw Map
   for (i=0; i < map->height; ++i) {
     for (j=0; j < map->width; ++j) {
+      locate (PLAY_X+j,PLAY_Y+i);
       is_wall = map->tiles[i][j].blocked;
-
+      pen (PEN_TILE);
       if (is_wall) {
-        PrintAt (PLAY_X+j,PLAY_Y+i, "#", PEN_TILE);
+        putchar(SPR_WALL);
       }
       else {
-        PrintAt (PLAY_X+j,PLAY_Y+i, ".", PEN_TILE);
+        putchar (SPR_FLOOR);
       }
     }
   }
@@ -200,17 +203,17 @@ void draw_entities (struct TEntity* entities[])
 */
 
 /****************************************************************************
- *                      Character Initialization
+ *                      Entity Initialization
  ***************************************************************************/
-void CharacterInit (struct TEntity *c,
-   u8 x, u8 y, u8 spr[], u8 color, u8 name[],
+void EntityInit (struct TEntity *c,
+   u8 x, u8 y, u8 spr, u8 color, u8 name[],
    u16 hp, u8 str, u8 destr, u8 refl)
 {
   c->x = x;         // current posX
   c->y = y;         // current posY
   c->px = c->x;     // Previous posX to current posX
   c->py = c->y;     // Previous posY to current posY
-  strcpy (c->spr, spr);
+  c->spr =spr;
   c->color = color;
   strcpy (c->name, name);
 
@@ -224,7 +227,7 @@ void CharacterInit (struct TEntity *c,
   c->defense = 1.5 * c->destr + c->refl;
 }
 //---------------------------------------------------------------------------
-u8 CharacterMove (struct TMap *gm, struct TEntity *c, i8 dx, i8 dy)
+u8 EntityMove (struct TMap *gm, struct TEntity *c, i8 dx, i8 dy)
 {
   if (MapCanMove (gm, c->x+dx, c->y+dy)) {
     c->px = c->x;   // Save old positions
@@ -234,6 +237,20 @@ u8 CharacterMove (struct TMap *gm, struct TEntity *c, i8 dx, i8 dy)
     return TRUE;    // Flag we could move to the new position
   }
   return FALSE;
+}
+//---------------------------------------------------------------------------
+void EntityDraw (struct TEntity *e)
+{
+  pen (PEN_ENTITY);
+  locate (PLAY_X+e->x, PLAY_Y+e->y);
+  putchar (e->spr);
+}
+//---------------------------------------------------------------------------
+void EntityErase (struct TEntity *e)
+{
+  pen (PEN_TILE);
+  locate (PLAY_X+e->px, PLAY_Y+e->py);
+  putchar (SPR_FLOOR);
 }
 /****************************************************************************
  *                      Initialize Entities
@@ -261,16 +278,17 @@ void InitColors()
 }
 
 /****************************************************************************
- *                      Display Character Stats
+ *                      Display Entity Stats
  ***************************************************************************/
-void PrintCharacterStats (struct TEntity *c, u8 y,
+void PrintEntityStats (struct TEntity *c, u8 y,
    u8 color1, u8 color2)
 {
-  u8 num[5];
-  PrintAt (3,y, "Movement: i:UP, k:DN, j:LT, k:RT", color2);
+  u8 num[10];
+  PrintAt (1,y, "Movement: i:UP, k:DN, j:LT, l:RT, s:WAIT", color2);
   PrintAt (1, y+1, "STR: ",color1);
   PrintAt (10,y+1, "DES: ",color1);
   PrintAt (20,y+1, "REF: ",color1);
+
   sprintf (num, "%d ", c->str);
   PrintAt (5,y+1, num, color2);
   sprintf (num, "%d ", c->destr);
@@ -291,6 +309,7 @@ void PrintCharacterStats (struct TEntity *c, u8 y,
   PrintAt (25,y+2, num, color2);
   sprintf (num, "%d", c->max_hp);
   PrintAt (29,y+2, num, color2);
+
 }
 /****************************************************************************
  *                      Clar Status Line
@@ -351,8 +370,10 @@ void main(void) {
   enum TActions player_action=NONE;
 
   // Array of 'dirty' flags, signals if entity needs to be drawn
-  //i8 dirty[2] = {TRUE, TRUE};
-  u8 dirty0 = TRUE;
+  i8 dirty[2] = {TRUE, TRUE};
+
+  // Flags if stats changed and needs to be displayed on screen
+  u8 stats_changed = TRUE;
 
   // Entities in the game, not used yet, it's buggy!!
   //struct TEntity* entities[MAX_ENTITIES];
@@ -365,6 +386,9 @@ void main(void) {
 
   // Move displacement for movement (either player or enemy)
   i8 dx=0, dy=0;
+
+  i8 mi_array[10] = { 1, 1, 1,1, 1, -1,-1,-1,-1,-1};
+  u8 ei = 0;
 
   ink (0,0,0); ink (1,0,0); ink (2,0,0);    // Black used palette colors
   cpct_setVideoMode (1);                    // Set Vide Mode 1 (40x25)
@@ -396,45 +420,38 @@ void main(void) {
   // Clear Screen
   cls();
 
-  // Initial values for player/enemy
-  CharacterInit (&player, 3, 3,
-    SPR_PLAYER, PEN_ENTITY, "Player",
+  EntityInit (&player, 3, 3, SPR_PLAYER, PEN_ENTITY, "Player",
     20, 17, 14, 12);
-
-  CharacterInit (&enemy, 12, 3,
-    SPR_GOBLIN, PEN_ENTITY, "Goblin",
+  EntityInit (&enemy, 12, 3, SPR_GOBLIN, PEN_ENTITY, "Goblin",
     10, 12, 13, 11);
 
-  // Initialize Entities, not used yet, it's buggy!!
-  //InitEntities (entities);
-  //entities[0] = &player;
-  //entities[1] = &enemy;
-
-  // Create map
   MapCreate (&game_map, MAP_WIDTH, MAP_HEIGHT);
   DrawMap(&game_map);
-  PrintCharacterStats (&player, 1, 2, 1);
 
-  // Loop forever
+
   do {
-    if (dirty0) {
-      PrintAt (PLAY_X+player.px, PLAY_Y+player.py, SPR_FLOOR, PEN_TILE);
-      PrintAt (PLAY_X+player.x, PLAY_Y+player.y, player.spr, player.color);
-      dirty0 = FALSE;
+    if (stats_changed) {
+      PrintEntityStats (&player, 1, 2, 1);
+      stats_changed = FALSE;
     }
-    PrintAt (PLAY_X+enemy.px, PLAY_Y+enemy.py, SPR_FLOOR, PEN_TILE);
-    PrintAt (PLAY_X+enemy.x, PLAY_Y+enemy.y, enemy.spr, enemy.color);
+
+    if (dirty[0]) {
+      EntityErase (&player);
+      EntityDraw (&player);
+      dirty[0] = FALSE;
+    }
+    EntityErase (&enemy);
+    EntityDraw (&enemy);
 
     // Re-scan keyboard
     do
       cpct_scanKeyboard();
       // Moves with i,k,j,l
       // s: Wait 1 turn
-      while (!cpct_isKeyPressed (Key_I) && !cpct_isKeyPressed (Key_K) &&
+    while (!cpct_isKeyPressed (Key_I) && !cpct_isKeyPressed (Key_K) &&
       !cpct_isKeyPressed (Key_J) && !cpct_isKeyPressed (Key_L) &&
       !cpct_isKeyPressed (Key_S));
 
-    // ClearStatusLine();
     // Player actions
     dx = dy = 0;
     do {
@@ -442,15 +459,20 @@ void main(void) {
     } while (!player_action);
 
     if (player_action == PLAYER_MOVED) {
-      player_action = CharacterMove (&game_map, &player, dx, dy) ?
+      player_action = EntityMove (&game_map, &player, dx, dy) ?
         PLAYER_MOVED : NONE;
     }
-    dirty0 = (player_action == PLAYER_MOVED);
+    dirty[0] = (player_action == PLAYER_MOVED);
 
     if (player_action) {
-    // Enemy actions
-      dx = -1; dy = 0;
-      CharacterMove (&game_map, &enemy, dx, dy);
+      cpct_waitHalts(50);
+      // Enemy actions
+      enemy.px = enemy.x;
+      enemy.x += mi_array[ei];
+      ei++;
+      if (ei > 9) ei = 0;
     }
+
   } while (1);
+
 }
