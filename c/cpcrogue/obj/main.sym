@@ -1,0 +1,62 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 1.
+Hexadecimal [16-Bits]
+
+Symbol Table
+
+    .__.$$$.                                                    =  2710 L
+    .__.ABS.                                                    =  0000 G
+    .__.CPU.                                                    =  0000 L
+    .__.H$L.                                                    =  0000 L
+    _EntityAttack                                                  **** GX
+    _EntityDrawEntities                                            **** GX
+    _EntityInit                                                    **** GX
+    _EntityMove                                                    **** GX
+    _EntityPrintStats                                              **** GX
+    _GetBlockingEntity                                             **** GX
+    _HandleKeyboard                                                **** GX
+  0 _InitColors                                                    0000 GR
+    _MapCreate                                                     **** GX
+    _MapDraw                                                       **** GX
+    _MapIsBlocked                                                  **** GX
+    _ShowLogo                                                      **** GX
+  0 ___str_0                                                       028A R
+  0 ___str_1                                                       0292 R
+  7 __xinit__action                                                0000 R
+  7 __xinit__edy                                                   0003 R
+  7 __xinit__target                                                0001 R
+  2 _action                                                        0000 GR
+    _cpct_scanKeyboard                                             **** GX
+    _cpct_waitHalts                                                **** GX
+  1 _dirty                                                         0042 GR
+  1 _dx                                                            0052 GR
+  1 _dy                                                            0053 GR
+  1 _edx                                                           0054 GR
+  2 _edy                                                           0003 GR
+  1 _enemy                                                         0021 GR
+  1 _entities                                                      0047 GR
+    _ink                                                           **** GX
+  0 _main                                                          004D GR
+  1 _new_x                                                         005E GR
+  1 _new_y                                                         005F GR
+    _paper                                                         **** GX
+  1 _player                                                        0000 GR
+    _putchar                                                       **** GX
+  1 _state                                                         0051 GR
+  2 _target                                                        0001 GR
+
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
+Hexadecimal [16-Bits]
+
+Area Table
+
+   0 _CODE                                      size  299   flags    0
+   1 _DATA                                      size   60   flags    0
+   2 _INITIALIZED                               size    4   flags    0
+   3 _DABS                                      size    0   flags    8
+   4 _HOME                                      size    0   flags    0
+   5 _GSINIT                                    size    0   flags    0
+   6 _GSFINAL                                   size    0   flags    0
+   7 _INITIALIZER                               size    4   flags    0
+   8 _CABS                                      size    0   flags    8
+

@@ -126,6 +126,7 @@ void main()
         if (GetBlockingEntity (entities, &target, new_x, new_y) &&
           target != &enemy) {
           EntityAttack (&enemy, target);
+          EntityPrintStats(&player);
         }
         else {
           EntityMove (&enemy, edx[ei++], edy);

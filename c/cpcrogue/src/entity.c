@@ -51,6 +51,51 @@ void EntityDraw (struct TEntity *e, u8 erase)
   putchar (spr);
 }
 /****************************************************************************
+ *                      Move entity to new position
+ ***************************************************************************/
+void EntityMove (TEntity *e, i8 dx, i8 dy)
+{
+  e->px = e->x;     // Save old positions
+  e->py = e->y;
+  e->x  = e->x+dx;   // Update to new position
+  e->y  = e->y+dy;
+}
+/****************************************************************************
+ *           Get Damage points from entity stats
+ ***************************************************************************/
+u8 EntityCalculateDamage (TEntity *e)
+{
+  u8 dmg = e->atk >> 2;
+  u8 r = (cpct_rand() * 7/255) - 3;
+  dmg += r;
+  return (dmg < 127 ? dmg : dmg+3);
+}
+/****************************************************************************
+ *           Take dmg points of damage
+ ***************************************************************************/
+void EntityTakeDamage (TEntity *e, u8 dmg)
+{
+  e->hp -= dmg;
+  PrintAt (1,23, e->name, 1);
+  PrintAt (8,23, "takes     ", 2);
+  PrintU8 (dmg, 14,23, 1);
+  PrintAt (17,23, "points of damage", 2);
+}
+/****************************************************************************
+ *                      Attack 'target'
+ ***************************************************************************/
+void EntityAttack (TEntity *e, TEntity *target)
+{
+  u8 dmg;
+  // Show action in log window
+  PrintAt (1,22, e->name, 1);
+  PrintAt (10,22, "attacks", 2);
+  PrintAt (23,22, target->name, 1);
+
+  dmg = EntityCalculateDamage (e);
+  EntityTakeDamage (target, dmg);
+}
+/****************************************************************************
  *           Get first blocking entity at given position
  ***************************************************************************/
 u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y)
@@ -95,7 +140,7 @@ void EntityPrintStats (TEntity *e)
   pen1 = 1; pen2 = 2;
   PrintAt (1,1, "i:UP, k:DN, j:LT, l:RT, s:WAIT", pen2);
   PrintAt (x,y, e->name, pen1); ++y;
-  PrintAt (x, y, "HP:", pen1); PrintU8 (e->hp,    x+3,y, pen2);
+  PrintAt (x, y, "HP:      ", pen1); PrintU8 (e->hp,    x+3,y, pen2);
   PrintAt (x+5, y, "/", pen1); PrintU8 (e->max_hp,x+6,y++, pen2);
   ++y;
   PrintAt (x, y, "STR:",pen1); PrintU8 (e->str,   x+4,y++, pen2);
@@ -105,28 +150,4 @@ void EntityPrintStats (TEntity *e)
   ++y;
   PrintAt (x, y, "ATK:",pen1); PrintU8 (e->atk,   x+4,y++, pen2);
   PrintAt (x, y, "DEF:",pen1); PrintU8 (e->def,   x+4,y++, pen2);
-}
-/****************************************************************************
- *                      Move entity to new position
- ***************************************************************************/
-u8 EntityMove (TEntity *e, i8 dx, i8 dy)
-{
-  //if (MapCanMove (gm, c->x+dx, c->y+dy)) {
-    e->px = e->x;     // Save old positions
-    e->py = e->y;
-    e->x  = e->x+dx;   // Update to new position
-    e->y  = e->y+dy;
-
-    return TRUE;      // Flag we could move to the new position
-  //}
-  //return FALSE;
-}
-/****************************************************************************
- *                      Attack 'target'
- ***************************************************************************/
-void EntityAttack (TEntity *e, TEntity *target)
-{
-  PrintAt (1,22, e->name, 1);
-  PrintAt (10,22, "attacks", 2);
-  PrintAt (23,22, target->name, 1);
 }

@@ -1,0 +1,914 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.6.8 #9946 (Linux)
+                              4 ;--------------------------------------------------------
+                              5 	.module entity
+                              6 	.optsdcc -mz80
+                              7 	
+                              8 ;--------------------------------------------------------
+                              9 ; Public variables in this module
+                             10 ;--------------------------------------------------------
+                             11 	.globl _EntityTakeDamage
+                             12 	.globl _EntityCalculateDamage
+                             13 	.globl _PrintU8
+                             14 	.globl _PrintAt
+                             15 	.globl _pen
+                             16 	.globl _locate
+                             17 	.globl _cpct_getRandom_mxor_u8
+                             18 	.globl _putchar
+                             19 	.globl _EntityInit
+                             20 	.globl _EntityDraw
+                             21 	.globl _EntityMove
+                             22 	.globl _EntityAttack
+                             23 	.globl _GetBlockingEntity
+                             24 	.globl _EntityDrawEntities
+                             25 	.globl _EntityPrintStats
+                             26 ;--------------------------------------------------------
+                             27 ; special function registers
+                             28 ;--------------------------------------------------------
+                             29 ;--------------------------------------------------------
+                             30 ; ram data
+                             31 ;--------------------------------------------------------
+                             32 	.area _DATA
+                             33 ;--------------------------------------------------------
+                             34 ; ram data
+                             35 ;--------------------------------------------------------
+                             36 	.area _INITIALIZED
+                             37 ;--------------------------------------------------------
+                             38 ; absolute external ram data
+                             39 ;--------------------------------------------------------
+                             40 	.area _DABS (ABS)
+                             41 ;--------------------------------------------------------
+                             42 ; global & static initialisations
+                             43 ;--------------------------------------------------------
+                             44 	.area _HOME
+                             45 	.area _GSINIT
+                             46 	.area _GSFINAL
+                             47 	.area _GSINIT
+                             48 ;--------------------------------------------------------
+                             49 ; Home
+                             50 ;--------------------------------------------------------
+                             51 	.area _HOME
+                             52 	.area _HOME
+                             53 ;--------------------------------------------------------
+                             54 ; code
+                             55 ;--------------------------------------------------------
+                             56 	.area _CODE
+                             57 ;src/entity.c:12: void EntityInit (TEntity *e, u8 x, u8 y, u8 spr, u8 color, u8 name[],
+                             58 ;	---------------------------------
+                             59 ; Function EntityInit
+                             60 ; ---------------------------------
+   0000                      61 _EntityInit::
+   0000 DD E5         [15]   62 	push	ix
+   0002 DD 21 00 00   [14]   63 	ld	ix,#0
+   0006 DD 39         [15]   64 	add	ix,sp
+   0008 F5            [11]   65 	push	af
+                             66 ;src/entity.c:15: e->x = e->px = x;  // current posX
+   0009 DD 4E 04      [19]   67 	ld	c,4 (ix)
+   000C DD 46 05      [19]   68 	ld	b,5 (ix)
+   000F 59            [ 4]   69 	ld	e, c
+   0010 50            [ 4]   70 	ld	d, b
+   0011 13            [ 6]   71 	inc	de
+   0012 13            [ 6]   72 	inc	de
+   0013 DD 7E 06      [19]   73 	ld	a, 6 (ix)
+   0016 12            [ 7]   74 	ld	(de), a
+   0017 DD 7E 06      [19]   75 	ld	a, 6 (ix)
+   001A 02            [ 7]   76 	ld	(bc), a
+                             77 ;src/entity.c:16: e->y = e->py = y;  // current posY
+   001B 59            [ 4]   78 	ld	e, c
+   001C 50            [ 4]   79 	ld	d, b
+   001D 13            [ 6]   80 	inc	de
+   001E 69            [ 4]   81 	ld	l, c
+   001F 60            [ 4]   82 	ld	h, b
+   0020 23            [ 6]   83 	inc	hl
+   0021 23            [ 6]   84 	inc	hl
+   0022 23            [ 6]   85 	inc	hl
+   0023 DD 7E 07      [19]   86 	ld	a, 7 (ix)
+   0026 77            [ 7]   87 	ld	(hl), a
+   0027 DD 7E 07      [19]   88 	ld	a, 7 (ix)
+   002A 12            [ 7]   89 	ld	(de), a
+                             90 ;src/entity.c:17: e->spr =spr;
+   002B 21 04 00      [10]   91 	ld	hl, #0x0004
+   002E 09            [11]   92 	add	hl, bc
+   002F DD 7E 08      [19]   93 	ld	a, 8 (ix)
+   0032 77            [ 7]   94 	ld	(hl), a
+                             95 ;src/entity.c:18: e->color = color;
+   0033 21 05 00      [10]   96 	ld	hl, #0x0005
+   0036 09            [11]   97 	add	hl, bc
+   0037 DD 7E 09      [19]   98 	ld	a, 9 (ix)
+   003A 77            [ 7]   99 	ld	(hl), a
+                            100 ;src/entity.c:19: strcpy (e->name, name);
+   003B 21 06 00      [10]  101 	ld	hl, #0x0006
+   003E 09            [11]  102 	add	hl,bc
+   003F EB            [ 4]  103 	ex	de,hl
+   0040 C5            [11]  104 	push	bc
+   0041 DD 6E 0A      [19]  105 	ld	l,10 (ix)
+   0044 DD 66 0B      [19]  106 	ld	h,11 (ix)
+   0047 AF            [ 4]  107 	xor	a, a
+   0048                     108 00103$:
+   0048 BE            [ 7]  109 	cp	a, (hl)
+   0049 ED A0         [16]  110 	ldi
+   004B 20 FB         [12]  111 	jr	NZ, 00103$
+   004D C1            [10]  112 	pop	bc
+                            113 ;src/entity.c:20: e->blocks = blocks;
+   004E 21 15 00      [10]  114 	ld	hl, #0x0015
+   0051 09            [11]  115 	add	hl, bc
+   0052 DD 7E 0C      [19]  116 	ld	a, 12 (ix)
+   0055 77            [ 7]  117 	ld	(hl), a
+                            118 ;src/entity.c:22: e->max_hp = hp;
+   0056 21 16 00      [10]  119 	ld	hl, #0x0016
+   0059 09            [11]  120 	add	hl, bc
+   005A DD 7E 0D      [19]  121 	ld	a, 13 (ix)
+   005D 77            [ 7]  122 	ld	(hl), a
+   005E 23            [ 6]  123 	inc	hl
+   005F DD 7E 0E      [19]  124 	ld	a, 14 (ix)
+   0062 77            [ 7]  125 	ld	(hl), a
+                            126 ;src/entity.c:23: e->hp = hp;
+   0063 21 18 00      [10]  127 	ld	hl, #0x0018
+   0066 09            [11]  128 	add	hl, bc
+   0067 DD 7E 0D      [19]  129 	ld	a, 13 (ix)
+   006A 77            [ 7]  130 	ld	(hl), a
+   006B 23            [ 6]  131 	inc	hl
+   006C DD 7E 0E      [19]  132 	ld	a, 14 (ix)
+   006F 77            [ 7]  133 	ld	(hl), a
+                            134 ;src/entity.c:24: e->str = str;
+   0070 21 1A 00      [10]  135 	ld	hl, #0x001a
+   0073 09            [11]  136 	add	hl, bc
+   0074 DD 7E 0F      [19]  137 	ld	a, 15 (ix)
+   0077 77            [ 7]  138 	ld	(hl), a
+                            139 ;src/entity.c:25: e->des = destr;
+   0078 21 1B 00      [10]  140 	ld	hl, #0x001b
+   007B 09            [11]  141 	add	hl, bc
+   007C DD 7E 10      [19]  142 	ld	a, 16 (ix)
+   007F 77            [ 7]  143 	ld	(hl), a
+                            144 ;src/entity.c:26: e->ref = refl;
+   0080 21 1C 00      [10]  145 	ld	hl, #0x001c
+   0083 09            [11]  146 	add	hl, bc
+   0084 DD 7E 11      [19]  147 	ld	a, 17 (ix)
+   0087 77            [ 7]  148 	ld	(hl), a
+                            149 ;src/entity.c:28: e->atk = (str  + destr)>>1;
+   0088 21 1D 00      [10]  150 	ld	hl, #0x001d
+   008B 09            [11]  151 	add	hl, bc
+   008C DD 5E 0F      [19]  152 	ld	e, 15 (ix)
+   008F 16 00         [ 7]  153 	ld	d, #0x00
+   0091 DD 7E 10      [19]  154 	ld	a, 16 (ix)
+   0094 DD 77 FE      [19]  155 	ld	-2 (ix), a
+   0097 DD 36 FF 00   [19]  156 	ld	-1 (ix), #0x00
+   009B 7B            [ 4]  157 	ld	a, e
+   009C DD 86 FE      [19]  158 	add	a, -2 (ix)
+   009F 5F            [ 4]  159 	ld	e, a
+   00A0 7A            [ 4]  160 	ld	a, d
+   00A1 DD 8E FF      [19]  161 	adc	a, -1 (ix)
+   00A4 57            [ 4]  162 	ld	d, a
+   00A5 CB 2A         [ 8]  163 	sra	d
+   00A7 CB 1B         [ 8]  164 	rr	e
+   00A9 73            [ 7]  165 	ld	(hl), e
+   00AA 23            [ 6]  166 	inc	hl
+   00AB 72            [ 7]  167 	ld	(hl), d
+                            168 ;src/entity.c:29: e->def = (destr + refl)>>1;
+   00AC 21 1F 00      [10]  169 	ld	hl, #0x001f
+   00AF 09            [11]  170 	add	hl, bc
+   00B0 DD 4E 11      [19]  171 	ld	c, 17 (ix)
+   00B3 06 00         [ 7]  172 	ld	b, #0x00
+   00B5 DD 7E FE      [19]  173 	ld	a, -2 (ix)
+   00B8 81            [ 4]  174 	add	a, c
+   00B9 4F            [ 4]  175 	ld	c, a
+   00BA DD 7E FF      [19]  176 	ld	a, -1 (ix)
+   00BD 88            [ 4]  177 	adc	a, b
+   00BE 47            [ 4]  178 	ld	b, a
+   00BF CB 28         [ 8]  179 	sra	b
+   00C1 CB 19         [ 8]  180 	rr	c
+   00C3 71            [ 7]  181 	ld	(hl), c
+   00C4 23            [ 6]  182 	inc	hl
+   00C5 70            [ 7]  183 	ld	(hl), b
+   00C6 DD F9         [10]  184 	ld	sp, ix
+   00C8 DD E1         [14]  185 	pop	ix
+   00CA C9            [10]  186 	ret
+                            187 ;src/entity.c:34: void EntityDraw (struct TEntity *e, u8 erase)
+                            188 ;	---------------------------------
+                            189 ; Function EntityDraw
+                            190 ; ---------------------------------
+   00CB                     191 _EntityDraw::
+   00CB DD E5         [15]  192 	push	ix
+   00CD DD 21 00 00   [14]  193 	ld	ix,#0
+   00D1 DD 39         [15]  194 	add	ix,sp
+   00D3 3B            [ 6]  195 	dec	sp
+                            196 ;src/entity.c:38: x = e->px;
+   00D4 DD 4E 04      [19]  197 	ld	c,4 (ix)
+   00D7 DD 46 05      [19]  198 	ld	b,5 (ix)
+                            199 ;src/entity.c:37: if (erase) {
+   00DA DD 7E 06      [19]  200 	ld	a, 6 (ix)
+   00DD B7            [ 4]  201 	or	a, a
+   00DE 28 13         [12]  202 	jr	Z,00102$
+                            203 ;src/entity.c:38: x = e->px;
+   00E0 69            [ 4]  204 	ld	l, c
+   00E1 60            [ 4]  205 	ld	h, b
+   00E2 23            [ 6]  206 	inc	hl
+   00E3 23            [ 6]  207 	inc	hl
+   00E4 5E            [ 7]  208 	ld	e, (hl)
+                            209 ;src/entity.c:39: y = e->py;
+   00E5 69            [ 4]  210 	ld	l, c
+   00E6 60            [ 4]  211 	ld	h, b
+   00E7 23            [ 6]  212 	inc	hl
+   00E8 23            [ 6]  213 	inc	hl
+   00E9 23            [ 6]  214 	inc	hl
+   00EA 56            [ 7]  215 	ld	d, (hl)
+                            216 ;src/entity.c:40: color = PEN_TILE;
+   00EB DD 36 FF 02   [19]  217 	ld	-1 (ix), #0x02
+                            218 ;src/entity.c:41: spr = SPR_FLOOR;
+   00EF 0E 2E         [ 7]  219 	ld	c, #0x2e
+   00F1 18 16         [12]  220 	jr	00103$
+   00F3                     221 00102$:
+                            222 ;src/entity.c:44: x = e->x;
+   00F3 0A            [ 7]  223 	ld	a, (bc)
+   00F4 5F            [ 4]  224 	ld	e, a
+                            225 ;src/entity.c:45: y = e->y;
+   00F5 69            [ 4]  226 	ld	l, c
+   00F6 60            [ 4]  227 	ld	h, b
+   00F7 23            [ 6]  228 	inc	hl
+   00F8 56            [ 7]  229 	ld	d, (hl)
+                            230 ;src/entity.c:46: color = e->color;
+   00F9 C5            [11]  231 	push	bc
+   00FA FD E1         [14]  232 	pop	iy
+   00FC FD 7E 05      [19]  233 	ld	a, 5 (iy)
+   00FF DD 77 FF      [19]  234 	ld	-1 (ix), a
+                            235 ;src/entity.c:47: spr = e->spr;
+   0102 69            [ 4]  236 	ld	l, c
+   0103 60            [ 4]  237 	ld	h, b
+   0104 01 04 00      [10]  238 	ld	bc, #0x0004
+   0107 09            [11]  239 	add	hl, bc
+   0108 4E            [ 7]  240 	ld	c, (hl)
+   0109                     241 00103$:
+                            242 ;src/entity.c:49: pen (color);
+   0109 C5            [11]  243 	push	bc
+   010A D5            [11]  244 	push	de
+   010B DD 7E FF      [19]  245 	ld	a, -1 (ix)
+   010E F5            [11]  246 	push	af
+   010F 33            [ 6]  247 	inc	sp
+   0110 CDr00r00      [17]  248 	call	_pen
+   0113 33            [ 6]  249 	inc	sp
+   0114 D1            [10]  250 	pop	de
+   0115 C1            [10]  251 	pop	bc
+                            252 ;src/entity.c:50: locate (PLAY_X+x, PLAY_Y+y);
+   0116 14            [ 4]  253 	inc	d
+   0117 14            [ 4]  254 	inc	d
+   0118 43            [ 4]  255 	ld	b, e
+   0119 04            [ 4]  256 	inc	b
+   011A C5            [11]  257 	push	bc
+   011B 58            [ 4]  258 	ld	e, b
+   011C D5            [11]  259 	push	de
+   011D CDr00r00      [17]  260 	call	_locate
+   0120 F1            [10]  261 	pop	af
+   0121 C1            [10]  262 	pop	bc
+                            263 ;src/entity.c:51: putchar (spr);
+   0122 06 00         [ 7]  264 	ld	b, #0x00
+   0124 C5            [11]  265 	push	bc
+   0125 CDr00r00      [17]  266 	call	_putchar
+   0128 F1            [10]  267 	pop	af
+   0129 33            [ 6]  268 	inc	sp
+   012A DD E1         [14]  269 	pop	ix
+   012C C9            [10]  270 	ret
+                            271 ;src/entity.c:56: void EntityMove (TEntity *e, i8 dx, i8 dy)
+                            272 ;	---------------------------------
+                            273 ; Function EntityMove
+                            274 ; ---------------------------------
+   012D                     275 _EntityMove::
+   012D DD E5         [15]  276 	push	ix
+   012F DD 21 00 00   [14]  277 	ld	ix,#0
+   0133 DD 39         [15]  278 	add	ix,sp
+                            279 ;src/entity.c:58: e->px = e->x;     // Save old positions
+   0135 DD 5E 04      [19]  280 	ld	e,4 (ix)
+   0138 DD 56 05      [19]  281 	ld	d,5 (ix)
+   013B 4B            [ 4]  282 	ld	c, e
+   013C 42            [ 4]  283 	ld	b, d
+   013D 03            [ 6]  284 	inc	bc
+   013E 03            [ 6]  285 	inc	bc
+   013F 1A            [ 7]  286 	ld	a, (de)
+   0140 02            [ 7]  287 	ld	(bc), a
+                            288 ;src/entity.c:59: e->py = e->y;
+   0141 D5            [11]  289 	push	de
+   0142 FD E1         [14]  290 	pop	iy
+   0144 FD 23         [10]  291 	inc	iy
+   0146 FD 23         [10]  292 	inc	iy
+   0148 FD 23         [10]  293 	inc	iy
+   014A 4B            [ 4]  294 	ld	c, e
+   014B 42            [ 4]  295 	ld	b, d
+   014C 03            [ 6]  296 	inc	bc
+   014D 0A            [ 7]  297 	ld	a, (bc)
+   014E FD 77 00      [19]  298 	ld	0 (iy), a
+                            299 ;src/entity.c:60: e->x  = e->x+dx;   // Update to new position
+   0151 1A            [ 7]  300 	ld	a, (de)
+   0152 DD 86 06      [19]  301 	add	a, 6 (ix)
+   0155 12            [ 7]  302 	ld	(de), a
+                            303 ;src/entity.c:61: e->y  = e->y+dy;
+   0156 0A            [ 7]  304 	ld	a, (bc)
+   0157 DD 86 07      [19]  305 	add	a, 7 (ix)
+   015A 02            [ 7]  306 	ld	(bc), a
+   015B DD E1         [14]  307 	pop	ix
+   015D C9            [10]  308 	ret
+                            309 ;src/entity.c:66: u8 EntityCalculateDamage (TEntity *e)
+                            310 ;	---------------------------------
+                            311 ; Function EntityCalculateDamage
+                            312 ; ---------------------------------
+   015E                     313 _EntityCalculateDamage::
+                            314 ;src/entity.c:68: u8 dmg = e->atk >> 2;
+   015E C1            [10]  315 	pop	bc
+   015F E1            [10]  316 	pop	hl
+   0160 E5            [11]  317 	push	hl
+   0161 C5            [11]  318 	push	bc
+   0162 11 1D 00      [10]  319 	ld	de, #0x001d
+   0165 19            [11]  320 	add	hl, de
+   0166 4E            [ 7]  321 	ld	c, (hl)
+   0167 23            [ 6]  322 	inc	hl
+   0168 46            [ 7]  323 	ld	b, (hl)
+   0169 CB 38         [ 8]  324 	srl	b
+   016B CB 19         [ 8]  325 	rr	c
+   016D CB 38         [ 8]  326 	srl	b
+   016F CB 19         [ 8]  327 	rr	c
+                            328 ;src/entity.c:69: u8 r = (cpct_rand() * 7/255) - 3;
+   0171 C5            [11]  329 	push	bc
+   0172 CDr00r00      [17]  330 	call	_cpct_getRandom_mxor_u8
+   0175 C1            [10]  331 	pop	bc
+   0176 5D            [ 4]  332 	ld	e,l
+   0177 16 00         [ 7]  333 	ld	d,#0x00
+   0179 6B            [ 4]  334 	ld	l, e
+   017A 62            [ 4]  335 	ld	h, d
+   017B 29            [11]  336 	add	hl, hl
+   017C 19            [11]  337 	add	hl, de
+   017D 29            [11]  338 	add	hl, hl
+   017E 19            [11]  339 	add	hl, de
+   017F C5            [11]  340 	push	bc
+   0180 11 FF 00      [10]  341 	ld	de, #0x00ff
+   0183 D5            [11]  342 	push	de
+   0184 E5            [11]  343 	push	hl
+   0185 CDr00r00      [17]  344 	call	__divsint
+   0188 F1            [10]  345 	pop	af
+   0189 F1            [10]  346 	pop	af
+   018A C1            [10]  347 	pop	bc
+   018B 7D            [ 4]  348 	ld	a, l
+   018C C6 FD         [ 7]  349 	add	a, #0xfd
+                            350 ;src/entity.c:70: dmg += r;
+   018E 81            [ 4]  351 	add	a,c
+                            352 ;src/entity.c:71: return (dmg < 127 ? dmg : dmg+3);
+   018F FE 7F         [ 7]  353 	cp	a, #0x7f
+   0191 38 02         [12]  354 	jr	C,00104$
+   0193 C6 03         [ 7]  355 	add	a, #0x03
+   0195                     356 00104$:
+   0195 6F            [ 4]  357 	ld	l, a
+   0196 C9            [10]  358 	ret
+                            359 ;src/entity.c:76: void EntityTakeDamage (TEntity *e, u8 dmg)
+                            360 ;	---------------------------------
+                            361 ; Function EntityTakeDamage
+                            362 ; ---------------------------------
+   0197                     363 _EntityTakeDamage::
+   0197 DD E5         [15]  364 	push	ix
+   0199 DD 21 00 00   [14]  365 	ld	ix,#0
+   019D DD 39         [15]  366 	add	ix,sp
+   019F F5            [11]  367 	push	af
+                            368 ;src/entity.c:78: e->hp -= dmg;
+   01A0 DD 4E 04      [19]  369 	ld	c,4 (ix)
+   01A3 DD 46 05      [19]  370 	ld	b,5 (ix)
+   01A6 21 18 00      [10]  371 	ld	hl, #0x0018
+   01A9 09            [11]  372 	add	hl, bc
+   01AA E5            [11]  373 	push	hl
+   01AB 7E            [ 7]  374 	ld	a, (hl)
+   01AC DD 77 FE      [19]  375 	ld	-2 (ix), a
+   01AF 23            [ 6]  376 	inc	hl
+   01B0 7E            [ 7]  377 	ld	a, (hl)
+   01B1 DD 77 FF      [19]  378 	ld	-1 (ix), a
+   01B4 E1            [10]  379 	pop	hl
+   01B5 DD 5E 06      [19]  380 	ld	e, 6 (ix)
+   01B8 16 00         [ 7]  381 	ld	d, #0x00
+   01BA DD 7E FE      [19]  382 	ld	a, -2 (ix)
+   01BD 93            [ 4]  383 	sub	a, e
+   01BE 5F            [ 4]  384 	ld	e, a
+   01BF DD 7E FF      [19]  385 	ld	a, -1 (ix)
+   01C2 9A            [ 4]  386 	sbc	a, d
+   01C3 57            [ 4]  387 	ld	d, a
+   01C4 73            [ 7]  388 	ld	(hl), e
+   01C5 23            [ 6]  389 	inc	hl
+   01C6 72            [ 7]  390 	ld	(hl), d
+                            391 ;src/entity.c:79: PrintAt (1,23, e->name, 1);
+   01C7 21 06 00      [10]  392 	ld	hl, #0x0006
+   01CA 09            [11]  393 	add	hl, bc
+   01CB 3E 01         [ 7]  394 	ld	a, #0x01
+   01CD F5            [11]  395 	push	af
+   01CE 33            [ 6]  396 	inc	sp
+   01CF E5            [11]  397 	push	hl
+   01D0 21 01 17      [10]  398 	ld	hl, #0x1701
+   01D3 E5            [11]  399 	push	hl
+   01D4 CDr00r00      [17]  400 	call	_PrintAt
+   01D7 F1            [10]  401 	pop	af
+   01D8 F1            [10]  402 	pop	af
+   01D9 33            [ 6]  403 	inc	sp
+                            404 ;src/entity.c:80: PrintAt (8,23, "takes     ", 2);
+   01DA 3E 02         [ 7]  405 	ld	a, #0x02
+   01DC F5            [11]  406 	push	af
+   01DD 33            [ 6]  407 	inc	sp
+   01DE 21r10r02      [10]  408 	ld	hl, #___str_0
+   01E1 E5            [11]  409 	push	hl
+   01E2 21 08 17      [10]  410 	ld	hl, #0x1708
+   01E5 E5            [11]  411 	push	hl
+   01E6 CDr00r00      [17]  412 	call	_PrintAt
+   01E9 F1            [10]  413 	pop	af
+                            414 ;src/entity.c:81: PrintU8 (dmg, 14,23, 1);
+   01EA 33            [ 6]  415 	inc	sp
+   01EB 21 17 01      [10]  416 	ld	hl,#0x0117
+   01EE E3            [19]  417 	ex	(sp),hl
+   01EF 3E 0E         [ 7]  418 	ld	a, #0x0e
+   01F1 F5            [11]  419 	push	af
+   01F2 33            [ 6]  420 	inc	sp
+   01F3 DD 7E 06      [19]  421 	ld	a, 6 (ix)
+   01F6 F5            [11]  422 	push	af
+   01F7 33            [ 6]  423 	inc	sp
+   01F8 CDr00r00      [17]  424 	call	_PrintU8
+   01FB F1            [10]  425 	pop	af
+                            426 ;src/entity.c:82: PrintAt (17,23, "points of damage", 2);
+   01FC 26 02         [ 7]  427 	ld	h,#0x02
+   01FE E3            [19]  428 	ex	(sp),hl
+   01FF 33            [ 6]  429 	inc	sp
+   0200 21r1Br02      [10]  430 	ld	hl, #___str_1
+   0203 E5            [11]  431 	push	hl
+   0204 21 11 17      [10]  432 	ld	hl, #0x1711
+   0207 E5            [11]  433 	push	hl
+   0208 CDr00r00      [17]  434 	call	_PrintAt
+   020B DD F9         [10]  435 	ld	sp,ix
+   020D DD E1         [14]  436 	pop	ix
+   020F C9            [10]  437 	ret
+   0210                     438 ___str_0:
+   0210 74 61 6B 65 73 20   439 	.ascii "takes     "
+        20 20 20 20
+   021A 00                  440 	.db 0x00
+   021B                     441 ___str_1:
+   021B 70 6F 69 6E 74 73   442 	.ascii "points of damage"
+        20 6F 66 20 64 61
+        6D 61 67 65
+   022B 00                  443 	.db 0x00
+                            444 ;src/entity.c:87: void EntityAttack (TEntity *e, TEntity *target)
+                            445 ;	---------------------------------
+                            446 ; Function EntityAttack
+                            447 ; ---------------------------------
+   022C                     448 _EntityAttack::
+   022C DD E5         [15]  449 	push	ix
+   022E DD 21 00 00   [14]  450 	ld	ix,#0
+   0232 DD 39         [15]  451 	add	ix,sp
+                            452 ;src/entity.c:91: PrintAt (1,22, e->name, 1);
+   0234 DD 5E 04      [19]  453 	ld	e,4 (ix)
+   0237 DD 56 05      [19]  454 	ld	d,5 (ix)
+   023A 21 06 00      [10]  455 	ld	hl, #0x0006
+   023D 19            [11]  456 	add	hl, de
+   023E D5            [11]  457 	push	de
+   023F 3E 01         [ 7]  458 	ld	a, #0x01
+   0241 F5            [11]  459 	push	af
+   0242 33            [ 6]  460 	inc	sp
+   0243 E5            [11]  461 	push	hl
+   0244 21 01 16      [10]  462 	ld	hl, #0x1601
+   0247 E5            [11]  463 	push	hl
+   0248 CDr00r00      [17]  464 	call	_PrintAt
+   024B F1            [10]  465 	pop	af
+   024C F1            [10]  466 	pop	af
+   024D 33            [ 6]  467 	inc	sp
+   024E 3E 02         [ 7]  468 	ld	a, #0x02
+   0250 F5            [11]  469 	push	af
+   0251 33            [ 6]  470 	inc	sp
+   0252 21r8Dr02      [10]  471 	ld	hl, #___str_2
+   0255 E5            [11]  472 	push	hl
+   0256 21 0A 16      [10]  473 	ld	hl, #0x160a
+   0259 E5            [11]  474 	push	hl
+   025A CDr00r00      [17]  475 	call	_PrintAt
+   025D F1            [10]  476 	pop	af
+   025E F1            [10]  477 	pop	af
+   025F 33            [ 6]  478 	inc	sp
+   0260 D1            [10]  479 	pop	de
+                            480 ;src/entity.c:93: PrintAt (23,22, target->name, 1);
+   0261 DD 4E 06      [19]  481 	ld	c,6 (ix)
+   0264 DD 46 07      [19]  482 	ld	b,7 (ix)
+   0267 21 06 00      [10]  483 	ld	hl, #0x0006
+   026A 09            [11]  484 	add	hl, bc
+   026B C5            [11]  485 	push	bc
+   026C D5            [11]  486 	push	de
+   026D 3E 01         [ 7]  487 	ld	a, #0x01
+   026F F5            [11]  488 	push	af
+   0270 33            [ 6]  489 	inc	sp
+   0271 E5            [11]  490 	push	hl
+   0272 21 17 16      [10]  491 	ld	hl, #0x1617
+   0275 E5            [11]  492 	push	hl
+   0276 CDr00r00      [17]  493 	call	_PrintAt
+   0279 F1            [10]  494 	pop	af
+   027A F1            [10]  495 	pop	af
+   027B 33            [ 6]  496 	inc	sp
+   027C CDr5Er01      [17]  497 	call	_EntityCalculateDamage
+   027F F1            [10]  498 	pop	af
+   0280 55            [ 4]  499 	ld	d, l
+   0281 C1            [10]  500 	pop	bc
+                            501 ;src/entity.c:96: EntityTakeDamage (target, dmg);
+   0282 D5            [11]  502 	push	de
+   0283 33            [ 6]  503 	inc	sp
+   0284 C5            [11]  504 	push	bc
+   0285 CDr97r01      [17]  505 	call	_EntityTakeDamage
+   0288 F1            [10]  506 	pop	af
+   0289 33            [ 6]  507 	inc	sp
+   028A DD E1         [14]  508 	pop	ix
+   028C C9            [10]  509 	ret
+   028D                     510 ___str_2:
+   028D 61 74 74 61 63 6B   511 	.ascii "attacks"
+        73
+   0294 00                  512 	.db 0x00
+                            513 ;src/entity.c:101: u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y)
+                            514 ;	---------------------------------
+                            515 ; Function GetBlockingEntity
+                            516 ; ---------------------------------
+   0295                     517 _GetBlockingEntity::
+   0295 DD E5         [15]  518 	push	ix
+   0297 DD 21 00 00   [14]  519 	ld	ix,#0
+   029B DD 39         [15]  520 	add	ix,sp
+   029D F5            [11]  521 	push	af
+                            522 ;src/entity.c:106: while ( (e=*entities++) != NULL) {
+   029E DD 4E 04      [19]  523 	ld	c,4 (ix)
+   02A1 DD 46 05      [19]  524 	ld	b,5 (ix)
+   02A4                     525 00105$:
+   02A4 69            [ 4]  526 	ld	l, c
+   02A5 60            [ 4]  527 	ld	h, b
+   02A6 5E            [ 7]  528 	ld	e, (hl)
+   02A7 23            [ 6]  529 	inc	hl
+   02A8 56            [ 7]  530 	ld	d, (hl)
+   02A9 03            [ 6]  531 	inc	bc
+   02AA 03            [ 6]  532 	inc	bc
+   02AB 33            [ 6]  533 	inc	sp
+   02AC 33            [ 6]  534 	inc	sp
+   02AD D5            [11]  535 	push	de
+   02AE 7A            [ 4]  536 	ld	a, d
+   02AF B3            [ 4]  537 	or	a,e
+   02B0 28 2E         [12]  538 	jr	Z,00107$
+                            539 ;src/entity.c:107: if (e->blocks && e->x == x && e->y == y) {
+   02B2 E1            [10]  540 	pop	hl
+   02B3 E5            [11]  541 	push	hl
+   02B4 11 15 00      [10]  542 	ld	de, #0x0015
+   02B7 19            [11]  543 	add	hl, de
+   02B8 7E            [ 7]  544 	ld	a, (hl)
+   02B9 B7            [ 4]  545 	or	a, a
+   02BA 28 E8         [12]  546 	jr	Z,00105$
+   02BC E1            [10]  547 	pop	hl
+   02BD E5            [11]  548 	push	hl
+   02BE DD 7E 08      [19]  549 	ld	a,8 (ix)
+   02C1 96            [ 7]  550 	sub	a,(hl)
+   02C2 20 E0         [12]  551 	jr	NZ,00105$
+   02C4 E1            [10]  552 	pop	hl
+   02C5 E5            [11]  553 	push	hl
+   02C6 23            [ 6]  554 	inc	hl
+   02C7 DD 7E 09      [19]  555 	ld	a,9 (ix)
+   02CA 96            [ 7]  556 	sub	a,(hl)
+   02CB 20 D7         [12]  557 	jr	NZ,00105$
+                            558 ;src/entity.c:108: *out_e = e;
+   02CD DD 4E 06      [19]  559 	ld	c,6 (ix)
+   02D0 DD 46 07      [19]  560 	ld	b,7 (ix)
+   02D3 DD 7E FE      [19]  561 	ld	a, -2 (ix)
+   02D6 02            [ 7]  562 	ld	(bc), a
+   02D7 03            [ 6]  563 	inc	bc
+   02D8 DD 7E FF      [19]  564 	ld	a, -1 (ix)
+   02DB 02            [ 7]  565 	ld	(bc), a
+                            566 ;src/entity.c:109: return TRUE;
+   02DC 2E 01         [ 7]  567 	ld	l, #0x01
+   02DE 18 02         [12]  568 	jr	00108$
+   02E0                     569 00107$:
+                            570 ;src/entity.c:112: return FALSE;
+   02E0 2E 00         [ 7]  571 	ld	l, #0x00
+   02E2                     572 00108$:
+   02E2 DD F9         [10]  573 	ld	sp, ix
+   02E4 DD E1         [14]  574 	pop	ix
+   02E6 C9            [10]  575 	ret
+                            576 ;src/entity.c:117: void EntityDrawEntities (TEntity *entities[], u8 dirty[])
+                            577 ;	---------------------------------
+                            578 ; Function EntityDrawEntities
+                            579 ; ---------------------------------
+   02E7                     580 _EntityDrawEntities::
+   02E7 DD E5         [15]  581 	push	ix
+   02E9 DD 21 00 00   [14]  582 	ld	ix,#0
+   02ED DD 39         [15]  583 	add	ix,sp
+   02EF F5            [11]  584 	push	af
+                            585 ;src/entity.c:121: while ( (e=entities[i]) ) {
+   02F0 0E 00         [ 7]  586 	ld	c, #0x00
+   02F2                     587 00103$:
+   02F2 69            [ 4]  588 	ld	l, c
+   02F3 26 00         [ 7]  589 	ld	h, #0x00
+   02F5 29            [11]  590 	add	hl, hl
+   02F6 EB            [ 4]  591 	ex	de,hl
+   02F7 DD 6E 04      [19]  592 	ld	l,4 (ix)
+   02FA DD 66 05      [19]  593 	ld	h,5 (ix)
+   02FD 19            [11]  594 	add	hl, de
+   02FE 5E            [ 7]  595 	ld	e, (hl)
+   02FF 23            [ 6]  596 	inc	hl
+   0300 56            [ 7]  597 	ld	d, (hl)
+   0301 33            [ 6]  598 	inc	sp
+   0302 33            [ 6]  599 	inc	sp
+   0303 D5            [11]  600 	push	de
+   0304 7A            [ 4]  601 	ld	a, d
+   0305 B3            [ 4]  602 	or	a,e
+   0306 28 37         [12]  603 	jr	Z,00106$
+                            604 ;src/entity.c:122: if (dirty[i]) {
+   0308 DD 6E 06      [19]  605 	ld	l,6 (ix)
+   030B DD 66 07      [19]  606 	ld	h,7 (ix)
+   030E 06 00         [ 7]  607 	ld	b, #0x00
+   0310 09            [11]  608 	add	hl, bc
+   0311 7E            [ 7]  609 	ld	a, (hl)
+   0312 B7            [ 4]  610 	or	a, a
+   0313 28 16         [12]  611 	jr	Z,00102$
+                            612 ;src/entity.c:123: EntityDraw (e, TRUE);
+   0315 E5            [11]  613 	push	hl
+   0316 C5            [11]  614 	push	bc
+   0317 3E 01         [ 7]  615 	ld	a, #0x01
+   0319 F5            [11]  616 	push	af
+   031A 33            [ 6]  617 	inc	sp
+   031B DD 5E FE      [19]  618 	ld	e,-2 (ix)
+   031E DD 56 FF      [19]  619 	ld	d,-1 (ix)
+   0321 D5            [11]  620 	push	de
+   0322 CDrCBr00      [17]  621 	call	_EntityDraw
+   0325 F1            [10]  622 	pop	af
+   0326 33            [ 6]  623 	inc	sp
+   0327 C1            [10]  624 	pop	bc
+   0328 E1            [10]  625 	pop	hl
+                            626 ;src/entity.c:124: dirty[i] = FALSE;
+   0329 36 00         [10]  627 	ld	(hl), #0x00
+   032B                     628 00102$:
+                            629 ;src/entity.c:126: EntityDraw (e, FALSE);
+   032B C5            [11]  630 	push	bc
+   032C AF            [ 4]  631 	xor	a, a
+   032D F5            [11]  632 	push	af
+   032E 33            [ 6]  633 	inc	sp
+   032F DD 6E FE      [19]  634 	ld	l,-2 (ix)
+   0332 DD 66 FF      [19]  635 	ld	h,-1 (ix)
+   0335 E5            [11]  636 	push	hl
+   0336 CDrCBr00      [17]  637 	call	_EntityDraw
+   0339 F1            [10]  638 	pop	af
+   033A 33            [ 6]  639 	inc	sp
+   033B C1            [10]  640 	pop	bc
+                            641 ;src/entity.c:127: ++i;
+   033C 0C            [ 4]  642 	inc	c
+   033D 18 B3         [12]  643 	jr	00103$
+   033F                     644 00106$:
+   033F DD F9         [10]  645 	ld	sp, ix
+   0341 DD E1         [14]  646 	pop	ix
+   0343 C9            [10]  647 	ret
+                            648 ;src/entity.c:133: void EntityPrintStats (TEntity *e)
+                            649 ;	---------------------------------
+                            650 ; Function EntityPrintStats
+                            651 ; ---------------------------------
+   0344                     652 _EntityPrintStats::
+   0344 DD E5         [15]  653 	push	ix
+   0346 DD 21 00 00   [14]  654 	ld	ix,#0
+   034A DD 39         [15]  655 	add	ix,sp
+                            656 ;src/entity.c:141: PrintAt (1,1, "i:UP, k:DN, j:LT, l:RT, s:WAIT", pen2);
+   034C 3E 02         [ 7]  657 	ld	a, #0x02
+   034E F5            [11]  658 	push	af
+   034F 33            [ 6]  659 	inc	sp
+   0350 21rA1r04      [10]  660 	ld	hl, #___str_3
+   0353 E5            [11]  661 	push	hl
+   0354 21 01 01      [10]  662 	ld	hl, #0x0101
+   0357 E5            [11]  663 	push	hl
+   0358 CDr00r00      [17]  664 	call	_PrintAt
+   035B F1            [10]  665 	pop	af
+   035C F1            [10]  666 	pop	af
+   035D 33            [ 6]  667 	inc	sp
+                            668 ;src/entity.c:142: PrintAt (x,y, e->name, pen1); ++y;
+   035E DD 4E 04      [19]  669 	ld	c,4 (ix)
+   0361 DD 46 05      [19]  670 	ld	b,5 (ix)
+   0364 21 06 00      [10]  671 	ld	hl, #0x0006
+   0367 09            [11]  672 	add	hl, bc
+   0368 C5            [11]  673 	push	bc
+   0369 3E 01         [ 7]  674 	ld	a, #0x01
+   036B F5            [11]  675 	push	af
+   036C 33            [ 6]  676 	inc	sp
+   036D E5            [11]  677 	push	hl
+   036E 21 1E 04      [10]  678 	ld	hl, #0x041e
+   0371 E5            [11]  679 	push	hl
+   0372 CDr00r00      [17]  680 	call	_PrintAt
+   0375 F1            [10]  681 	pop	af
+   0376 F1            [10]  682 	pop	af
+   0377 33            [ 6]  683 	inc	sp
+   0378 3E 01         [ 7]  684 	ld	a, #0x01
+   037A F5            [11]  685 	push	af
+   037B 33            [ 6]  686 	inc	sp
+   037C 21rC0r04      [10]  687 	ld	hl, #___str_4
+   037F E5            [11]  688 	push	hl
+   0380 21 1E 05      [10]  689 	ld	hl, #0x051e
+   0383 E5            [11]  690 	push	hl
+   0384 CDr00r00      [17]  691 	call	_PrintAt
+   0387 F1            [10]  692 	pop	af
+   0388 F1            [10]  693 	pop	af
+   0389 33            [ 6]  694 	inc	sp
+   038A C1            [10]  695 	pop	bc
+   038B 69            [ 4]  696 	ld	l, c
+   038C 60            [ 4]  697 	ld	h, b
+   038D 11 18 00      [10]  698 	ld	de, #0x0018
+   0390 19            [11]  699 	add	hl, de
+   0391 5E            [ 7]  700 	ld	e, (hl)
+   0392 23            [ 6]  701 	inc	hl
+   0393 56            [ 7]  702 	ld	d, (hl)
+   0394 53            [ 4]  703 	ld	d, e
+   0395 C5            [11]  704 	push	bc
+   0396 21 05 02      [10]  705 	ld	hl, #0x0205
+   0399 E5            [11]  706 	push	hl
+   039A 3E 21         [ 7]  707 	ld	a, #0x21
+   039C F5            [11]  708 	push	af
+   039D 33            [ 6]  709 	inc	sp
+   039E D5            [11]  710 	push	de
+   039F 33            [ 6]  711 	inc	sp
+   03A0 CDr00r00      [17]  712 	call	_PrintU8
+   03A3 F1            [10]  713 	pop	af
+   03A4 26 01         [ 7]  714 	ld	h,#0x01
+   03A6 E3            [19]  715 	ex	(sp),hl
+   03A7 33            [ 6]  716 	inc	sp
+   03A8 21rCAr04      [10]  717 	ld	hl, #___str_5
+   03AB E5            [11]  718 	push	hl
+   03AC 21 23 05      [10]  719 	ld	hl, #0x0523
+   03AF E5            [11]  720 	push	hl
+   03B0 CDr00r00      [17]  721 	call	_PrintAt
+   03B3 F1            [10]  722 	pop	af
+   03B4 F1            [10]  723 	pop	af
+   03B5 33            [ 6]  724 	inc	sp
+   03B6 C1            [10]  725 	pop	bc
+   03B7 69            [ 4]  726 	ld	l, c
+   03B8 60            [ 4]  727 	ld	h, b
+   03B9 11 16 00      [10]  728 	ld	de, #0x0016
+   03BC 19            [11]  729 	add	hl, de
+   03BD 5E            [ 7]  730 	ld	e, (hl)
+   03BE 23            [ 6]  731 	inc	hl
+   03BF 56            [ 7]  732 	ld	d, (hl)
+   03C0 53            [ 4]  733 	ld	d, e
+   03C1 C5            [11]  734 	push	bc
+   03C2 21 05 02      [10]  735 	ld	hl, #0x0205
+   03C5 E5            [11]  736 	push	hl
+   03C6 3E 24         [ 7]  737 	ld	a, #0x24
+   03C8 F5            [11]  738 	push	af
+   03C9 33            [ 6]  739 	inc	sp
+   03CA D5            [11]  740 	push	de
+   03CB 33            [ 6]  741 	inc	sp
+   03CC CDr00r00      [17]  742 	call	_PrintU8
+   03CF F1            [10]  743 	pop	af
+   03D0 26 01         [ 7]  744 	ld	h,#0x01
+   03D2 E3            [19]  745 	ex	(sp),hl
+   03D3 33            [ 6]  746 	inc	sp
+   03D4 21rCCr04      [10]  747 	ld	hl, #___str_6
+   03D7 E5            [11]  748 	push	hl
+   03D8 21 1E 07      [10]  749 	ld	hl, #0x071e
+   03DB E5            [11]  750 	push	hl
+   03DC CDr00r00      [17]  751 	call	_PrintAt
+   03DF F1            [10]  752 	pop	af
+   03E0 F1            [10]  753 	pop	af
+   03E1 33            [ 6]  754 	inc	sp
+   03E2 C1            [10]  755 	pop	bc
+   03E3 C5            [11]  756 	push	bc
+   03E4 FD E1         [14]  757 	pop	iy
+   03E6 FD 56 1A      [19]  758 	ld	d, 26 (iy)
+   03E9 C5            [11]  759 	push	bc
+   03EA 21 07 02      [10]  760 	ld	hl, #0x0207
+   03ED E5            [11]  761 	push	hl
+   03EE 3E 22         [ 7]  762 	ld	a, #0x22
+   03F0 F5            [11]  763 	push	af
+   03F1 33            [ 6]  764 	inc	sp
+   03F2 D5            [11]  765 	push	de
+   03F3 33            [ 6]  766 	inc	sp
+   03F4 CDr00r00      [17]  767 	call	_PrintU8
+   03F7 F1            [10]  768 	pop	af
+   03F8 26 01         [ 7]  769 	ld	h,#0x01
+   03FA E3            [19]  770 	ex	(sp),hl
+   03FB 33            [ 6]  771 	inc	sp
+   03FC 21rD1r04      [10]  772 	ld	hl, #___str_7
+   03FF E5            [11]  773 	push	hl
+   0400 21 1E 08      [10]  774 	ld	hl, #0x081e
+   0403 E5            [11]  775 	push	hl
+   0404 CDr00r00      [17]  776 	call	_PrintAt
+   0407 F1            [10]  777 	pop	af
+   0408 F1            [10]  778 	pop	af
+   0409 33            [ 6]  779 	inc	sp
+   040A C1            [10]  780 	pop	bc
+   040B C5            [11]  781 	push	bc
+   040C FD E1         [14]  782 	pop	iy
+   040E FD 56 1B      [19]  783 	ld	d, 27 (iy)
+   0411 C5            [11]  784 	push	bc
+   0412 21 08 02      [10]  785 	ld	hl, #0x0208
+   0415 E5            [11]  786 	push	hl
+   0416 3E 22         [ 7]  787 	ld	a, #0x22
+   0418 F5            [11]  788 	push	af
+   0419 33            [ 6]  789 	inc	sp
+   041A D5            [11]  790 	push	de
+   041B 33            [ 6]  791 	inc	sp
+   041C CDr00r00      [17]  792 	call	_PrintU8
+   041F F1            [10]  793 	pop	af
+   0420 26 01         [ 7]  794 	ld	h,#0x01
+   0422 E3            [19]  795 	ex	(sp),hl
+   0423 33            [ 6]  796 	inc	sp
+   0424 21rD6r04      [10]  797 	ld	hl, #___str_8
+   0427 E5            [11]  798 	push	hl
+   0428 21 1E 09      [10]  799 	ld	hl, #0x091e
+   042B E5            [11]  800 	push	hl
+   042C CDr00r00      [17]  801 	call	_PrintAt
+   042F F1            [10]  802 	pop	af
+   0430 F1            [10]  803 	pop	af
+   0431 33            [ 6]  804 	inc	sp
+   0432 C1            [10]  805 	pop	bc
+   0433 C5            [11]  806 	push	bc
+   0434 FD E1         [14]  807 	pop	iy
+   0436 FD 56 1C      [19]  808 	ld	d, 28 (iy)
+   0439 C5            [11]  809 	push	bc
+   043A 21 09 02      [10]  810 	ld	hl, #0x0209
+   043D E5            [11]  811 	push	hl
+   043E 3E 22         [ 7]  812 	ld	a, #0x22
+   0440 F5            [11]  813 	push	af
+   0441 33            [ 6]  814 	inc	sp
+   0442 D5            [11]  815 	push	de
+   0443 33            [ 6]  816 	inc	sp
+   0444 CDr00r00      [17]  817 	call	_PrintU8
+   0447 F1            [10]  818 	pop	af
+   0448 26 01         [ 7]  819 	ld	h,#0x01
+   044A E3            [19]  820 	ex	(sp),hl
+   044B 33            [ 6]  821 	inc	sp
+   044C 21rDBr04      [10]  822 	ld	hl, #___str_9
+   044F E5            [11]  823 	push	hl
+   0450 21 1E 0B      [10]  824 	ld	hl, #0x0b1e
+   0453 E5            [11]  825 	push	hl
+   0454 CDr00r00      [17]  826 	call	_PrintAt
+   0457 F1            [10]  827 	pop	af
+   0458 F1            [10]  828 	pop	af
+   0459 33            [ 6]  829 	inc	sp
+   045A C1            [10]  830 	pop	bc
+   045B 69            [ 4]  831 	ld	l, c
+   045C 60            [ 4]  832 	ld	h, b
+   045D 11 1D 00      [10]  833 	ld	de, #0x001d
+   0460 19            [11]  834 	add	hl, de
+   0461 5E            [ 7]  835 	ld	e, (hl)
+   0462 23            [ 6]  836 	inc	hl
+   0463 56            [ 7]  837 	ld	d, (hl)
+   0464 53            [ 4]  838 	ld	d, e
+   0465 C5            [11]  839 	push	bc
+   0466 21 0B 02      [10]  840 	ld	hl, #0x020b
+   0469 E5            [11]  841 	push	hl
+   046A 3E 22         [ 7]  842 	ld	a, #0x22
+   046C F5            [11]  843 	push	af
+   046D 33            [ 6]  844 	inc	sp
+   046E D5            [11]  845 	push	de
+   046F 33            [ 6]  846 	inc	sp
+   0470 CDr00r00      [17]  847 	call	_PrintU8
+   0473 F1            [10]  848 	pop	af
+   0474 26 01         [ 7]  849 	ld	h,#0x01
+   0476 E3            [19]  850 	ex	(sp),hl
+   0477 33            [ 6]  851 	inc	sp
+   0478 21rE0r04      [10]  852 	ld	hl, #___str_10
+   047B E5            [11]  853 	push	hl
+   047C 21 1E 0C      [10]  854 	ld	hl, #0x0c1e
+   047F E5            [11]  855 	push	hl
+   0480 CDr00r00      [17]  856 	call	_PrintAt
+   0483 F1            [10]  857 	pop	af
+   0484 F1            [10]  858 	pop	af
+   0485 33            [ 6]  859 	inc	sp
+   0486 E1            [10]  860 	pop	hl
+   0487 11 1F 00      [10]  861 	ld	de, #0x001f
+   048A 19            [11]  862 	add	hl, de
+   048B 4E            [ 7]  863 	ld	c, (hl)
+   048C 23            [ 6]  864 	inc	hl
+   048D 46            [ 7]  865 	ld	b, (hl)
+   048E 41            [ 4]  866 	ld	b, c
+   048F 21 0C 02      [10]  867 	ld	hl, #0x020c
+   0492 E5            [11]  868 	push	hl
+   0493 3E 22         [ 7]  869 	ld	a, #0x22
+   0495 F5            [11]  870 	push	af
+   0496 33            [ 6]  871 	inc	sp
+   0497 C5            [11]  872 	push	bc
+   0498 33            [ 6]  873 	inc	sp
+   0499 CDr00r00      [17]  874 	call	_PrintU8
+   049C F1            [10]  875 	pop	af
+   049D F1            [10]  876 	pop	af
+   049E DD E1         [14]  877 	pop	ix
+   04A0 C9            [10]  878 	ret
+   04A1                     879 ___str_3:
+   04A1 69 3A 55 50 2C 20   880 	.ascii "i:UP, k:DN, j:LT, l:RT, s:WAIT"
+        6B 3A 44 4E 2C 20
+        6A 3A 4C 54 2C 20
+        6C 3A 52 54 2C 20
+        73 3A 57 41 49 54
+   04BF 00                  881 	.db 0x00
+   04C0                     882 ___str_4:
+   04C0 48 50 3A 20 20 20   883 	.ascii "HP:      "
+        20 20 20
+   04C9 00                  884 	.db 0x00
+   04CA                     885 ___str_5:
+   04CA 2F                  886 	.ascii "/"
+   04CB 00                  887 	.db 0x00
+   04CC                     888 ___str_6:
+   04CC 53 54 52 3A         889 	.ascii "STR:"
+   04D0 00                  890 	.db 0x00
+   04D1                     891 ___str_7:
+   04D1 44 45 53 3A         892 	.ascii "DES:"
+   04D5 00                  893 	.db 0x00
+   04D6                     894 ___str_8:
+   04D6 52 45 46 3A         895 	.ascii "REF:"
+   04DA 00                  896 	.db 0x00
+   04DB                     897 ___str_9:
+   04DB 41 54 4B 3A         898 	.ascii "ATK:"
+   04DF 00                  899 	.db 0x00
+   04E0                     900 ___str_10:
+   04E0 44 45 46 3A         901 	.ascii "DEF:"
+   04E4 00                  902 	.db 0x00
+                            903 	.area _CODE
+                            904 	.area _INITIALIZER
+                            905 	.area _CABS (ABS)

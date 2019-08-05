@@ -23,7 +23,7 @@ typedef struct TEntity {
 
 void EntityInit (TEntity *c, u8 x, u8 y, u8 spr, u8 color, u8 name[],
   u8 blocks, u16 hp, u8 str, u8 destr, u8 refl);
-u8 EntityMove (TEntity *c, i8 dx, i8 dy);
+void EntityMove (TEntity *c, i8 dx, i8 dy);
 void EntityAttack (TEntity *e, TEntity *target);
 u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y);
 void EntityDraw (TEntity *e, u8 erase);
