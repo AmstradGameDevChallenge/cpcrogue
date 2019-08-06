@@ -47,3 +47,13 @@ void PrintU8 (u8 num, u8 x, u8 y, u8 color)
   sprintf (str, "%d", num);
   PrintAt (x,y, str, color);
 }
+
+void BlackScreen()
+{
+  ink (0, INK_BG,INK_BG);
+  ink (1, INK_BG,INK_BG);
+  ink (2, INK_BG,INK_BG);
+  ink (3, INK_BG,INK_BG);
+
+  border (0); paper (0);
+}

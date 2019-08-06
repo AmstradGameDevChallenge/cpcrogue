@@ -76,10 +76,10 @@ u8 EntityCalculateDamage (TEntity *e)
 void EntityTakeDamage (TEntity *e, u8 dmg)
 {
   e->hp -= dmg;
-  PrintAt (1,23, e->name, 1);
-  PrintAt (8,23, "takes     ", 2);
-  PrintU8 (dmg, 14,23, 1);
-  PrintAt (17,23, "points of damage", 2);
+  PrintAt (STATUS_X,STATUS_Y+1, e->name, PEN_BRIGHT);
+  PrintAt (STATUS_X+7,STATUS_Y+1, "takes     ", PEN_NORMAL);
+  PrintU8 (dmg, STATUS_X+13,STATUS_Y+1, PEN_BRIGHT);
+  PrintAt (STATUS_X+16,STATUS_Y+1, "points of damage", PEN_NORMAL);
 }
 /****************************************************************************
  *                      Attack 'target'
@@ -88,9 +88,10 @@ void EntityAttack (TEntity *e, TEntity *target)
 {
   u8 dmg;
   // Show action in log window
-  PrintAt (1,22, e->name, 1);
-  PrintAt (10,22, "attacks", 2);
-  PrintAt (23,22, target->name, 1);
+
+  PrintAt (STATUS_X,STATUS_Y, e->name, PEN_BRIGHT);
+  PrintAt (STATUS_X+8,STATUS_Y, "attacks", PEN_NORMAL);
+  PrintAt (STATUS_X+16,STATUS_Y, target->name, PEN_BRIGHT);
 
   dmg = EntityCalculateDamage (e);
   EntityTakeDamage (target, dmg);
@@ -126,28 +127,4 @@ void EntityDrawEntities (TEntity *entities[], u8 dirty[])
     EntityDraw (e, FALSE);
     ++i;
   }
-}
-/****************************************************************************
- *                      Display Entity Stats
- ***************************************************************************/
-void EntityPrintStats (TEntity *e)
-{
-  u8 pen1, pen2;
-  u8 x, y;
-
-  x = 30;
-  y = 4;
-  pen1 = 1; pen2 = 2;
-  PrintAt (1,1, "i:UP, k:DN, j:LT, l:RT, s:WAIT", pen2);
-  PrintAt (x,y, e->name, pen1); ++y;
-  PrintAt (x, y, "HP:      ", pen1); PrintU8 (e->hp,    x+3,y, pen2);
-  PrintAt (x+5, y, "/", pen1); PrintU8 (e->max_hp,x+6,y++, pen2);
-  ++y;
-  PrintAt (x, y, "STR:",pen1); PrintU8 (e->str,   x+4,y++, pen2);
-  PrintAt (x, y, "DES:",pen1); PrintU8 (e->des,   x+4,y++, pen2);
-  PrintAt (x, y, "REF:",pen1); PrintU8 (e->ref,   x+4,y++, pen2);
-
-  ++y;
-  PrintAt (x, y, "ATK:",pen1); PrintU8 (e->atk,   x+4,y++, pen2);
-  PrintAt (x, y, "DEF:",pen1); PrintU8 (e->def,   x+4,y++, pen2);
 }

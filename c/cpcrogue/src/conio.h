@@ -15,3 +15,4 @@ inline void cls () { putchar (FF); }
 
 void PrintAt (u8 x, u8 y, u8 text[], u8 color);
 void PrintU8 (u8 num, u8 x, u8 y, u8 color);
+void BlackScreen ();

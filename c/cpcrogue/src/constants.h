@@ -19,12 +19,18 @@
 
 // Map dimensions
 #define MAP_WIDTH       28
-#define MAP_HEIGHT      20
+#define MAP_HEIGHT      18
 
 // Where the visible map starts, these offsets are added to
 // everything we draw so they appear in the correct playable coordinates
-#define PLAY_X            1
-#define PLAY_Y            2
+#define PLAY_X          2
+#define PLAY_Y          2
+#define STATS_X         PLAY_X + MAP_WIDTH + 1
+#define STATS_Y         3
+#define STATUS_X        2
+#define STATUS_Y        21
+#define LOADING_X       STATUS_X
+#define LOADING_Y       STATUS_Y
 
 // Game Sprites
 #define   SPR_WALL    '#'
@@ -33,12 +39,17 @@
 #define   SPR_GOBLIN  'g'
 
 // Sprite Colors
-#define   INK_DARK_TILE   1
-#define   INK_LIGHT_TILE  13
-#define   INK_ENTITY      20
-#define   PEN_ENTITY      1
-#define   PEN_TILE        2
-#define   PEN_EXLORED     3
+#define   INK_BG          0
+#define   INK_DARK        1
+#define   INK_BRIGHT      20
+#define   INK_NORMAL      10
+#define   PEN_ENTITY      3
+
+#define   PEN_CLEAR       0
+#define   PEN_TILE        3
+#define   PEN_EXLORED     1
+#define   PEN_BRIGHT      2
+#define   PEN_NORMAL      3
 
 // Available actions for player
 typedef enum TAction {

@@ -1,3 +1,5 @@
+#ifndef ENTITY_H
+#define ENTITY_H
 /****************************************************************************
  *                      ENTITY
  ***************************************************************************/
@@ -29,3 +31,5 @@ u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y);
 void EntityDraw (TEntity *e, u8 erase);
 void EntityDrawEntities(TEntity *entities[], u8 dirty[]);
 void EntityPrintStats (TEntity *e);
+
+#endif

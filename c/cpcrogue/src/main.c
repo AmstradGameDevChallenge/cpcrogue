@@ -29,15 +29,16 @@
 #include "game_map.h"
 #include "input_handler.h"
 #include "logo.h"
+#include "user_interface.h"
 /****************************************************************************
  *                      Initialize Colors
  ***************************************************************************/
 void InitColors()
 {
-  ink (0, 0,0);
-  ink (PEN_ENTITY, INK_ENTITY, INK_ENTITY);
-  ink (PEN_TILE, INK_LIGHT_TILE, INK_LIGHT_TILE);
-  ink (PEN_EXLORED, INK_DARK_TILE, INK_DARK_TILE);
+  ink (0, INK_BG,INK_BG);
+  ink (1, INK_DARK, INK_DARK);
+  ink (2, INK_BRIGHT, INK_BRIGHT);
+  ink (3, INK_NORMAL, INK_NORMAL);
 
   border (0); paper (0);
 }
@@ -67,11 +68,10 @@ void main()
     edx[ei]=1; edx[9-ei]=-1;
   }
 
-  ShowLogo();
+  //ShowLogo();
   cls();
 
-  InitColors();
-  EntityInit (&player, 3, 3, SPR_PLAYER, PEN_ENTITY, "Thorbag", TRUE,
+  EntityInit (&player, 3, 3, SPR_PLAYER, PEN_BRIGHT, "Thorbag", TRUE,
     20, 17, 14, 12);
   EntityInit (&enemy, 19, 3, SPR_GOBLIN, PEN_ENTITY, "Goblin", TRUE,
     10, 12, 13, 11);
@@ -82,10 +82,14 @@ void main()
   dirty[0] = FALSE;
   dirty[1] = FALSE;
 
+  BlackScreen ();
+  DisplayLoading ();
+  DrawHUD ();
   MapCreate (MAP_WIDTH, MAP_HEIGHT);
   MapDraw ();
-
-  EntityPrintStats(&player);
+  PrintStats(&player);
+  ClearStatus(LOADING_Y, 1);
+  InitColors();
 
   // It's Player's turn
   state = PLAYER_TURN;
@@ -126,7 +130,7 @@ void main()
         if (GetBlockingEntity (entities, &target, new_x, new_y) &&
           target != &enemy) {
           EntityAttack (&enemy, target);
-          EntityPrintStats(&player);
+          PrintStats(&player);
         }
         else {
           EntityMove (&enemy, edx[ei++], edy);
