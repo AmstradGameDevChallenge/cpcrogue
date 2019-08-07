@@ -21,5 +21,8 @@ TAction HandleKeyboard (i8 *dx, i8 *dy)
   if (cpct_isKeyPressed (Key_S)) {  // s: WAIT
     return PLAYER_MOVE;
   }
+  if (cpct_isKeyPressed (Key_N)) {  // s: WAIT
+    return NEW_LEVEL;
+  }
   return NONE;
 }

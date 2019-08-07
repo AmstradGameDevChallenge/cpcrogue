@@ -20,6 +20,9 @@
 // Map dimensions
 #define MAP_WIDTH       28
 #define MAP_HEIGHT      18
+#define MAX_ROOMS       16
+#define ROOM_MIN_SIZE   3
+#define ROOM_MAX_SIZE   7
 
 // Where the visible map starts, these offsets are added to
 // everything we draw so they appear in the correct playable coordinates
@@ -53,7 +56,7 @@
 
 // Available actions for player
 typedef enum TAction {
-  NONE, PLAYER_MOVE
+  NONE, PLAYER_MOVE, NEW_LEVEL
 } TAction;
 
 // Possible states in game

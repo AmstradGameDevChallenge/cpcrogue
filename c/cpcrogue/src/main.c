@@ -31,6 +31,7 @@
 #include "logo.h"
 #include "user_interface.h"
 #include "fov.h"
+#include "fast_math.h"
 
 /****************************************************************************
  *                      Initialize Colors
@@ -57,7 +58,7 @@ TEntity *target = NULL;           // Used when searching entities
 // Player displacement
 i8 dx, dy;
 // Enemy displacement
-i8 edx[10];
+const i8 edx[10] = {1,1,1,1,1,-1,-1,-1,-1,-1};
 i8 edy = 0;
 // Temporary new positions
 u8 new_x, new_y;
@@ -65,16 +66,10 @@ u8 new_x, new_y;
 void main()
 {
   u8 ei = 0;
-  u8 points[256];
-  // Create enemy dx list {1,1,1,1,1,-1,-1,-1,-1,-1}
-  for (ei=0; ei!=5; ++ei) {
-    edx[ei]=1; edx[9-ei]=-1;
-  }
 
   //ShowLogo();
   cls();
 
-/*
   EntityInit (&player, 3, 3, SPR_PLAYER, PEN_BRIGHT, "Thorbag", TRUE,
     20, 17, 14, 12);
   EntityInit (&enemy, 19, 3, SPR_GOBLIN, PEN_ENTITY, "Goblin", TRUE,
@@ -89,17 +84,19 @@ void main()
   BlackScreen ();
   DisplayLoading ();
   DrawHUD ();
-  */
-  MapCreate (MAP_WIDTH, MAP_HEIGHT);
+
+  MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
   MapDraw ();
-  /*
+  EntityDrawEntities(entities, dirty);
+
   PrintStats(&player);
   ClearStatus(LOADING_Y, 1);
   InitColors();
-  */
-/*
+
+
   // It's Player's turn
   state = PLAYER_TURN;
+
   do {
     // Draw all
     EntityDrawEntities(entities, dirty);
@@ -113,6 +110,16 @@ void main()
 
     new_x = player.x+dx;
     new_y = player.y+dy;
+
+    if (action == NEW_LEVEL) {
+      BlackScreen ();
+      DisplayLoading ();
+      MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
+      MapDraw ();
+      EntityDrawEntities(entities, dirty);
+      ClearStatus(LOADING_Y, 1);
+      InitColors ();
+    }
     if (action == PLAYER_MOVE && state == PLAYER_TURN) {
       if (!MapIsBlocked (new_x, new_y)) {
         if (GetBlockingEntity (entities, &target, new_x, new_y) &&
@@ -124,12 +131,12 @@ void main()
           dirty[0] = TRUE;
           EntityMove (&player, dx, dy);
         }
-        cpct_waitHalts(25);
+        cpct_waitHalts(15);
         state = ENEMY_TURN;
       }
     }
     if (state == ENEMY_TURN) {
-      cpct_waitHalts(25);
+      cpct_waitHalts(15);
       // Enemy actions
       new_x = enemy.x + edx[ei];
       new_y = enemy.y;
@@ -149,8 +156,5 @@ void main()
       // It's Player's turn
       state = PLAYER_TURN;
     }
-  }
-*/
-  while (1);
-
+  } while (1);
 }
