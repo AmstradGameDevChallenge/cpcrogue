@@ -109,7 +109,7 @@ void DisplayLoading ()
 void ClearStatus (u8 start_line, u8 nlines)
 {
   for (u8 n=0; n<nlines; ++n) {
-    PrintAt (STATUS_X, STATUS_Y+n,
+    PrintAt (STATUS_X, start_line+n,
       "                                      ",
       PEN_NORMAL);
   }
@@ -135,4 +135,18 @@ void PrintStats (TEntity *e)
   ++y;
   PrintAt (x, y, "ATK:",PEN_NORMAL); PrintU8 (e->atk,   x+4,y++, PEN_BRIGHT);
   PrintAt (x, y, "DEF:",PEN_NORMAL); PrintU8 (e->def,   x+4,y++, PEN_BRIGHT);
+}
+
+void DrawLine (u8 coords[], u8 ch, u8 color)
+{
+  u8 *ptr;
+  u8 x,y;
+
+  pen (color);
+  ptr = coords;
+  while ( (x = *ptr++) != 0xff) {
+    y = *ptr++;
+    locate (x,y);
+    putchar (ch);
+  }
 }

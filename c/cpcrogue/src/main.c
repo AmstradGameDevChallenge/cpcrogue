@@ -30,6 +30,8 @@
 #include "input_handler.h"
 #include "logo.h"
 #include "user_interface.h"
+#include "fov.h"
+
 /****************************************************************************
  *                      Initialize Colors
  ***************************************************************************/
@@ -63,6 +65,7 @@ u8 new_x, new_y;
 void main()
 {
   u8 ei = 0;
+  u8 points[256];
   // Create enemy dx list {1,1,1,1,1,-1,-1,-1,-1,-1}
   for (ei=0; ei!=5; ++ei) {
     edx[ei]=1; edx[9-ei]=-1;
@@ -71,6 +74,7 @@ void main()
   //ShowLogo();
   cls();
 
+/*
   EntityInit (&player, 3, 3, SPR_PLAYER, PEN_BRIGHT, "Thorbag", TRUE,
     20, 17, 14, 12);
   EntityInit (&enemy, 19, 3, SPR_GOBLIN, PEN_ENTITY, "Goblin", TRUE,
@@ -85,12 +89,15 @@ void main()
   BlackScreen ();
   DisplayLoading ();
   DrawHUD ();
+  */
   MapCreate (MAP_WIDTH, MAP_HEIGHT);
   MapDraw ();
+  /*
   PrintStats(&player);
   ClearStatus(LOADING_Y, 1);
   InitColors();
-
+  */
+/*
   // It's Player's turn
   state = PLAYER_TURN;
   do {
@@ -142,5 +149,8 @@ void main()
       // It's Player's turn
       state = PLAYER_TURN;
     }
-  } while (1);
+  }
+*/
+  while (1);
+
 }

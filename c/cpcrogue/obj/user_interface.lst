@@ -1,0 +1,901 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.6.8 #9946 (Linux)
+                              4 ;--------------------------------------------------------
+                              5 	.module user_interface
+                              6 	.optsdcc -mz80
+                              7 	
+                              8 ;--------------------------------------------------------
+                              9 ; Public variables in this module
+                             10 ;--------------------------------------------------------
+                             11 	.globl __DrawLines
+                             12 	.globl __DrawLine
+                             13 	.globl _DrawSingleChars
+                             14 	.globl _PrintU8
+                             15 	.globl _PrintAt
+                             16 	.globl _pen
+                             17 	.globl _ink
+                             18 	.globl _locate
+                             19 	.globl _putchar
+                             20 	.globl _hud
+                             21 	.globl _DrawHUD
+                             22 	.globl _DisplayLoading
+                             23 	.globl _ClearStatus
+                             24 	.globl _PrintStats
+                             25 	.globl _DrawLine
+                             26 ;--------------------------------------------------------
+                             27 ; special function registers
+                             28 ;--------------------------------------------------------
+                             29 ;--------------------------------------------------------
+                             30 ; ram data
+                             31 ;--------------------------------------------------------
+                             32 	.area _DATA
+                             33 ;--------------------------------------------------------
+                             34 ; ram data
+                             35 ;--------------------------------------------------------
+                             36 	.area _INITIALIZED
+                             37 ;--------------------------------------------------------
+                             38 ; absolute external ram data
+                             39 ;--------------------------------------------------------
+                             40 	.area _DABS (ABS)
+                             41 ;--------------------------------------------------------
+                             42 ; global & static initialisations
+                             43 ;--------------------------------------------------------
+                             44 	.area _HOME
+                             45 	.area _GSINIT
+                             46 	.area _GSFINAL
+                             47 	.area _GSINIT
+                             48 ;--------------------------------------------------------
+                             49 ; Home
+                             50 ;--------------------------------------------------------
+                             51 	.area _HOME
+                             52 	.area _HOME
+                             53 ;--------------------------------------------------------
+                             54 ; code
+                             55 ;--------------------------------------------------------
+                             56 	.area _CODE
+                             57 ;src/user_interface.c:27: u8 DrawSingleChars ()
+                             58 ;	---------------------------------
+                             59 ; Function DrawSingleChars
+                             60 ; ---------------------------------
+   0000                      61 _DrawSingleChars::
+   0000 DD E5         [15]   62 	push	ix
+   0002 DD 21 00 00   [14]   63 	ld	ix,#0
+   0006 DD 39         [15]   64 	add	ix,sp
+   0008 F5            [11]   65 	push	af
+   0009 F5            [11]   66 	push	af
+                             67 ;src/user_interface.c:35: i=0;
+   000A 0E 00         [ 7]   68 	ld	c, #0x00
+                             69 ;src/user_interface.c:36: while ( (ch = hud[i++]) != 255) {
+   000C 11r85r00      [10]   70 	ld	de, #_hud+0
+   000F                      71 00102$:
+   000F 69            [ 4]   72 	ld	l, c
+   0010 0C            [ 4]   73 	inc	c
+   0011 26 00         [ 7]   74 	ld	h,#0x00
+   0013 19            [11]   75 	add	hl, de
+   0014 46            [ 7]   76 	ld	b, (hl)
+   0015 DD 70 FF      [19]   77 	ld	-1 (ix), b
+   0018 04            [ 4]   78 	inc	b
+   0019 28 64         [12]   79 	jr	Z,00104$
+                             80 ;src/user_interface.c:37: color = hud[i++];
+   001B 79            [ 4]   81 	ld	a,c
+   001C 47            [ 4]   82 	ld	b,a
+   001D 3C            [ 4]   83 	inc	a
+   001E DD 77 FE      [19]   84 	ld	-2 (ix), a
+   0021 68            [ 4]   85 	ld	l,b
+   0022 26 00         [ 7]   86 	ld	h,#0x00
+   0024 19            [11]   87 	add	hl, de
+   0025 46            [ 7]   88 	ld	b, (hl)
+                             89 ;src/user_interface.c:38: reps = hud[i++];
+   0026 DD 6E FE      [19]   90 	ld	l, -2 (ix)
+   0029 DD 4E FE      [19]   91 	ld	c, -2 (ix)
+   002C 0C            [ 4]   92 	inc	c
+   002D 26 00         [ 7]   93 	ld	h,#0x00
+   002F 19            [11]   94 	add	hl, de
+   0030 7E            [ 7]   95 	ld	a, (hl)
+   0031 DD 77 FD      [19]   96 	ld	-3 (ix), a
+                             97 ;src/user_interface.c:39: pen(color);
+   0034 C5            [11]   98 	push	bc
+   0035 D5            [11]   99 	push	de
+   0036 C5            [11]  100 	push	bc
+   0037 33            [ 6]  101 	inc	sp
+   0038 CDr00r00      [17]  102 	call	_pen
+   003B 33            [ 6]  103 	inc	sp
+   003C D1            [10]  104 	pop	de
+   003D C1            [10]  105 	pop	bc
+                            106 ;src/user_interface.c:41: for (u8 n=0; n<reps; ++n) {
+   003E DD 36 FC 00   [19]  107 	ld	-4 (ix), #0x00
+   0042                     108 00106$:
+   0042 DD 7E FC      [19]  109 	ld	a, -4 (ix)
+   0045 DD 96 FD      [19]  110 	sub	a, -3 (ix)
+   0048 30 C5         [12]  111 	jr	NC,00102$
+                            112 ;src/user_interface.c:42: x=hud[i++];
+   004A 79            [ 4]  113 	ld	a,c
+   004B 47            [ 4]  114 	ld	b,a
+   004C 3C            [ 4]  115 	inc	a
+   004D DD 77 FE      [19]  116 	ld	-2 (ix), a
+   0050 68            [ 4]  117 	ld	l,b
+   0051 26 00         [ 7]  118 	ld	h,#0x00
+   0053 19            [11]  119 	add	hl, de
+   0054 46            [ 7]  120 	ld	b, (hl)
+                            121 ;src/user_interface.c:43: y=hud[i++];
+   0055 DD 6E FE      [19]  122 	ld	l, -2 (ix)
+   0058 DD 4E FE      [19]  123 	ld	c, -2 (ix)
+   005B 0C            [ 4]  124 	inc	c
+   005C 26 00         [ 7]  125 	ld	h,#0x00
+   005E 19            [11]  126 	add	hl, de
+   005F 66            [ 7]  127 	ld	h, (hl)
+                            128 ;src/user_interface.c:44: locate (x,y);
+   0060 C5            [11]  129 	push	bc
+   0061 D5            [11]  130 	push	de
+   0062 E5            [11]  131 	push	hl
+   0063 33            [ 6]  132 	inc	sp
+   0064 C5            [11]  133 	push	bc
+   0065 33            [ 6]  134 	inc	sp
+   0066 CDr00r00      [17]  135 	call	_locate
+   0069 F1            [10]  136 	pop	af
+   006A D1            [10]  137 	pop	de
+   006B C1            [10]  138 	pop	bc
+                            139 ;src/user_interface.c:45: putchar (ch);
+   006C DD 6E FF      [19]  140 	ld	l, -1 (ix)
+   006F 26 00         [ 7]  141 	ld	h, #0x00
+   0071 C5            [11]  142 	push	bc
+   0072 D5            [11]  143 	push	de
+   0073 E5            [11]  144 	push	hl
+   0074 CDr00r00      [17]  145 	call	_putchar
+   0077 F1            [10]  146 	pop	af
+   0078 D1            [10]  147 	pop	de
+   0079 C1            [10]  148 	pop	bc
+                            149 ;src/user_interface.c:41: for (u8 n=0; n<reps; ++n) {
+   007A DD 34 FC      [23]  150 	inc	-4 (ix)
+   007D 18 C3         [12]  151 	jr	00106$
+   007F                     152 00104$:
+                            153 ;src/user_interface.c:48: return i;
+   007F 69            [ 4]  154 	ld	l, c
+   0080 DD F9         [10]  155 	ld	sp, ix
+   0082 DD E1         [14]  156 	pop	ix
+   0084 C9            [10]  157 	ret
+   0085                     158 _hud:
+   0085 E9                  159 	.db #0xe9	; 233
+   0086 02                  160 	.db #0x02	; 2
+   0087 08                  161 	.db #0x08	; 8
+   0088 01                  162 	.db #0x01	; 1
+   0089 01                  163 	.db #0x01	; 1
+   008A 1E                  164 	.db #0x1e	; 30
+   008B 01                  165 	.db #0x01	; 1
+   008C 28                  166 	.db #0x28	; 40
+   008D 01                  167 	.db #0x01	; 1
+   008E 01                  168 	.db #0x01	; 1
+   008F 14                  169 	.db #0x14	; 20
+   0090 1E                  170 	.db #0x1e	; 30
+   0091 14                  171 	.db #0x14	; 20
+   0092 28                  172 	.db #0x28	; 40
+   0093 14                  173 	.db #0x14	; 20
+   0094 01                  174 	.db #0x01	; 1
+   0095 19                  175 	.db #0x19	; 25
+   0096 28                  176 	.db #0x28	; 40
+   0097 19                  177 	.db #0x19	; 25
+   0098 9A                  178 	.db #0x9a	; 154
+   0099 02                  179 	.db #0x02	; 2
+   009A 0C                  180 	.db #0x0c	; 12
+   009B 02                  181 	.db #0x02	; 2
+   009C 01                  182 	.db #0x01	; 1
+   009D 0A                  183 	.db #0x0a	; 10
+   009E 01                  184 	.db #0x01	; 1
+   009F 15                  185 	.db #0x15	; 21
+   00A0 01                  186 	.db #0x01	; 1
+   00A1 1D                  187 	.db #0x1d	; 29
+   00A2 01                  188 	.db #0x01	; 1
+   00A3 1F                  189 	.db #0x1f	; 31
+   00A4 01                  190 	.db #0x01	; 1
+   00A5 27                  191 	.db #0x27	; 39
+   00A6 01                  192 	.db #0x01	; 1
+   00A7 02                  193 	.db #0x02	; 2
+   00A8 14                  194 	.db #0x14	; 20
+   00A9 1D                  195 	.db #0x1d	; 29
+   00AA 14                  196 	.db #0x14	; 20
+   00AB 1F                  197 	.db #0x1f	; 31
+   00AC 14                  198 	.db #0x14	; 20
+   00AD 27                  199 	.db #0x27	; 39
+   00AE 14                  200 	.db #0x14	; 20
+   00AF 02                  201 	.db #0x02	; 2
+   00B0 19                  202 	.db #0x19	; 25
+   00B1 27                  203 	.db #0x27	; 39
+   00B2 19                  204 	.db #0x19	; 25
+   00B3 95                  205 	.db #0x95	; 149
+   00B4 02                  206 	.db #0x02	; 2
+   00B5 0A                  207 	.db #0x0a	; 10
+   00B6 01                  208 	.db #0x01	; 1
+   00B7 02                  209 	.db #0x02	; 2
+   00B8 1E                  210 	.db #0x1e	; 30
+   00B9 02                  211 	.db #0x02	; 2
+   00BA 28                  212 	.db #0x28	; 40
+   00BB 02                  213 	.db #0x02	; 2
+   00BC 01                  214 	.db #0x01	; 1
+   00BD 13                  215 	.db #0x13	; 19
+   00BE 01                  216 	.db #0x01	; 1
+   00BF 15                  217 	.db #0x15	; 21
+   00C0 1E                  218 	.db #0x1e	; 30
+   00C1 13                  219 	.db #0x13	; 19
+   00C2 28                  220 	.db #0x28	; 40
+   00C3 13                  221 	.db #0x13	; 19
+   00C4 28                  222 	.db #0x28	; 40
+   00C5 15                  223 	.db #0x15	; 21
+   00C6 01                  224 	.db #0x01	; 1
+   00C7 18                  225 	.db #0x18	; 24
+   00C8 28                  226 	.db #0x28	; 40
+   00C9 18                  227 	.db #0x18	; 24
+   00CA 9D                  228 	.db #0x9d	; 157
+   00CB 02                  229 	.db #0x02	; 2
+   00CC 01                  230 	.db #0x01	; 1
+   00CD 0B                  231 	.db #0x0b	; 11
+   00CE 01                  232 	.db #0x01	; 1
+   00CF 97                  233 	.db #0x97	; 151
+   00D0 02                  234 	.db #0x02	; 2
+   00D1 01                  235 	.db #0x01	; 1
+   00D2 14                  236 	.db #0x14	; 20
+   00D3 01                  237 	.db #0x01	; 1
+   00D4 FF                  238 	.db #0xff	; 255
+   00D5 9A                  239 	.db #0x9a	; 154
+   00D6 03                  240 	.db #0x03	; 3
+   00D7 01                  241 	.db #0x01	; 1
+   00D8 06                  242 	.db #0x06	; 6
+   00D9 03                  243 	.db #0x03	; 3
+   00DA 01                  244 	.db #0x01	; 1
+   00DB 07                  245 	.db #0x07	; 7
+   00DC 16                  246 	.db #0x16	; 22
+   00DD 01                  247 	.db #0x01	; 1
+   00DE 08                  248 	.db #0x08	; 8
+   00DF 20                  249 	.db #0x20	; 32
+   00E0 01                  250 	.db #0x01	; 1
+   00E1 07                  251 	.db #0x07	; 7
+   00E2 03                  252 	.db #0x03	; 3
+   00E3 14                  253 	.db #0x14	; 20
+   00E4 1A                  254 	.db #0x1a	; 26
+   00E5 20                  255 	.db #0x20	; 32
+   00E6 14                  256 	.db #0x14	; 20
+   00E7 07                  257 	.db #0x07	; 7
+   00E8 03                  258 	.db #0x03	; 3
+   00E9 19                  259 	.db #0x19	; 25
+   00EA 24                  260 	.db #0x24	; 36
+   00EB 95                  261 	.db #0x95	; 149
+   00EC 03                  262 	.db #0x03	; 3
+   00ED 00                  263 	.db #0x00	; 0
+   00EE 05                  264 	.db #0x05	; 5
+   00EF 01                  265 	.db #0x01	; 1
+   00F0 03                  266 	.db #0x03	; 3
+   00F1 10                  267 	.db #0x10	; 16
+   00F2 1E                  268 	.db #0x1e	; 30
+   00F3 03                  269 	.db #0x03	; 3
+   00F4 10                  270 	.db #0x10	; 16
+   00F5 28                  271 	.db #0x28	; 40
+   00F6 03                  272 	.db #0x03	; 3
+   00F7 10                  273 	.db #0x10	; 16
+   00F8 01                  274 	.db #0x01	; 1
+   00F9 16                  275 	.db #0x16	; 22
+   00FA 02                  276 	.db #0x02	; 2
+   00FB 28                  277 	.db #0x28	; 40
+   00FC 16                  278 	.db #0x16	; 22
+   00FD 02                  279 	.db #0x02	; 2
+   00FE FF                  280 	.db #0xff	; 255
+                            281 ;src/user_interface.c:51: void _DrawLine (u8 start, u8 other, u8 reps, u8 ch, u8 color, u8 is_hor)
+                            282 ;	---------------------------------
+                            283 ; Function _DrawLine
+                            284 ; ---------------------------------
+   00FF                     285 __DrawLine::
+   00FF DD E5         [15]  286 	push	ix
+   0101 DD 21 00 00   [14]  287 	ld	ix,#0
+   0105 DD 39         [15]  288 	add	ix,sp
+   0107 3B            [ 6]  289 	dec	sp
+                            290 ;src/user_interface.c:55: pen (color);
+   0108 DD 7E 08      [19]  291 	ld	a, 8 (ix)
+   010B F5            [11]  292 	push	af
+   010C 33            [ 6]  293 	inc	sp
+   010D CDr00r00      [17]  294 	call	_pen
+   0110 33            [ 6]  295 	inc	sp
+                            296 ;src/user_interface.c:56: for (u8 var=start; var!= start+reps; ++var) {
+   0111 DD 7E 04      [19]  297 	ld	a, 4 (ix)
+   0114 DD 77 FF      [19]  298 	ld	-1 (ix), a
+   0117                     299 00106$:
+   0117 DD 4E 04      [19]  300 	ld	c, 4 (ix)
+   011A 06 00         [ 7]  301 	ld	b, #0x00
+   011C DD 6E 06      [19]  302 	ld	l, 6 (ix)
+   011F 26 00         [ 7]  303 	ld	h, #0x00
+   0121 09            [11]  304 	add	hl,bc
+   0122 4D            [ 4]  305 	ld	c, l
+   0123 44            [ 4]  306 	ld	b, h
+   0124 DD 5E FF      [19]  307 	ld	e, -1 (ix)
+   0127 16 00         [ 7]  308 	ld	d, #0x00
+   0129 79            [ 4]  309 	ld	a, c
+   012A 93            [ 4]  310 	sub	a, e
+   012B 20 04         [12]  311 	jr	NZ,00123$
+   012D 78            [ 4]  312 	ld	a, b
+   012E 92            [ 4]  313 	sub	a, d
+   012F 28 27         [12]  314 	jr	Z,00108$
+   0131                     315 00123$:
+                            316 ;src/user_interface.c:59: y = other;
+   0131 DD 46 05      [19]  317 	ld	b, 5 (ix)
+                            318 ;src/user_interface.c:57: if (is_hor) {
+   0134 DD 7E 09      [19]  319 	ld	a, 9 (ix)
+   0137 B7            [ 4]  320 	or	a, a
+   0138 28 05         [12]  321 	jr	Z,00102$
+                            322 ;src/user_interface.c:58: x = var;
+   013A DD 56 FF      [19]  323 	ld	d, -1 (ix)
+                            324 ;src/user_interface.c:59: y = other;
+   013D 18 04         [12]  325 	jr	00103$
+   013F                     326 00102$:
+                            327 ;src/user_interface.c:62: x = other;
+   013F 50            [ 4]  328 	ld	d, b
+                            329 ;src/user_interface.c:63: y = var;
+   0140 DD 46 FF      [19]  330 	ld	b, -1 (ix)
+   0143                     331 00103$:
+                            332 ;src/user_interface.c:65: locate (x,y);
+   0143 4A            [ 4]  333 	ld	c, d
+   0144 C5            [11]  334 	push	bc
+   0145 CDr00r00      [17]  335 	call	_locate
+   0148 F1            [10]  336 	pop	af
+                            337 ;src/user_interface.c:66: putchar (ch);
+   0149 DD 4E 07      [19]  338 	ld	c, 7 (ix)
+   014C 06 00         [ 7]  339 	ld	b, #0x00
+   014E C5            [11]  340 	push	bc
+   014F CDr00r00      [17]  341 	call	_putchar
+   0152 F1            [10]  342 	pop	af
+                            343 ;src/user_interface.c:56: for (u8 var=start; var!= start+reps; ++var) {
+   0153 DD 34 FF      [23]  344 	inc	-1 (ix)
+   0156 18 BF         [12]  345 	jr	00106$
+   0158                     346 00108$:
+   0158 33            [ 6]  347 	inc	sp
+   0159 DD E1         [14]  348 	pop	ix
+   015B C9            [10]  349 	ret
+                            350 ;src/user_interface.c:69: u8 _DrawLines (u8 idx)
+                            351 ;	---------------------------------
+                            352 ; Function _DrawLines
+                            353 ; ---------------------------------
+   015C                     354 __DrawLines::
+   015C DD E5         [15]  355 	push	ix
+   015E DD 21 00 00   [14]  356 	ld	ix,#0
+   0162 DD 39         [15]  357 	add	ix,sp
+   0164 21 FA FF      [10]  358 	ld	hl, #-6
+   0167 39            [11]  359 	add	hl, sp
+   0168 F9            [ 6]  360 	ld	sp, hl
+                            361 ;src/user_interface.c:77: i = idx;
+   0169 DD 4E 04      [19]  362 	ld	c, 4 (ix)
+                            363 ;src/user_interface.c:78: while ( (ch = hud[i++]) != 255) {
+   016C                     364 00105$:
+   016C 59            [ 4]  365 	ld	e, c
+   016D 0C            [ 4]  366 	inc	c
+   016E 21r85r00      [10]  367 	ld	hl, #_hud
+   0171 16 00         [ 7]  368 	ld	d, #0x00
+   0173 19            [11]  369 	add	hl, de
+   0174 46            [ 7]  370 	ld	b, (hl)
+   0175 58            [ 4]  371 	ld	e, b
+   0176 04            [ 4]  372 	inc	b
+   0177 CAr35r02      [10]  373 	jp	Z,00107$
+                            374 ;src/user_interface.c:79: color = hud[i++];
+   017A 41            [ 4]  375 	ld	b, c
+   017B 0C            [ 4]  376 	inc	c
+   017C FD 21r85r00   [14]  377 	ld	iy, #_hud
+   0180 C5            [11]  378 	push	bc
+   0181 48            [ 4]  379 	ld	c,b
+   0182 06 00         [ 7]  380 	ld	b,#0x00
+   0184 FD 09         [15]  381 	add	iy, bc
+   0186 C1            [10]  382 	pop	bc
+   0187 FD 7E 00      [19]  383 	ld	a, 0 (iy)
+   018A DD 77 FB      [19]  384 	ld	-5 (ix), a
+                            385 ;src/user_interface.c:80: is_hor = hud[i++];
+   018D 79            [ 4]  386 	ld	a, c
+   018E 3C            [ 4]  387 	inc	a
+   018F DD 77 FF      [19]  388 	ld	-1 (ix), a
+   0192 21r85r00      [10]  389 	ld	hl, #_hud
+   0195 06 00         [ 7]  390 	ld	b, #0x00
+   0197 09            [11]  391 	add	hl, bc
+   0198 7E            [ 7]  392 	ld	a, (hl)
+   0199 DD 77 FA      [19]  393 	ld	-6 (ix), a
+                            394 ;src/user_interface.c:81: n_lines = hud[i++];
+   019C DD 46 FF      [19]  395 	ld	b, -1 (ix)
+   019F DD 4E FF      [19]  396 	ld	c, -1 (ix)
+   01A2 0C            [ 4]  397 	inc	c
+   01A3 3Er85         [ 7]  398 	ld	a, #<(_hud)
+   01A5 80            [ 4]  399 	add	a, b
+   01A6 6F            [ 4]  400 	ld	l, a
+   01A7 3Es00         [ 7]  401 	ld	a, #>(_hud)
+   01A9 CE 00         [ 7]  402 	adc	a, #0x00
+   01AB 67            [ 4]  403 	ld	h, a
+   01AC 7E            [ 7]  404 	ld	a, (hl)
+   01AD DD 77 FE      [19]  405 	ld	-2 (ix), a
+                            406 ;src/user_interface.c:82: for (u8 n_line=0; n_line < n_lines; ++n_line) {
+   01B0 16 00         [ 7]  407 	ld	d, #0x00
+   01B2                     408 00109$:
+   01B2 7A            [ 4]  409 	ld	a, d
+   01B3 DD 96 FE      [19]  410 	sub	a, -2 (ix)
+   01B6 30 B4         [12]  411 	jr	NC,00105$
+                            412 ;src/user_interface.c:83: x = hud[i++];
+   01B8 69            [ 4]  413 	ld	l, c
+   01B9 0C            [ 4]  414 	inc	c
+   01BA 3Er85         [ 7]  415 	ld	a, #<(_hud)
+   01BC 85            [ 4]  416 	add	a, l
+   01BD 6F            [ 4]  417 	ld	l, a
+   01BE 3Es00         [ 7]  418 	ld	a, #>(_hud)
+   01C0 CE 00         [ 7]  419 	adc	a, #0x00
+   01C2 67            [ 4]  420 	ld	h, a
+   01C3 7E            [ 7]  421 	ld	a, (hl)
+   01C4 DD 77 FD      [19]  422 	ld	-3 (ix), a
+                            423 ;src/user_interface.c:84: y = hud[i++];
+   01C7 79            [ 4]  424 	ld	a,c
+   01C8 6F            [ 4]  425 	ld	l,a
+   01C9 3C            [ 4]  426 	inc	a
+   01CA DD 77 FF      [19]  427 	ld	-1 (ix), a
+   01CD FD 21r85r00   [14]  428 	ld	iy, #_hud
+   01D1 4D            [ 4]  429 	ld	c,l
+   01D2 06 00         [ 7]  430 	ld	b,#0x00
+   01D4 FD 09         [15]  431 	add	iy, bc
+   01D6 FD 7E 00      [19]  432 	ld	a, 0 (iy)
+   01D9 DD 77 FC      [19]  433 	ld	-4 (ix), a
+                            434 ;src/user_interface.c:85: reps = hud[i++];
+   01DC DD 46 FF      [19]  435 	ld	b, -1 (ix)
+   01DF DD 4E FF      [19]  436 	ld	c, -1 (ix)
+   01E2 0C            [ 4]  437 	inc	c
+   01E3 3Er85         [ 7]  438 	ld	a, #<(_hud)
+   01E5 80            [ 4]  439 	add	a, b
+   01E6 6F            [ 4]  440 	ld	l, a
+   01E7 3Es00         [ 7]  441 	ld	a, #>(_hud)
+   01E9 CE 00         [ 7]  442 	adc	a, #0x00
+   01EB 67            [ 4]  443 	ld	h, a
+   01EC 46            [ 7]  444 	ld	b, (hl)
+                            445 ;src/user_interface.c:86: if (is_hor)
+   01ED DD 7E FA      [19]  446 	ld	a, -6 (ix)
+   01F0 B7            [ 4]  447 	or	a, a
+   01F1 28 20         [12]  448 	jr	Z,00102$
+                            449 ;src/user_interface.c:87: _DrawLine (x, y, reps, ch, color, is_hor);
+   01F3 C5            [11]  450 	push	bc
+   01F4 D5            [11]  451 	push	de
+   01F5 DD 7E FA      [19]  452 	ld	a, -6 (ix)
+   01F8 F5            [11]  453 	push	af
+   01F9 33            [ 6]  454 	inc	sp
+   01FA DD 56 FB      [19]  455 	ld	d, -5 (ix)
+   01FD D5            [11]  456 	push	de
+   01FE C5            [11]  457 	push	bc
+   01FF 33            [ 6]  458 	inc	sp
+   0200 DD 66 FC      [19]  459 	ld	h, -4 (ix)
+   0203 DD 6E FD      [19]  460 	ld	l, -3 (ix)
+   0206 E5            [11]  461 	push	hl
+   0207 CDrFFr00      [17]  462 	call	__DrawLine
+   020A 21 06 00      [10]  463 	ld	hl, #6
+   020D 39            [11]  464 	add	hl, sp
+   020E F9            [ 6]  465 	ld	sp, hl
+   020F D1            [10]  466 	pop	de
+   0210 C1            [10]  467 	pop	bc
+   0211 18 1E         [12]  468 	jr	00110$
+   0213                     469 00102$:
+                            470 ;src/user_interface.c:89: _DrawLine (y, x, reps, ch, color, is_hor);
+   0213 C5            [11]  471 	push	bc
+   0214 D5            [11]  472 	push	de
+   0215 DD 7E FA      [19]  473 	ld	a, -6 (ix)
+   0218 F5            [11]  474 	push	af
+   0219 33            [ 6]  475 	inc	sp
+   021A DD 56 FB      [19]  476 	ld	d, -5 (ix)
+   021D D5            [11]  477 	push	de
+   021E C5            [11]  478 	push	bc
+   021F 33            [ 6]  479 	inc	sp
+   0220 DD 66 FD      [19]  480 	ld	h, -3 (ix)
+   0223 DD 6E FC      [19]  481 	ld	l, -4 (ix)
+   0226 E5            [11]  482 	push	hl
+   0227 CDrFFr00      [17]  483 	call	__DrawLine
+   022A 21 06 00      [10]  484 	ld	hl, #6
+   022D 39            [11]  485 	add	hl, sp
+   022E F9            [ 6]  486 	ld	sp, hl
+   022F D1            [10]  487 	pop	de
+   0230 C1            [10]  488 	pop	bc
+   0231                     489 00110$:
+                            490 ;src/user_interface.c:82: for (u8 n_line=0; n_line < n_lines; ++n_line) {
+   0231 14            [ 4]  491 	inc	d
+   0232 C3rB2r01      [10]  492 	jp	00109$
+   0235                     493 00107$:
+                            494 ;src/user_interface.c:92: return i;
+   0235 69            [ 4]  495 	ld	l, c
+   0236 DD F9         [10]  496 	ld	sp, ix
+   0238 DD E1         [14]  497 	pop	ix
+   023A C9            [10]  498 	ret
+                            499 ;src/user_interface.c:95: void DrawHUD ()
+                            500 ;	---------------------------------
+                            501 ; Function DrawHUD
+                            502 ; ---------------------------------
+   023B                     503 _DrawHUD::
+                            504 ;src/user_interface.c:99: i = DrawSingleChars ();
+   023B CDr00r00      [17]  505 	call	_DrawSingleChars
+   023E 45            [ 4]  506 	ld	b, l
+                            507 ;src/user_interface.c:100: i = _DrawLines (i);
+   023F C5            [11]  508 	push	bc
+   0240 33            [ 6]  509 	inc	sp
+   0241 CDr5Cr01      [17]  510 	call	__DrawLines
+   0244 33            [ 6]  511 	inc	sp
+                            512 ;src/user_interface.c:101: PrintAt (12,1, "CPCRogue", PEN_BRIGHT);
+   0245 3E 02         [ 7]  513 	ld	a, #0x02
+   0247 F5            [11]  514 	push	af
+   0248 33            [ 6]  515 	inc	sp
+   0249 21r58r02      [10]  516 	ld	hl, #___str_0
+   024C E5            [11]  517 	push	hl
+   024D 21 0C 01      [10]  518 	ld	hl, #0x010c
+   0250 E5            [11]  519 	push	hl
+   0251 CDr00r00      [17]  520 	call	_PrintAt
+   0254 F1            [10]  521 	pop	af
+   0255 F1            [10]  522 	pop	af
+   0256 33            [ 6]  523 	inc	sp
+   0257 C9            [10]  524 	ret
+   0258                     525 ___str_0:
+   0258 43 50 43 52 6F 67   526 	.ascii "CPCRogue"
+        75 65
+   0260 00                  527 	.db 0x00
+                            528 ;src/user_interface.c:104: void DisplayLoading ()
+                            529 ;	---------------------------------
+                            530 ; Function DisplayLoading
+                            531 ; ---------------------------------
+   0261                     532 _DisplayLoading::
+                            533 ;src/user_interface.c:106: ink (1, 20, 14);
+   0261 21 14 0E      [10]  534 	ld	hl, #0x0e14
+   0264 E5            [11]  535 	push	hl
+   0265 3E 01         [ 7]  536 	ld	a, #0x01
+   0267 F5            [11]  537 	push	af
+   0268 33            [ 6]  538 	inc	sp
+   0269 CDr00r00      [17]  539 	call	_ink
+   026C F1            [10]  540 	pop	af
+   026D 33            [ 6]  541 	inc	sp
+                            542 ;src/user_interface.c:107: PrintAt (LOADING_X,LOADING_Y, "Loading...", 1);
+   026E 3E 01         [ 7]  543 	ld	a, #0x01
+   0270 F5            [11]  544 	push	af
+   0271 33            [ 6]  545 	inc	sp
+   0272 21r81r02      [10]  546 	ld	hl, #___str_1
+   0275 E5            [11]  547 	push	hl
+   0276 21 02 15      [10]  548 	ld	hl, #0x1502
+   0279 E5            [11]  549 	push	hl
+   027A CDr00r00      [17]  550 	call	_PrintAt
+   027D F1            [10]  551 	pop	af
+   027E F1            [10]  552 	pop	af
+   027F 33            [ 6]  553 	inc	sp
+   0280 C9            [10]  554 	ret
+   0281                     555 ___str_1:
+   0281 4C 6F 61 64 69 6E   556 	.ascii "Loading..."
+        67 2E 2E 2E
+   028B 00                  557 	.db 0x00
+                            558 ;src/user_interface.c:109: void ClearStatus (u8 start_line, u8 nlines)
+                            559 ;	---------------------------------
+                            560 ; Function ClearStatus
+                            561 ; ---------------------------------
+   028C                     562 _ClearStatus::
+   028C DD E5         [15]  563 	push	ix
+   028E DD 21 00 00   [14]  564 	ld	ix,#0
+   0292 DD 39         [15]  565 	add	ix,sp
+                            566 ;src/user_interface.c:111: for (u8 n=0; n<nlines; ++n) {
+   0294 0E 00         [ 7]  567 	ld	c, #0x00
+   0296                     568 00103$:
+   0296 79            [ 4]  569 	ld	a, c
+   0297 DD 96 05      [19]  570 	sub	a, 5 (ix)
+   029A 30 1E         [12]  571 	jr	NC,00105$
+                            572 ;src/user_interface.c:113: "                                      ",
+   029C 11rBDr02      [10]  573 	ld	de, #___str_2
+                            574 ;src/user_interface.c:112: PrintAt (STATUS_X, start_line+n,
+   029F DD 7E 04      [19]  575 	ld	a, 4 (ix)
+   02A2 81            [ 4]  576 	add	a, c
+   02A3 47            [ 4]  577 	ld	b, a
+   02A4 C5            [11]  578 	push	bc
+   02A5 3E 03         [ 7]  579 	ld	a, #0x03
+   02A7 F5            [11]  580 	push	af
+   02A8 33            [ 6]  581 	inc	sp
+   02A9 D5            [11]  582 	push	de
+   02AA C5            [11]  583 	push	bc
+   02AB 33            [ 6]  584 	inc	sp
+   02AC 3E 02         [ 7]  585 	ld	a, #0x02
+   02AE F5            [11]  586 	push	af
+   02AF 33            [ 6]  587 	inc	sp
+   02B0 CDr00r00      [17]  588 	call	_PrintAt
+   02B3 F1            [10]  589 	pop	af
+   02B4 F1            [10]  590 	pop	af
+   02B5 33            [ 6]  591 	inc	sp
+   02B6 C1            [10]  592 	pop	bc
+                            593 ;src/user_interface.c:111: for (u8 n=0; n<nlines; ++n) {
+   02B7 0C            [ 4]  594 	inc	c
+   02B8 18 DC         [12]  595 	jr	00103$
+   02BA                     596 00105$:
+   02BA DD E1         [14]  597 	pop	ix
+   02BC C9            [10]  598 	ret
+   02BD                     599 ___str_2:
+   02BD 20 20 20 20 20 20   600 	.ascii "                                      "
+        20 20 20 20 20 20
+        20 20 20 20 20 20
+        20 20 20 20 20 20
+        20 20 20 20 20 20
+        20 20 20 20 20 20
+        20 20
+   02E3 00                  601 	.db 0x00
+                            602 ;src/user_interface.c:120: void PrintStats (TEntity *e)
+                            603 ;	---------------------------------
+                            604 ; Function PrintStats
+                            605 ; ---------------------------------
+   02E4                     606 _PrintStats::
+   02E4 DD E5         [15]  607 	push	ix
+   02E6 DD 21 00 00   [14]  608 	ld	ix,#0
+   02EA DD 39         [15]  609 	add	ix,sp
+                            610 ;src/user_interface.c:127: PrintAt (x,y, e->name, PEN_NORMAL); ++y;
+   02EC DD 4E 04      [19]  611 	ld	c,4 (ix)
+   02EF DD 46 05      [19]  612 	ld	b,5 (ix)
+   02F2 21 06 00      [10]  613 	ld	hl, #0x0006
+   02F5 09            [11]  614 	add	hl, bc
+   02F6 C5            [11]  615 	push	bc
+   02F7 3E 03         [ 7]  616 	ld	a, #0x03
+   02F9 F5            [11]  617 	push	af
+   02FA 33            [ 6]  618 	inc	sp
+   02FB E5            [11]  619 	push	hl
+   02FC 21 1F 03      [10]  620 	ld	hl, #0x031f
+   02FF E5            [11]  621 	push	hl
+   0300 CDr00r00      [17]  622 	call	_PrintAt
+   0303 F1            [10]  623 	pop	af
+   0304 F1            [10]  624 	pop	af
+   0305 33            [ 6]  625 	inc	sp
+   0306 3E 03         [ 7]  626 	ld	a, #0x03
+   0308 F5            [11]  627 	push	af
+   0309 33            [ 6]  628 	inc	sp
+   030A 21r2Fr04      [10]  629 	ld	hl, #___str_3
+   030D E5            [11]  630 	push	hl
+   030E 21 1F 04      [10]  631 	ld	hl, #0x041f
+   0311 E5            [11]  632 	push	hl
+   0312 CDr00r00      [17]  633 	call	_PrintAt
+   0315 F1            [10]  634 	pop	af
+   0316 F1            [10]  635 	pop	af
+   0317 33            [ 6]  636 	inc	sp
+   0318 C1            [10]  637 	pop	bc
+   0319 69            [ 4]  638 	ld	l, c
+   031A 60            [ 4]  639 	ld	h, b
+   031B 11 18 00      [10]  640 	ld	de, #0x0018
+   031E 19            [11]  641 	add	hl, de
+   031F 5E            [ 7]  642 	ld	e, (hl)
+   0320 23            [ 6]  643 	inc	hl
+   0321 56            [ 7]  644 	ld	d, (hl)
+   0322 53            [ 4]  645 	ld	d, e
+   0323 C5            [11]  646 	push	bc
+   0324 21 04 02      [10]  647 	ld	hl, #0x0204
+   0327 E5            [11]  648 	push	hl
+   0328 3E 22         [ 7]  649 	ld	a, #0x22
+   032A F5            [11]  650 	push	af
+   032B 33            [ 6]  651 	inc	sp
+   032C D5            [11]  652 	push	de
+   032D 33            [ 6]  653 	inc	sp
+   032E CDr00r00      [17]  654 	call	_PrintU8
+   0331 F1            [10]  655 	pop	af
+   0332 26 03         [ 7]  656 	ld	h,#0x03
+   0334 E3            [19]  657 	ex	(sp),hl
+   0335 33            [ 6]  658 	inc	sp
+   0336 21r39r04      [10]  659 	ld	hl, #___str_4
+   0339 E5            [11]  660 	push	hl
+   033A 21 24 04      [10]  661 	ld	hl, #0x0424
+   033D E5            [11]  662 	push	hl
+   033E CDr00r00      [17]  663 	call	_PrintAt
+   0341 F1            [10]  664 	pop	af
+   0342 F1            [10]  665 	pop	af
+   0343 33            [ 6]  666 	inc	sp
+   0344 C1            [10]  667 	pop	bc
+   0345 69            [ 4]  668 	ld	l, c
+   0346 60            [ 4]  669 	ld	h, b
+   0347 11 16 00      [10]  670 	ld	de, #0x0016
+   034A 19            [11]  671 	add	hl, de
+   034B 5E            [ 7]  672 	ld	e, (hl)
+   034C 23            [ 6]  673 	inc	hl
+   034D 56            [ 7]  674 	ld	d, (hl)
+   034E 53            [ 4]  675 	ld	d, e
+   034F C5            [11]  676 	push	bc
+   0350 21 04 02      [10]  677 	ld	hl, #0x0204
+   0353 E5            [11]  678 	push	hl
+   0354 3E 25         [ 7]  679 	ld	a, #0x25
+   0356 F5            [11]  680 	push	af
+   0357 33            [ 6]  681 	inc	sp
+   0358 D5            [11]  682 	push	de
+   0359 33            [ 6]  683 	inc	sp
+   035A CDr00r00      [17]  684 	call	_PrintU8
+   035D F1            [10]  685 	pop	af
+   035E 26 03         [ 7]  686 	ld	h,#0x03
+   0360 E3            [19]  687 	ex	(sp),hl
+   0361 33            [ 6]  688 	inc	sp
+   0362 21r3Br04      [10]  689 	ld	hl, #___str_5
+   0365 E5            [11]  690 	push	hl
+   0366 21 1F 06      [10]  691 	ld	hl, #0x061f
+   0369 E5            [11]  692 	push	hl
+   036A CDr00r00      [17]  693 	call	_PrintAt
+   036D F1            [10]  694 	pop	af
+   036E F1            [10]  695 	pop	af
+   036F 33            [ 6]  696 	inc	sp
+   0370 C1            [10]  697 	pop	bc
+   0371 C5            [11]  698 	push	bc
+   0372 FD E1         [14]  699 	pop	iy
+   0374 FD 56 1A      [19]  700 	ld	d, 26 (iy)
+   0377 C5            [11]  701 	push	bc
+   0378 21 06 02      [10]  702 	ld	hl, #0x0206
+   037B E5            [11]  703 	push	hl
+   037C 3E 23         [ 7]  704 	ld	a, #0x23
+   037E F5            [11]  705 	push	af
+   037F 33            [ 6]  706 	inc	sp
+   0380 D5            [11]  707 	push	de
+   0381 33            [ 6]  708 	inc	sp
+   0382 CDr00r00      [17]  709 	call	_PrintU8
+   0385 F1            [10]  710 	pop	af
+   0386 26 03         [ 7]  711 	ld	h,#0x03
+   0388 E3            [19]  712 	ex	(sp),hl
+   0389 33            [ 6]  713 	inc	sp
+   038A 21r40r04      [10]  714 	ld	hl, #___str_6
+   038D E5            [11]  715 	push	hl
+   038E 21 1F 07      [10]  716 	ld	hl, #0x071f
+   0391 E5            [11]  717 	push	hl
+   0392 CDr00r00      [17]  718 	call	_PrintAt
+   0395 F1            [10]  719 	pop	af
+   0396 F1            [10]  720 	pop	af
+   0397 33            [ 6]  721 	inc	sp
+   0398 C1            [10]  722 	pop	bc
+   0399 C5            [11]  723 	push	bc
+   039A FD E1         [14]  724 	pop	iy
+   039C FD 56 1B      [19]  725 	ld	d, 27 (iy)
+   039F C5            [11]  726 	push	bc
+   03A0 21 07 02      [10]  727 	ld	hl, #0x0207
+   03A3 E5            [11]  728 	push	hl
+   03A4 3E 23         [ 7]  729 	ld	a, #0x23
+   03A6 F5            [11]  730 	push	af
+   03A7 33            [ 6]  731 	inc	sp
+   03A8 D5            [11]  732 	push	de
+   03A9 33            [ 6]  733 	inc	sp
+   03AA CDr00r00      [17]  734 	call	_PrintU8
+   03AD F1            [10]  735 	pop	af
+   03AE 26 03         [ 7]  736 	ld	h,#0x03
+   03B0 E3            [19]  737 	ex	(sp),hl
+   03B1 33            [ 6]  738 	inc	sp
+   03B2 21r45r04      [10]  739 	ld	hl, #___str_7
+   03B5 E5            [11]  740 	push	hl
+   03B6 21 1F 08      [10]  741 	ld	hl, #0x081f
+   03B9 E5            [11]  742 	push	hl
+   03BA CDr00r00      [17]  743 	call	_PrintAt
+   03BD F1            [10]  744 	pop	af
+   03BE F1            [10]  745 	pop	af
+   03BF 33            [ 6]  746 	inc	sp
+   03C0 C1            [10]  747 	pop	bc
+   03C1 C5            [11]  748 	push	bc
+   03C2 FD E1         [14]  749 	pop	iy
+   03C4 FD 56 1C      [19]  750 	ld	d, 28 (iy)
+   03C7 C5            [11]  751 	push	bc
+   03C8 21 08 02      [10]  752 	ld	hl, #0x0208
+   03CB E5            [11]  753 	push	hl
+   03CC 3E 23         [ 7]  754 	ld	a, #0x23
+   03CE F5            [11]  755 	push	af
+   03CF 33            [ 6]  756 	inc	sp
+   03D0 D5            [11]  757 	push	de
+   03D1 33            [ 6]  758 	inc	sp
+   03D2 CDr00r00      [17]  759 	call	_PrintU8
+   03D5 F1            [10]  760 	pop	af
+   03D6 26 03         [ 7]  761 	ld	h,#0x03
+   03D8 E3            [19]  762 	ex	(sp),hl
+   03D9 33            [ 6]  763 	inc	sp
+   03DA 21r4Ar04      [10]  764 	ld	hl, #___str_8
+   03DD E5            [11]  765 	push	hl
+   03DE 21 1F 0A      [10]  766 	ld	hl, #0x0a1f
+   03E1 E5            [11]  767 	push	hl
+   03E2 CDr00r00      [17]  768 	call	_PrintAt
+   03E5 F1            [10]  769 	pop	af
+   03E6 F1            [10]  770 	pop	af
+   03E7 33            [ 6]  771 	inc	sp
+   03E8 C1            [10]  772 	pop	bc
+   03E9 69            [ 4]  773 	ld	l, c
+   03EA 60            [ 4]  774 	ld	h, b
+   03EB 11 1D 00      [10]  775 	ld	de, #0x001d
+   03EE 19            [11]  776 	add	hl, de
+   03EF 5E            [ 7]  777 	ld	e, (hl)
+   03F0 23            [ 6]  778 	inc	hl
+   03F1 56            [ 7]  779 	ld	d, (hl)
+   03F2 53            [ 4]  780 	ld	d, e
+   03F3 C5            [11]  781 	push	bc
+   03F4 21 0A 02      [10]  782 	ld	hl, #0x020a
+   03F7 E5            [11]  783 	push	hl
+   03F8 3E 23         [ 7]  784 	ld	a, #0x23
+   03FA F5            [11]  785 	push	af
+   03FB 33            [ 6]  786 	inc	sp
+   03FC D5            [11]  787 	push	de
+   03FD 33            [ 6]  788 	inc	sp
+   03FE CDr00r00      [17]  789 	call	_PrintU8
+   0401 F1            [10]  790 	pop	af
+   0402 26 03         [ 7]  791 	ld	h,#0x03
+   0404 E3            [19]  792 	ex	(sp),hl
+   0405 33            [ 6]  793 	inc	sp
+   0406 21r4Fr04      [10]  794 	ld	hl, #___str_9
+   0409 E5            [11]  795 	push	hl
+   040A 21 1F 0B      [10]  796 	ld	hl, #0x0b1f
+   040D E5            [11]  797 	push	hl
+   040E CDr00r00      [17]  798 	call	_PrintAt
+   0411 F1            [10]  799 	pop	af
+   0412 F1            [10]  800 	pop	af
+   0413 33            [ 6]  801 	inc	sp
+   0414 E1            [10]  802 	pop	hl
+   0415 11 1F 00      [10]  803 	ld	de, #0x001f
+   0418 19            [11]  804 	add	hl, de
+   0419 4E            [ 7]  805 	ld	c, (hl)
+   041A 23            [ 6]  806 	inc	hl
+   041B 46            [ 7]  807 	ld	b, (hl)
+   041C 41            [ 4]  808 	ld	b, c
+   041D 21 0B 02      [10]  809 	ld	hl, #0x020b
+   0420 E5            [11]  810 	push	hl
+   0421 3E 23         [ 7]  811 	ld	a, #0x23
+   0423 F5            [11]  812 	push	af
+   0424 33            [ 6]  813 	inc	sp
+   0425 C5            [11]  814 	push	bc
+   0426 33            [ 6]  815 	inc	sp
+   0427 CDr00r00      [17]  816 	call	_PrintU8
+   042A F1            [10]  817 	pop	af
+   042B F1            [10]  818 	pop	af
+   042C DD E1         [14]  819 	pop	ix
+   042E C9            [10]  820 	ret
+   042F                     821 ___str_3:
+   042F 48 50 3A 20 20 20   822 	.ascii "HP:      "
+        20 20 20
+   0438 00                  823 	.db 0x00
+   0439                     824 ___str_4:
+   0439 2F                  825 	.ascii "/"
+   043A 00                  826 	.db 0x00
+   043B                     827 ___str_5:
+   043B 53 54 52 3A         828 	.ascii "STR:"
+   043F 00                  829 	.db 0x00
+   0440                     830 ___str_6:
+   0440 44 45 53 3A         831 	.ascii "DES:"
+   0444 00                  832 	.db 0x00
+   0445                     833 ___str_7:
+   0445 52 45 46 3A         834 	.ascii "REF:"
+   0449 00                  835 	.db 0x00
+   044A                     836 ___str_8:
+   044A 41 54 4B 3A         837 	.ascii "ATK:"
+   044E 00                  838 	.db 0x00
+   044F                     839 ___str_9:
+   044F 44 45 46 3A         840 	.ascii "DEF:"
+   0453 00                  841 	.db 0x00
+                            842 ;src/user_interface.c:140: void DrawLine (u8 coords[], u8 ch, u8 color)
+                            843 ;	---------------------------------
+                            844 ; Function DrawLine
+                            845 ; ---------------------------------
+   0454                     846 _DrawLine::
+   0454 DD E5         [15]  847 	push	ix
+   0456 DD 21 00 00   [14]  848 	ld	ix,#0
+   045A DD 39         [15]  849 	add	ix,sp
+                            850 ;src/user_interface.c:145: pen (color);
+   045C DD 7E 07      [19]  851 	ld	a, 7 (ix)
+   045F F5            [11]  852 	push	af
+   0460 33            [ 6]  853 	inc	sp
+   0461 CDr00r00      [17]  854 	call	_pen
+   0464 33            [ 6]  855 	inc	sp
+                            856 ;src/user_interface.c:146: ptr = coords;
+   0465 DD 4E 04      [19]  857 	ld	c,4 (ix)
+   0468 DD 46 05      [19]  858 	ld	b,5 (ix)
+                            859 ;src/user_interface.c:147: while ( (x = *ptr++) != 0xff) {
+   046B                     860 00101$:
+   046B 0A            [ 7]  861 	ld	a, (bc)
+   046C 5F            [ 4]  862 	ld	e, a
+   046D 03            [ 6]  863 	inc	bc
+   046E 53            [ 4]  864 	ld	d, e
+   046F 1C            [ 4]  865 	inc	e
+   0470 28 19         [12]  866 	jr	Z,00104$
+                            867 ;src/user_interface.c:148: y = *ptr++;
+   0472 0A            [ 7]  868 	ld	a, (bc)
+   0473 67            [ 4]  869 	ld	h, a
+   0474 03            [ 6]  870 	inc	bc
+                            871 ;src/user_interface.c:149: locate (x,y);
+   0475 C5            [11]  872 	push	bc
+   0476 6A            [ 4]  873 	ld	l, d
+   0477 E5            [11]  874 	push	hl
+   0478 CDr00r00      [17]  875 	call	_locate
+   047B F1            [10]  876 	pop	af
+   047C C1            [10]  877 	pop	bc
+                            878 ;src/user_interface.c:150: putchar (ch);
+   047D DD 5E 06      [19]  879 	ld	e, 6 (ix)
+   0480 16 00         [ 7]  880 	ld	d, #0x00
+   0482 C5            [11]  881 	push	bc
+   0483 D5            [11]  882 	push	de
+   0484 CDr00r00      [17]  883 	call	_putchar
+   0487 F1            [10]  884 	pop	af
+   0488 C1            [10]  885 	pop	bc
+   0489 18 E0         [12]  886 	jr	00101$
+   048B                     887 00104$:
+   048B DD E1         [14]  888 	pop	ix
+   048D C9            [10]  889 	ret
+                            890 	.area _CODE
+                            891 	.area _INITIALIZER
+                            892 	.area _CABS (ABS)
