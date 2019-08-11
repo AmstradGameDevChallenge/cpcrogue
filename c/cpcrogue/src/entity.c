@@ -31,23 +31,25 @@ void EntityInit (TEntity *e, u8 x, u8 y, u8 spr, u8 color, u8 name[],
 /****************************************************************************
  *                    Draw/Erase a single entity
  ***************************************************************************/
-void EntityDraw (struct TEntity *e, u8 erase)
+void EntityDraw (struct TEntity *e, u8 erase, u8 left, u8 top)
 {
   u8 x, y, color, spr;
+
   if (erase) {
-    x = e->px;
-    y = e->py;
-    color = PEN_TILE;
+    x = e->px - left;
+    y = e->py - top;
+    color = PEN_BRIGHT;
     spr = SPR_FLOOR;
   }
   else {
-    x = e->x;
-    y = e->y;
+    x = e->x - left;
+    y = e->y - top;
     color = e->color;
     spr = e->spr;
   }
+  if (x > 127 || x > VIEW_WIDTH-1 || y > 127 || y > VIEW_HEIGHT-1) return;
   pen (color);
-  locate (PLAY_X+x, PLAY_Y+y);
+  locate (VIEW_X+x, VIEW_Y+y);
   putchar (spr);
 }
 /****************************************************************************
@@ -115,16 +117,16 @@ u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y)
 /****************************************************************************
  *                      Draw all entities in array
  ***************************************************************************/
-void EntityDrawEntities (TEntity *entities[], u8 dirty[])
+void EntityDrawEntities (TEntity *entities[], u8 dirty[], u8 left, u8 top)
 {
   TEntity *e;
   u8 i=0;
   while ( (e=entities[i]) ) {
     if (dirty[i]) {
-      EntityDraw (e, TRUE);
+      EntityDraw (e, TRUE, left, top);
       dirty[i] = FALSE;
     }
-    EntityDraw (e, FALSE);
+    EntityDraw (e, FALSE, left, top);
     ++i;
   }
 }

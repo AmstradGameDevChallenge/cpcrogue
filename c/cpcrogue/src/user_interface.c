@@ -121,7 +121,7 @@ void PrintStats (TEntity *e)
 {
   u8 x, y;
 
-  x = STATS_X;
+  x = 31;
   y = STATS_Y;
 
   PrintAt (x,y, e->name, PEN_NORMAL); ++y;

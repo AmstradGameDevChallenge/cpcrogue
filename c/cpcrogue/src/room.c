@@ -4,25 +4,27 @@
 #include <stdio.h>
 
 
-void _RoomCreate (Room *r, u8 x, u8 y, u8 w, u8 h)
+void RoomCreate (TRoom *r, u8 x, u8 y, u8 w, u8 h)
 {
-  r->x1 = x;
-  r->y1 = y;
-  r->x2 = x+w;
-  r->y2 = y+h;
+  r->width = w;
+  r->height = h;
+  r->left = x;
+  r->top = y;
+  r->right = x+w+1;
+  r->bottom = y+h+1;
 }
 
-void _GetCenter (Room *r, u8 *x, u8 *y)
+void GetCenter (TRoom *r, u8 *x, u8 *y)
 {
-  *x = (r->x1 + r->x2) >> 1;
-  *y = (r->y1 + r->y2) >> 1;
+  *x = (r->left + r->right) >> 1;
+  *y = (r->top + r->bottom) >> 1;
 }
-u8 _RoomOverlaps (Room *r, Room *other)
+u8 RoomOverlaps (TRoom *r, TRoom *other)
 {
 /*  locate (1,21);
-  printf ("this (%d,%d),(%d,%d)", r->x1, r->y1, r->x2, r->y2);
+  printf ("this (%d,%d),(%d,%d)", r->left, r->top, r->right, r->bottom);
   locate (1,22);
-  printf ("other (%d,%d),(%d,%d)", other->x1, other->y1, other->x2, other->y2);*/
-  return (r->x1 <= other->x2 && r->x2 >= other->x1 &&
-    r->y1 <= other->y2 && r->y2 >= other->y1);
+  printf ("other (%d,%d),(%d,%d)", other->left, other->top, other->right, other->bottom);*/
+  return (r->left <= other->right && r->right >= other->left &&
+    r->top <= other->bottom && r->bottom >= other->top);
 }

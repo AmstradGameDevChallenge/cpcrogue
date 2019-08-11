@@ -18,17 +18,27 @@
 #define MAX_ENTITIES 5
 
 // Map dimensions
-#define MAP_WIDTH       28
-#define MAP_HEIGHT      18
-#define MAX_ROOMS       16
-#define ROOM_MIN_SIZE   3
-#define ROOM_MAX_SIZE   7
+#define MAP_WIDTH       50
+#define MAP_HEIGHT      30
+#define MIN_ROOM_SIZE   4
+#define MAX_ROOM_SIZE   8
+#define MIN_ROOMS       5
+#define MAX_ROOMS       15
+
+// Grid
+#define SPOTS_IN_GRID   10
+#define GRID_WIDTH      5
+#define GRID_HEIGHT     3
+#define ROOM_NONE       GRID_WIDTH * GRID_HEIGHT
 
 // Where the visible map starts, these offsets are added to
 // everything we draw so they appear in the correct playable coordinates
-#define PLAY_X          2
-#define PLAY_Y          2
-#define STATS_X         PLAY_X + MAP_WIDTH + 1
+// Viewport dimensions
+#define VIEW_WIDTH      28
+#define VIEW_HEIGHT     18
+#define VIEW_X          2
+#define VIEW_Y          2
+#define STATS_X         VIEW_X + MAP_WIDTH -1
 #define STATS_Y         3
 #define STATUS_X        2
 #define STATUS_Y        21
@@ -36,21 +46,21 @@
 #define LOADING_Y       STATUS_Y
 
 // Game Sprites
-#define   SPR_WALL    '#'
-#define   SPR_FLOOR   '.'
+#define   SPR_WALL    207
+#define   SPR_FLOOR   144
 #define   SPR_PLAYER  '@'
 #define   SPR_GOBLIN  'g'
 
 // Sprite Colors
 #define   INK_BG          0
 #define   INK_DARK        1
-#define   INK_BRIGHT      20
-#define   INK_NORMAL      10
-#define   PEN_ENTITY      3
+#define   INK_BRIGHT      25
+#define   INK_NORMAL      16
 
+#define   PEN_ENTITY      3
 #define   PEN_CLEAR       0
 #define   PEN_TILE        3
-#define   PEN_EXLORED     1
+#define   PEN_EXPLORED    1
 #define   PEN_BRIGHT      2
 #define   PEN_NORMAL      3
 

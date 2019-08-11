@@ -1,9 +1,16 @@
-typedef struct Room {
-  u8 x1, y1;
-  u8 x2, y2;
-} Room;
+#ifndef ROOMS_H
+#define ROOMS_H
 
-void _RoomCreate (Room *r, u8 x, u8 y, u8 w, u8 h);
-void _PlaceRoom (Room *r);
-u8 _RoomOverlaps (Room *r, Room *other);
-void _GetCenter (Room *r, u8 *x, u8 *y);
+typedef struct {
+  u8 left, right, top, bottom;    // Rect coordinates
+  //u8 center_x, center_y;
+  u8 width, height;               // width,height including walls
+  u8 grid_id;                     // Grid id where the room is placed
+} TRoom;
+
+void RoomCreate (TRoom *r, u8 x, u8 y, u8 w, u8 h);
+void PlaceRoom (TRoom *r);
+u8 RoomOverlaps (TRoom *r, TRoom *other);
+void GetCenter (TRoom *r, u8 *x, u8 *y);
+
+#endif

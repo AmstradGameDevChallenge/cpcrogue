@@ -54,6 +54,7 @@ u8 dirty[MAX_ENTITIES];           // Flags to signal when to draw an entity
 TEntity *entities[MAX_ENTITIES];  // List of entities in game
 TState state;                     // Current state in game
 TEntity *target = NULL;           // Used when searching entities
+u8 left, top;                     // Map coords. we want to start drawing
 
 // Player displacement
 i8 dx, dy;
@@ -66,11 +67,12 @@ u8 new_x, new_y;
 void main()
 {
   u8 ei = 0;
+  u8 view_updated = FALSE;
 
   //ShowLogo();
   cls();
 
-  EntityInit (&player, 3, 3, SPR_PLAYER, PEN_BRIGHT, "Thorbag", TRUE,
+  EntityInit (&player, 0, 0, SPR_PLAYER, PEN_BRIGHT, "Thorbag", TRUE,
     20, 17, 14, 12);
   EntityInit (&enemy, 19, 3, SPR_GOBLIN, PEN_ENTITY, "Goblin", TRUE,
     10, 12, 13, 11);
@@ -86,20 +88,33 @@ void main()
   DrawHUD ();
 
   MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
-  MapDraw ();
-  EntityDrawEntities(entities, dirty);
-
+  GetView (&player, &left, &top);
   PrintStats(&player);
+  MapDraw (left, top);
+  //EntityDrawEntities(entities, dirty, left, top);
   ClearStatus(LOADING_Y, 1);
   InitColors();
-
 
   // It's Player's turn
   state = PLAYER_TURN;
 
   do {
     // Draw all
-    EntityDrawEntities(entities, dirty);
+    // Check if we should update viewport
+    if (player.x < left || player.y <top ||
+      player.x > left+VIEW_WIDTH || player.y > top+VIEW_HEIGHT) {
+      GetView (&player, &left, &top);
+      view_updated = TRUE;
+    }
+    if (view_updated) {
+      view_updated = FALSE;
+      BlackScreen ();
+      DisplayLoading ();
+      MapDraw (left, top);
+      ClearStatus(LOADING_Y, 1);
+      InitColors();
+    }
+    EntityDrawEntities(entities, dirty, left, top);
 
     // Get keyboard state
     cpct_scanKeyboard();
@@ -115,8 +130,9 @@ void main()
       BlackScreen ();
       DisplayLoading ();
       MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
-      MapDraw ();
-      EntityDrawEntities(entities, dirty);
+      GetView (&player, &left, &top);
+      MapDraw (left, top);
+      EntityDrawEntities(entities, dirty, left, top);
       ClearStatus(LOADING_Y, 1);
       InitColors ();
     }
