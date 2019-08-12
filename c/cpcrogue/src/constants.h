@@ -64,6 +64,15 @@
 #define   PEN_BRIGHT      2
 #define   PEN_NORMAL      3
 
+// Cell Flags
+#define   BLOCKED       0x01  // Blocks movement
+#define   BLOCKS_LIGHT  0x02  // Light does not pass through this cell
+#define   EXPLORED      0x04  // Has been explored by player
+#define   VISIBLE       0x08  // Is visible by player
+
+// LOS constants
+#define   FOV_RADIUS    3     // Max distance player can see
+
 // Available actions for player
 typedef enum TAction {
   NONE, PLAYER_MOVE, NEW_LEVEL

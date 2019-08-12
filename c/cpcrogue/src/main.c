@@ -50,7 +50,6 @@ void InitColors()
  ***************************************************************************/
 TAction action = NONE;            // Action taken by player
 TEntity player, enemy;            // Entities to be placed
-u8 dirty[MAX_ENTITIES];           // Flags to signal when to draw an entity
 TEntity *entities[MAX_ENTITIES];  // List of entities in game
 TState state;                     // Current state in game
 TEntity *target = NULL;           // Used when searching entities
@@ -68,6 +67,7 @@ void main()
 {
   u8 ei = 0;
   u8 view_updated = FALSE;
+  u8 fov_changed = FALSE;
 
   //ShowLogo();
   cls();
@@ -80,18 +80,15 @@ void main()
   entities[0] = &player;
   entities[1] = &enemy;
 
-  dirty[0] = FALSE;
-  dirty[1] = FALSE;
-
   BlackScreen ();
   DisplayLoading ();
   DrawHUD ();
 
   MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
-  GetView (&player, &left, &top);
+  GetView (&player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
+  ComputeLOS (player.x, player.y, FOV_RADIUS);
+  MapDraw (left, top, VIEW_WIDTH, VIEW_HEIGHT, &player);
   PrintStats(&player);
-  MapDraw (left, top);
-  //EntityDrawEntities(entities, dirty, left, top);
   ClearStatus(LOADING_Y, 1);
   InitColors();
 
@@ -99,22 +96,30 @@ void main()
   state = PLAYER_TURN;
 
   do {
+    // Check if we need to recompute field of view
+    if (fov_changed) {
+      ComputeLOS (player.x, player.y, FOV_RADIUS);
+      MapDraw (left, top, VIEW_WIDTH, VIEW_HEIGHT, &player);
+      fov_changed = FALSE;
+    }
     // Draw all
     // Check if we should update viewport
     if (player.x < left || player.y <top ||
       player.x > left+VIEW_WIDTH || player.y > top+VIEW_HEIGHT) {
-      GetView (&player, &left, &top);
       view_updated = TRUE;
     }
     if (view_updated) {
       view_updated = FALSE;
       BlackScreen ();
+      cls();
       DisplayLoading ();
-      MapDraw (left, top);
+      MapDraw (left, top, VIEW_WIDTH, VIEW_HEIGHT, &player);
       ClearStatus(LOADING_Y, 1);
+      DrawHUD ();
+      PrintStats(&player);
       InitColors();
     }
-    EntityDrawEntities(entities, dirty, left, top);
+    EntityDrawEntities(entities, left, top);
 
     // Get keyboard state
     cpct_scanKeyboard();
@@ -128,12 +133,15 @@ void main()
 
     if (action == NEW_LEVEL) {
       BlackScreen ();
+      cls();
       DisplayLoading ();
       MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
-      GetView (&player, &left, &top);
-      MapDraw (left, top);
-      EntityDrawEntities(entities, dirty, left, top);
+      ComputeLOS(player.x, player.y, FOV_RADIUS);
+      GetView (&player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
+      MapDraw (left, top, VIEW_WIDTH, VIEW_HEIGHT, &player);
       ClearStatus(LOADING_Y, 1);
+      DrawHUD ();
+      PrintStats(&player);
       InitColors ();
     }
     if (action == PLAYER_MOVE && state == PLAYER_TURN) {
@@ -144,15 +152,17 @@ void main()
           EntityAttack (&player, target);
         }
         else {
-          dirty[0] = TRUE;
+          // Reset tile visibility around player's FOV
+          MapSetNotVisible (player.x, player.y, FOV_RADIUS);
           EntityMove (&player, dx, dy);
+          fov_changed = TRUE;
         }
-        cpct_waitHalts(15);
+        //cpct_waitHalts(15);
         state = ENEMY_TURN;
       }
     }
     if (state == ENEMY_TURN) {
-      cpct_waitHalts(15);
+      //cpct_waitHalts(15);
       // Enemy actions
       new_x = enemy.x + edx[ei];
       new_y = enemy.y;
@@ -164,7 +174,6 @@ void main()
         }
         else {
           EntityMove (&enemy, edx[ei++], edy);
-          dirty[1] = TRUE;
         }
       }
       else ++ei;

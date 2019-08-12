@@ -29,7 +29,11 @@ inline i8 sign (i8 value)
 
 u8 rand_range (u8 min, u8 max);
 
-u16 manh_distance_to (u8 x1, u8 y1, u8 x2, u8 y2);
+u16 manh_distance (u8 x1, u8 y1, u8 x2, u8 y2);
+
+inline u16 distance_sqr (u8 x1, u8 y1, u8 x2, u8 y2) {
+  return ((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+}
 
 
 //#endif

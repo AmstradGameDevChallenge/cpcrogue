@@ -28,8 +28,8 @@ void EntityInit (TEntity *c, u8 x, u8 y, u8 spr, u8 color, u8 name[],
 void EntityMove (TEntity *c, i8 dx, i8 dy);
 void EntityAttack (TEntity *e, TEntity *target);
 u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y);
-void EntityDraw (TEntity *e, u8 erase, u8 left, u8 top);
-void EntityDrawEntities(TEntity *entities[], u8 dirty[], u8 left, u8 top);
+void EntityDraw (TEntity *e, u8 left, u8 top);
+void EntityDrawEntities(TEntity *entities[], u8 left, u8 top);
 void EntityPrintStats (TEntity *e);
 
 #endif
