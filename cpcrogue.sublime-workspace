@@ -1,0 +1,676 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"cpct_memset_",
+				"cpct_memset_f64"
+			],
+			[
+				"cpct_drwa",
+				"cpct_setDrawCharM1"
+			],
+			[
+				"fov_",
+				"FOV_RADIUS"
+			],
+			[
+				"bl",
+				"BLOCKED"
+			],
+			[
+				"Tunn",
+				"_CreateTunnel"
+			],
+			[
+				"t",
+				"td\tTypedef"
+			],
+			[
+				"Draw",
+				"_DrawSquares"
+			],
+			[
+				"n",
+				"nlines_h"
+			],
+			[
+				"stat",
+				"stats_changed"
+			],
+			[
+				"Romo",
+				"_RoomCreate"
+			],
+			[
+				"MAX_",
+				"MAX_ROWS"
+			],
+			[
+				"PEN",
+				"PEN_EXLORED"
+			],
+			[
+				"K",
+				"Key_I"
+			],
+			[
+				"cpct_",
+				"cpct_setDrawCharM1"
+			],
+			[
+				"PEN_",
+				"PEN_TILE"
+			],
+			[
+				"create",
+				"map_create"
+			],
+			[
+				"pd",
+				"PDIRTY"
+			],
+			[
+				"log",
+				"log_messages"
+			],
+			[
+				"pos",
+				"posX"
+			],
+			[
+				"Key",
+				"Key_W"
+			],
+			[
+				"Initi",
+				"InitializeCharacter"
+			],
+			[
+				"Define",
+				"DefineEntityDefault"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/main.c",
+			"settings":
+			{
+				"buffer_size": 4767,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/user_interface.c",
+			"settings":
+			{
+				"buffer_size": 4439,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doxygen/Doxyfile",
+			"settings":
+			{
+				"buffer_size": 110579,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/user_interface.h",
+			"settings":
+			{
+				"buffer_size": 762,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C Single File.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/C++/C Single File.sublime-build",
+				"Run"
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src"
+	],
+	"file_history":
+	[
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game_map.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game_map.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/entity.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/constants.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fov.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fast_math.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fast_math.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/rect.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/rect.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen/Doxyfile",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fov.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/conio.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/logo.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/input_handler.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/input_handler.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/fast_math.rst",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/fast_math.rel",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/entity.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/main.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/conio.c",
+		"/home/andriu/repos/cpctelera/dirtybit/obj/main.lst",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/init.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/init.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/room.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/room.h",
+		"/home/andriu/cpcrogue/src/game_map.c",
+		"/home/andriu/repos/cpp/rog11src/RINGS.C",
+		"/home/andriu/repos/cpp/rog11src/RIP.C",
+		"/home/andriu/repos/cpp/rog11src/EXTERN.H",
+		"/home/andriu/repos/cpp/rog11src/EXTERN.C",
+		"/home/andriu/repos/basrogue/map.bak",
+		"/home/andriu/repos/cpp/rog11src/ROOMS.C",
+		"/home/andriu/repos/rogue_docs/Dungeon_alternatives.txt",
+		"/home/andriu/repos/rogue_docs/Precise Shadowcasting.txt",
+		"/home/andriu/repos/rogue_docs/Line of Sight.txt",
+		"/home/andriu/repos/rogue_docs/recursive_shadow.txt",
+		"/home/andriu/repos/rogue_docs/basic_n_shadow.cs",
+		"/home/andriu/repos/rogue_docs/improved_shaow.java",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/cfg/build_config.mk",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/game_map.rst",
+		"/home/andriu/.local/cpctelera/cpctelera/cfg/global_main_makefile.mk",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/fov.lst",
+		"/home/andriu/.local/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/share/sdcc/include/time.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc02/src/entity.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc02/src/main.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc02/src/entity.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc02/cfg/build_config.mk",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/main.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/entity.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/conio.h",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/logo.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/game_map.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/entity.h",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/logo.h",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/constants.h",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/input_handler.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/conio.c",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/game_map.h",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/input_handler.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc02/obj/agc02.map",
+		"/home/andriu/repos/cpctelera/tests/src/game_map.h",
+		"/home/andriu/repos/cpctelera/tests/src/game_map.c",
+		"/home/andriu/repos/cpctelera/tests/src/constants.h",
+		"/home/andriu/repos/cpctelera/tests/src/main.c",
+		"/home/andriu/repos/cpctelera/tests/src/debug.c",
+		"/home/andriu/repos/cpctelera/tests/src/debug.h",
+		"/home/andriu/repos/cpctelera/tests/cfg/build_config.mk",
+		"/home/andriu/repos/cpctelera/tests/obj/game_map.rst",
+		"/home/andriu/repos/cpctelera/tests/obj/debug.rst",
+		"/home/andriu/repos/cpctelera/tests/obj/main.rst",
+		"/home/andriu/repos/cpctelera/tests/obj/tests.bin",
+		"/home/andriu/repos/cpctelera/tests/src/entity.c",
+		"/home/andriu/repos/cpctelera/tests/src/entity.h",
+		"/home/andriu/repos/cpctelera/tests/obj/entity.lst",
+		"/home/andriu/repos/cpctelera/tests/src/fast_math.h",
+		"/home/andriu/repos/cpctelera/tests/src/path_finding.c",
+		"/home/andriu/repos/cpctelera/tests/src/path_finding.h",
+		"/home/andriu/repos/cpctelera/tests/src/tile.h",
+		"/home/andriu/repos/cpctelera/tests/src/fast_math.c",
+		"/home/andriu/repos/cpctelera/tests/obj/main.lst",
+		"/home/andriu/repos/cpctelera/tests/src/tile.c",
+		"/home/andriu/repos/cpctelera/tests/obj/path_finding.rst",
+		"/home/andriu/repos/cpctelera/tests/obj/path_finding.lst",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/src/main.bak",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/obj/agc02.map",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/obj/main.rst",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/obj/main.asm",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/obj/agc02.bin",
+		"/home/andriu/repos/cpctelera/rogue_tests/c/agc02/obj/main.lst",
+		"/home/andriu/repos/python/rogue_gui/main.py",
+		"/home/andriu/.config/sxhkd/sxhkdrc",
+		"/home/andriu/repos/cpp/test.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/bas/rogue.bas",
+		"/home/andriu/repos/python/rogue_gui/constants.py",
+		"/home/andriu/.config/i3blocks/config",
+		"/home/andriu/repos/python/rogue/input.py",
+		"/home/andriu/repos/python/rogue/engine.py",
+		"/home/andriu/repos/cpctelera/bas_c/cpc_rogue/bas/cpcrogue.bas",
+		"/home/andriu/.config/i3/config",
+		"/home/andriu/.config/gtk-2.0/gtkrc-2.0",
+		"/home/andriu/.config/gtk-3.0/settings.ini",
+		"/home/andriu/.Xresources",
+		"/home/andriu/repos/cpctelera/cpcrogue/.gitignore",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc01/obj/agc01.map",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc01/src/rogue.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/agc01/src/main.c",
+		"/home/andriu/.profile",
+		"/home/andriu/.gtkrc-2.0.mine",
+		"/home/andriu/repos/cpctelera/cpcrogue/README.md",
+		"/home/andriu/repos/cpctelera/bas_c/cpc_rogue/c/cpcrogue/src/main.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/.git/COMMIT_EDITMSG",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/rogue.c",
+		"/home/andriu/repos/cpctelera/base_redo/src/main.s",
+		"/home/andriu/repos/cpctelera/base_redo/src/entity.s",
+		"/home/andriu/repos/cpctelera/base_redo/src/entity.h.s",
+		"/home/andriu/.local/bin/statusbar/internet",
+		"/etc/i3blocks.conf",
+		"/home/andriu/.local/bin/statusbar/iface",
+		"/home/andriu/.bash_profile",
+		"/home/andriu/.xprofile",
+		"/home/andriu/.local/bin/statusbar/volume",
+		"/home/andriu/dwm_rice/.xinitrc",
+		"/home/andriu/.local/bin/dwmbar",
+		"/home/andriu/.local/bin/statusbar/weather"
+	],
+	"find":
+	{
+		"height": 41.0
+	},
+	"find_in_files":
+	{
+		"height": 105.0,
+		"where_history":
+		[
+			"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"initial",
+			"SOURCE",
+			"PRIVATE",
+			"INLINE",
+			"SOURCE_BROWSER",
+			"EXTRACT_ALL",
+			"FILE_PATTERNS",
+			"hud",
+			"hud[",
+			"hud",
+			"DrawSingleChars",
+			"DrawGame",
+			"FOV",
+			"player",
+			"detail",
+			"brief",
+			",",
+			"BRIEF_MEMBER",
+			"JAVADOC",
+			"QT",
+			"directory",
+			"TRUE",
+			"FALSE",
+			"TRUE",
+			"\"\n",
+			"MapDraw",
+			"putchar",
+			"printf",
+			"Public",
+			"TRUE",
+			"FALSE",
+			"TRUE"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			";",
+			"true",
+			"false",
+			"true",
+			"false",
+			"true"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/main.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4767,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3605,
+								3605
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1670.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/user_interface.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4439,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								229,
+								229
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "doxygen/Doxyfile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 110579,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								65991,
+								65991
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Bash.sublime-syntax",
+							"tab_size": 5,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 33439.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/user_interface.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 762,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								288,
+								288
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 133.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "cpcrogue.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 224.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,85 @@
+\hypertarget{group__Map}{}\section{Map}
+\label{group__Map}\index{Map@{Map}}
+
+
+Map information.  
+
+
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structTTile}{T\+Tile}}
+\begin{DoxyCompactList}\small\item\em Single tile information. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structTMap}{T\+Map}}
+\begin{DoxyCompactList}\small\item\em Map dimensions and tiles it contains. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structTRoom}{T\+Room}}
+\item 
+struct \mbox{\hyperlink{structTGridCell}{T\+Grid\+Cell}}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__Map_ga0a25d4a00a01f6a01f415c8cf22b17d2}\label{group__Map_ga0a25d4a00a01f6a01f415c8cf22b17d2}} 
+void {\bfseries Map\+Create} (u8 width, u8 height, \mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$player)
+\item 
+\mbox{\Hypertarget{group__Map_ga3eae0d3c0cf7368023838ed2dfc5e3c8}\label{group__Map_ga3eae0d3c0cf7368023838ed2dfc5e3c8}} 
+u8 {\bfseries Map\+Is\+Blocked} (u8 x, u8 y)
+\item 
+\mbox{\Hypertarget{group__Map_ga4a96cfd7d7f5dab759c0274d498ca927}\label{group__Map_ga4a96cfd7d7f5dab759c0274d498ca927}} 
+u8 {\bfseries Map\+Blocks\+Light} (u8 x, u8 y)
+\item 
+\mbox{\Hypertarget{group__Map_ga806e9ea5321e82e566b161fcbd5e2e2d}\label{group__Map_ga806e9ea5321e82e566b161fcbd5e2e2d}} 
+void {\bfseries Map\+Set\+Not\+Visible} (u8 origin\+\_\+x, u8 origin\+\_\+y, u8 range)
+\item 
+\mbox{\Hypertarget{group__Map_ga300f688f7b1989dba73d6bae2772a7dc}\label{group__Map_ga300f688f7b1989dba73d6bae2772a7dc}} 
+void {\bfseries Map\+Draw} (u8 left, u8 right, u8 width, u8 height, \mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$player)
+\item 
+\mbox{\Hypertarget{group__Map_gae17467d65d599928e1b7bfa3ddeee49f}\label{group__Map_gae17467d65d599928e1b7bfa3ddeee49f}} 
+void {\bfseries Get\+View} (\mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$player, u8 $\ast$left, u8 $\ast$top, u8 width, u8 height)
+\item 
+\mbox{\Hypertarget{group__Map_gaaf6d5d23473322d54274ad7aa393adcd}\label{group__Map_gaaf6d5d23473322d54274ad7aa393adcd}} 
+void {\bfseries Map\+Set\+Visible} (u8 x, u8 y)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__Map_ga4e29a9a98bfa352440b628a995cba64d}\label{group__Map_ga4e29a9a98bfa352440b628a995cba64d}} 
+u8 {\bfseries T\+Tile\+::t\+\_\+flags}
+\item 
+\mbox{\Hypertarget{group__Map_ga2fe3dde5db57e2ec58a78ceb85ef1642}\label{group__Map_ga2fe3dde5db57e2ec58a78ceb85ef1642}} 
+u8 {\bfseries T\+Map\+::width}
+\item 
+\mbox{\Hypertarget{group__Map_ga62f0d660273fafe5b4f27ecc7f95456d}\label{group__Map_ga62f0d660273fafe5b4f27ecc7f95456d}} 
+u8 {\bfseries T\+Map\+::height}
+\item 
+\mbox{\Hypertarget{group__Map_gac8050f8f059101f93288d8f4037531c9}\label{group__Map_gac8050f8f059101f93288d8f4037531c9}} 
+\mbox{\hyperlink{structTTile}{T\+Tile}} {\bfseries T\+Map\+::tiles} \mbox{[}M\+A\+P\+\_\+\+H\+E\+I\+G\+HT\mbox{]}\mbox{[}M\+A\+P\+\_\+\+W\+I\+D\+TH\mbox{]}
+\item 
+\mbox{\Hypertarget{group__Map_ga637db7778f278eaa8fd09ec009881ae2}\label{group__Map_ga637db7778f278eaa8fd09ec009881ae2}} 
+\mbox{\hyperlink{structTRect}{T\+Rect}} {\bfseries T\+Room\+::rect}
+\item 
+\mbox{\Hypertarget{group__Map_gaf547d9aae28ee0d3a09d51cb4650659c}\label{group__Map_gaf547d9aae28ee0d3a09d51cb4650659c}} 
+u8 {\bfseries T\+Room\+::grid\+\_\+id}
+\item 
+\mbox{\Hypertarget{group__Map_ga9eb413b36d66119ffbb32a5a23c5d628}\label{group__Map_ga9eb413b36d66119ffbb32a5a23c5d628}} 
+u8 {\bfseries T\+Grid\+Cell\+::x}
+\item 
+\mbox{\Hypertarget{group__Map_ga203679fb4506b253419a1eb4db418ae5}\label{group__Map_ga203679fb4506b253419a1eb4db418ae5}} 
+u8 {\bfseries T\+Grid\+Cell\+::y}
+\item 
+\mbox{\Hypertarget{group__Map_gaf6810a8c1ba4361c7fda884f6cbb7787}\label{group__Map_gaf6810a8c1ba4361c7fda884f6cbb7787}} 
+u8 {\bfseries T\+Grid\+Cell\+::room\+\_\+id}
+\item 
+\mbox{\Hypertarget{group__Map_ga86fd67ae05bb10aa49151b5cbcfb03ad}\label{group__Map_ga86fd67ae05bb10aa49151b5cbcfb03ad}} 
+\mbox{\hyperlink{structTGridCell}{T\+Grid\+Cell}} {\bfseries grid} \mbox{[}$\,$\mbox{]}
+\item 
+\mbox{\Hypertarget{group__Map_ga6c049bed6e4286fab8db7b65f4d8f871}\label{group__Map_ga6c049bed6e4286fab8db7b65f4d8f871}} 
+\mbox{\hyperlink{structTMap}{T\+Map}} {\bfseries game\+\_\+map}
+\item 
+\mbox{\Hypertarget{group__Map_ga0b54f3c216fb05da0dd0c07c9140cfb6}\label{group__Map_ga0b54f3c216fb05da0dd0c07c9140cfb6}} 
+\mbox{\hyperlink{structTRoom}{T\+Room}} {\bfseries rooms} \mbox{[}$\,$\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The game stores information of each tile in the map. Each tile needs to keep track of certain attributes like is it walkable?, or blocks light? etc. 

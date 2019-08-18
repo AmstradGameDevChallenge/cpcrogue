@@ -1,0 +1,130 @@
+\hypertarget{group__TRect}{}\section{T\+Rect}
+\label{group__TRect}\index{TRect@{TRect}}
+
+
+Used to define coordinates and dimensions.  
+
+
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structTRect}{T\+Rect}}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group__TRect_gaec082007d22f2533dccd8e2542514401}{Rect\+Create}} (\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$r, u8 x, u8 y, u8 w, u8 h)
+\begin{DoxyCompactList}\small\item\em Creates a new rectangle at position x,y and w,h dimensions. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__TRect_gac05f9cf832034413436d9aaeed3bbc72}{Rect\+Get\+Center}} (\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$r, u8 $\ast$x, u8 $\ast$y)
+\begin{DoxyCompactList}\small\item\em Get the center coordinates of a rectangle. \end{DoxyCompactList}\item 
+u8 \mbox{\hyperlink{group__TRect_ga2f135e151b08906abfa35b64a3d6b366}{Rect\+Intersect}} (\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$rect, \mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$other)
+\begin{DoxyCompactList}\small\item\em Queries for intersection of two rectangles. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+u8 \mbox{\hyperlink{group__TRect_gabf4bc428ae2b560efda3c60687a73f00}{T\+Rect\+::left}}
+\item 
+u8 \mbox{\hyperlink{group__TRect_ga145b5ca0d242dc39c33f1fa72dd04056}{T\+Rect\+::top}}
+\item 
+u8 \mbox{\hyperlink{group__TRect_gae2a5778c81eb1e464703e1a563e7dcf0}{T\+Rect\+::right}}
+\item 
+u8 \mbox{\hyperlink{group__TRect_ga225c7bff13bd2bb02d55a517f4c34eb2}{T\+Rect\+::bottom}}
+\item 
+u8 \mbox{\hyperlink{group__TRect_ga1a0b1f4f8d316782395a16e4b88bc66f}{T\+Rect\+::width}}
+\item 
+u8 \mbox{\hyperlink{group__TRect_ga8808bb53b01ed90c0d41b3360a9f6b95}{T\+Rect\+::height}}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__TRect_gaec082007d22f2533dccd8e2542514401}\label{group__TRect_gaec082007d22f2533dccd8e2542514401}} 
+\index{TRect@{TRect}!RectCreate@{RectCreate}}
+\index{RectCreate@{RectCreate}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{RectCreate()}{RectCreate()}}
+{\footnotesize\ttfamily void Rect\+Create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$}]{r,  }\item[{u8}]{x,  }\item[{u8}]{y,  }\item[{u8}]{w,  }\item[{u8}]{h }\end{DoxyParamCaption})}
+
+Create a new rectangle at specific coords and width, height
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em r} & Rectangle (ptr) to create\\
+\hline
+\mbox{\texttt{ in}}  & {\em x,y} & Top, left coordinate position\\
+\hline
+\mbox{\texttt{ in}}  & {\em w,h} & Width and height dimensions \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__TRect_gac05f9cf832034413436d9aaeed3bbc72}\label{group__TRect_gac05f9cf832034413436d9aaeed3bbc72}} 
+\index{TRect@{TRect}!RectGetCenter@{RectGetCenter}}
+\index{RectGetCenter@{RectGetCenter}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{RectGetCenter()}{RectGetCenter()}}
+{\footnotesize\ttfamily void Rect\+Get\+Center (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$}]{r,  }\item[{u8 $\ast$}]{x,  }\item[{u8 $\ast$}]{y }\end{DoxyParamCaption})}
+
+Get center of a rectangle
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em r} & Rectangle to process\\
+\hline
+\mbox{\texttt{ out}}  & {\em x,y} & Center coordinates \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__TRect_ga2f135e151b08906abfa35b64a3d6b366}\label{group__TRect_ga2f135e151b08906abfa35b64a3d6b366}} 
+\index{TRect@{TRect}!RectIntersect@{RectIntersect}}
+\index{RectIntersect@{RectIntersect}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{RectIntersect()}{RectIntersect()}}
+{\footnotesize\ttfamily u8 Rect\+Intersect (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$}]{rect,  }\item[{\mbox{\hyperlink{structTRect}{T\+Rect}} $\ast$}]{other }\end{DoxyParamCaption})}
+
+true if two rectangles overlap
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em rect,other} & The two rectangles to query for intersection (overlap)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the two rectangles overlap 
+\end{DoxyReturn}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{group__TRect_ga225c7bff13bd2bb02d55a517f4c34eb2}\label{group__TRect_ga225c7bff13bd2bb02d55a517f4c34eb2}} 
+\index{TRect@{TRect}!bottom@{bottom}}
+\index{bottom@{bottom}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{bottom}{bottom}}
+{\footnotesize\ttfamily u8 T\+Rect\+::bottom}
+
+bottom boundary of the rectangle \mbox{\Hypertarget{group__TRect_ga8808bb53b01ed90c0d41b3360a9f6b95}\label{group__TRect_ga8808bb53b01ed90c0d41b3360a9f6b95}} 
+\index{TRect@{TRect}!height@{height}}
+\index{height@{height}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{height}{height}}
+{\footnotesize\ttfamily u8 T\+Rect\+::height}
+
+height dimension of the rectangle \mbox{\Hypertarget{group__TRect_gabf4bc428ae2b560efda3c60687a73f00}\label{group__TRect_gabf4bc428ae2b560efda3c60687a73f00}} 
+\index{TRect@{TRect}!left@{left}}
+\index{left@{left}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{left}{left}}
+{\footnotesize\ttfamily u8 T\+Rect\+::left}
+
+X position of the rectangle \mbox{\Hypertarget{group__TRect_gae2a5778c81eb1e464703e1a563e7dcf0}\label{group__TRect_gae2a5778c81eb1e464703e1a563e7dcf0}} 
+\index{TRect@{TRect}!right@{right}}
+\index{right@{right}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{right}{right}}
+{\footnotesize\ttfamily u8 T\+Rect\+::right}
+
+right boundary of the rectangle \mbox{\Hypertarget{group__TRect_ga145b5ca0d242dc39c33f1fa72dd04056}\label{group__TRect_ga145b5ca0d242dc39c33f1fa72dd04056}} 
+\index{TRect@{TRect}!top@{top}}
+\index{top@{top}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{top}{top}}
+{\footnotesize\ttfamily u8 T\+Rect\+::top}
+
+Y position of the rectangle \mbox{\Hypertarget{group__TRect_ga1a0b1f4f8d316782395a16e4b88bc66f}\label{group__TRect_ga1a0b1f4f8d316782395a16e4b88bc66f}} 
+\index{TRect@{TRect}!width@{width}}
+\index{width@{width}!TRect@{TRect}}
+\subsubsection{\texorpdfstring{width}{width}}
+{\footnotesize\ttfamily u8 T\+Rect\+::width}
+
+width dimension of the rectangle 

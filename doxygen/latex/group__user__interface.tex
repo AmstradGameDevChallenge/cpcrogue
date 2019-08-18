@@ -1,0 +1,73 @@
+\hypertarget{group__user__interface}{}\section{User\+\_\+interface}
+\label{group__user__interface}\index{User\_interface@{User\_interface}}
+
+
+Routines to draw visible game elements.  
+
+
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group__user__interface_ga9c256069a6dda3ba120c624a6e3f2c34}\label{group__user__interface_ga9c256069a6dda3ba120c624a6e3f2c34}} 
+void \mbox{\hyperlink{group__user__interface_ga9c256069a6dda3ba120c624a6e3f2c34}{Draw\+H\+UD}} ()
+\begin{DoxyCompactList}\small\item\em Draws the H\+UD decorations. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group__user__interface_ga35b18059a439e2d01de270944eb907ae}\label{group__user__interface_ga35b18059a439e2d01de270944eb907ae}} 
+void \mbox{\hyperlink{group__user__interface_ga35b18059a439e2d01de270944eb907ae}{Print\+Stats}} (\mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$e)
+\begin{DoxyCompactList}\small\item\em Draws the {\itshape stats} window. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group__user__interface_ga3ada17b0be0c8171d1620e7e32464292}\label{group__user__interface_ga3ada17b0be0c8171d1620e7e32464292}} 
+void \mbox{\hyperlink{group__user__interface_ga3ada17b0be0c8171d1620e7e32464292}{Display\+Loading}} ()
+\begin{DoxyCompactList}\small\item\em Displays a \textquotesingle{}loading...\textquotesingle{} message in the status window. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group__user__interface_ga5f1a5dc4199a971852d2bae7f7b69ee0}\label{group__user__interface_ga5f1a5dc4199a971852d2bae7f7b69ee0}} 
+void \mbox{\hyperlink{group__user__interface_ga5f1a5dc4199a971852d2bae7f7b69ee0}{Clear\+Status}} (u8 start\+\_\+line, u8 nlines)
+\begin{DoxyCompactList}\small\item\em Clears the status message window from {\itshape start\+\_\+line} up to {\itshape nlines} lines. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{group__user__interface_gaf665342055aea2d01fc6375b38c8b4df}{Draw\+Game}} (\mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$player, u8 left, u8 top, u8 draw\+\_\+flags)
+\begin{DoxyCompactList}\small\item\em Draw the visible elements in the game. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const u8 \mbox{\hyperlink{group__user__interface_gaec0e6bac325752e9bc0a41d772670bd9}{hud}} \mbox{[}122\mbox{]}
+\begin{DoxyCompactList}\small\item\em H\+UD data, in a custom coded format to reduce memmory size. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The functions in this module are responsible for drawing different elements of the game\+:
+
+
+\begin{DoxyItemize}
+\item H\+UD decorations
+\item Map world
+\item Status window (messages)
+\item Stats window 
+\end{DoxyItemize}
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__user__interface_gaf665342055aea2d01fc6375b38c8b4df}\label{group__user__interface_gaf665342055aea2d01fc6375b38c8b4df}} 
+\index{User\_interface@{User\_interface}!DrawGame@{DrawGame}}
+\index{DrawGame@{DrawGame}!User\_interface@{User\_interface}}
+\subsubsection{\texorpdfstring{DrawGame()}{DrawGame()}}
+{\footnotesize\ttfamily void Draw\+Game (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structTEntity}{T\+Entity}} $\ast$}]{player,  }\item[{u8}]{left,  }\item[{u8}]{top,  }\item[{u8}]{draw\+\_\+flags }\end{DoxyParamCaption})}
+
+This function selectively calls other drawing functions to draw different visible aspects of the game. What to draw is selected from a set of flags in {\itshape draw\+\_\+flags}. The flags can request additional actions like clearing the screen, or showing a message at the status line.
+
+
+\begin{DoxyParams}{Parameters}
+{\em player} & Player info needed when drawing the {\itshape stats} \\
+\hline
+{\em left,top} & Top/left tile from the game map subregion to draw \\
+\hline
+{\em draw\+\_\+flags} & Bitmask to select what to draw and extra actions to do. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{group__user__interface_gaec0e6bac325752e9bc0a41d772670bd9}\label{group__user__interface_gaec0e6bac325752e9bc0a41d772670bd9}} 
+\index{User\_interface@{User\_interface}!hud@{hud}}
+\index{hud@{hud}!User\_interface@{User\_interface}}
+\subsubsection{\texorpdfstring{hud}{hud}}
+{\footnotesize\ttfamily const u8 hud\mbox{[}122\mbox{]}}
+
+The H\+UD data is just an array of bytes, arranged in a custom format\+:
+\begin{DoxyItemize}
+\item T\+O\+DO\+: 
+\end{DoxyItemize}
