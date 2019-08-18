@@ -38,6 +38,9 @@ include cfg/build_config.mk
 include $(CPCT_PATH)/cfg/global_main_makefile.mk
 
 doc:
-	doxygen doxygen/Doxyfile
+	doxygen cfg/Doxyfile
 run:
 	cpct_rvm -a
+
+clean_doc:
+	rm -f -r docs/*
