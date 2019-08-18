@@ -12,6 +12,21 @@
 /**@{*/
 
 /*! \brief
+ * Resets the visibility map to everything *not visible*
+ */
+void ClearVisMap ();
+
+/*! \brief
+ * Sets a specific tile in the visibility map as visible
+ */
+void SetVisible (u8 x, u8 y);
+
+/*! \brief
+ * Queries a specific visibility map coordinate for visibility
+ */
+u8 isVisible (u8 x, u8 y);
+
+/*! \brief
  * Traces a line between two game map points and updates the FOV visibility.
  */
 void TraceLine (u8 x1, u8 y1, u8 x2, u8 y2, u8 range);

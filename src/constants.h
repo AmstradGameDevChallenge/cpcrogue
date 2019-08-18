@@ -18,12 +18,12 @@
 #define MAX_ENTITIES 5
 
 // Map dimensions
-#define MAP_WIDTH       50
-#define MAP_HEIGHT      30
+#define MAP_WIDTH       64
+#define MAP_HEIGHT      32
 #define MIN_ROOM_SIZE   4
 #define MAX_ROOM_SIZE   8
-#define MIN_ROOMS       5
-#define MAX_ROOMS       15
+#define MIN_ROOMS       10
+#define MAX_ROOMS       25
 
 // Grid
 #define SPOTS_IN_GRID   10
@@ -68,7 +68,7 @@
 #define   BLOCKED       0x01  // Blocks movement
 #define   BLOCKS_LIGHT  0x02  // Light does not pass through this cell
 #define   EXPLORED      0x04  // Has been explored by player
-#define   VISIBLE       0x08  // Is visible by player
+//#define   VISIBLE       0x08  // Is visible by player
 
 // Flags for drawing UI
 #define   CLEAR_ALL     0x01  // Clear whole screen before drawing anything

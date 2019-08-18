@@ -6,6 +6,48 @@
 #include "game_map.h"
 #include "fov.h"
 
+/*! \brief Visibility map, implemented as a bitarray */
+u8 vis_map[MAP_HEIGHT][MAP_WIDTH/8];
+
+/*
+ * Reset the visibility map to all *not visible*. In current implementation
+ * what it does is zeroes all bytes in the \ref vis_map array.
+ */
+void ClearVisMap ()
+{
+  cpct_memset (vis_map, 0, sizeof (vis_map));
+}
+
+/*!
+ * \param x,y Visibility map coordinates to set as visible
+ */
+void SetVisible (u8 x, u8 y)
+{
+  u8 *dest;
+
+  assert (x < MAP_WIDTH && x < 128);
+  assert (y < MAP_HEIGHT && y < 128);
+  dest = &vis_map[y][x>>3];
+  *dest |= 0x80 >> (x&7);
+}
+
+/*!
+ * \param x,y Visibility map coordinates to set as visible
+ *
+ * \return 1 if the tile is visible, 0 otherwise
+ */
+u8 isVisible (u8 x, u8 y)
+{
+  u8 vis_byte;
+  u8 query_mask;
+
+  assert (x < MAP_WIDTH && x < 128);
+  assert (y < MAP_HEIGHT && y < 128);
+  vis_byte = vis_map[y][x>>3];
+  query_mask = 0x80 >> (x&7);
+
+  return vis_byte & query_mask;
+}
 
 /*!
  * Computes Light of Sight from a specific point using basic *ray-casting*.
@@ -23,7 +65,7 @@ void ComputeLOS (u8 origin_x, u8 origin_y, u8 range)
   u8 range_sqr = range*range;
 
   // Start point is visible by definition
-  MapSetVisible (origin_x, origin_y);
+  SetVisible (origin_x, origin_y);
 
   // Create a Rect around the origin
   RectCreate (&area, origin_x - range, origin_y - range,
@@ -99,7 +141,7 @@ void TraceLine (u8 x1, u8 y1, u8 x2, u8 y2, u8 range)
       break;
 
     // Set visible every cell we 'touch' along the line
-    MapSetVisible (x1,y1);
+    SetVisible (x1,y1);
     // Exit if we found something that blocks light (i.e:wall)
     if (MapBlocksLight (x1, y1)) break;
   }

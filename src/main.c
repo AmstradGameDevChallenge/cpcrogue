@@ -81,8 +81,8 @@ void main()
     }
     // Draw all
     // Check if we should update viewport
-    if (player.x < left || player.y <top ||
-      player.x > left+VIEW_WIDTH || player.y > top+VIEW_HEIGHT) {
+    if (player.x <= left || player.y <=top ||
+      player.x > left+VIEW_WIDTH-1 || player.y > top+VIEW_HEIGHT-1) {
       view_updated = true;
     }
     if (view_updated) {
@@ -119,16 +119,14 @@ void main()
         }
         else {
           // Reset tile visibility around player's FOV
-          MapSetNotVisible (player.x, player.y, FOV_RADIUS*2);
+          ClearVisMap ();
           EntityMove (&player, dx, dy);
           fov_changed = true;
         }
-        //cpct_waitHalts(15);
         state = ENEMY_TURN;
       }
     }
     if (state == ENEMY_TURN) {
-      //cpct_waitHalts(15);
       // Enemy actions
       new_x = enemy.x + edx[ei];
       new_y = enemy.y;

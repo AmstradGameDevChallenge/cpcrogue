@@ -95,42 +95,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "src/main.c",
-			"settings":
-			{
-				"buffer_size": 4767,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/user_interface.c",
-			"settings":
-			{
-				"buffer_size": 4439,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "doxygen/Doxyfile",
-			"settings":
-			{
-				"buffer_size": 110579,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/user_interface.h",
-			"settings":
-			{
-				"buffer_size": 762,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -256,15 +220,17 @@
 	},
 	"expanded_folders":
 	[
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src"
+		"/home/andriu/repos/cpctelera/cpcrogue"
 	],
 	"file_history":
 	[
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen/Doxyfile",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/main.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/.git/COMMIT_EDITMSG",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game_map.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game_map.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/entity.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/constants.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fov.c",
@@ -274,17 +240,14 @@
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/game.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/rect.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/rect.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen/Doxyfile",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/fov.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/conio.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/logo.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/input_handler.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/input_handler.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/fast_math.rst",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/obj/fast_math.rel",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/entity.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/main.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/conio.c",
 		"/home/andriu/repos/cpctelera/dirtybit/obj/main.lst",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/init.c",
@@ -376,7 +339,6 @@
 		"/home/andriu/.gtkrc-2.0.mine",
 		"/home/andriu/repos/cpctelera/cpcrogue/README.md",
 		"/home/andriu/repos/cpctelera/bas_c/cpc_rogue/c/cpcrogue/src/main.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/.git/COMMIT_EDITMSG",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/rogue.c",
 		"/home/andriu/repos/cpctelera/base_redo/src/main.s",
 		"/home/andriu/repos/cpctelera/base_redo/src/entity.s",
@@ -393,14 +355,13 @@
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 28.0
 	},
 	"find_in_files":
 	{
 		"height": 105.0,
 		"where_history":
 		[
-			"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src"
 		]
 	},
 	"find_state":
@@ -408,38 +369,6 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"initial",
-			"SOURCE",
-			"PRIVATE",
-			"INLINE",
-			"SOURCE_BROWSER",
-			"EXTRACT_ALL",
-			"FILE_PATTERNS",
-			"hud",
-			"hud[",
-			"hud",
-			"DrawSingleChars",
-			"DrawGame",
-			"FOV",
-			"player",
-			"detail",
-			"brief",
-			",",
-			"BRIEF_MEMBER",
-			"JAVADOC",
-			"QT",
-			"directory",
-			"TRUE",
-			"FALSE",
-			"TRUE",
-			"\"\n",
-			"MapDraw",
-			"putchar",
-			"printf",
-			"Public",
-			"TRUE",
-			"FALSE",
-			"TRUE"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -447,12 +376,6 @@
 		"regex": false,
 		"replace_history":
 		[
-			";",
-			"true",
-			"false",
-			"true",
-			"false",
-			"true"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -463,127 +386,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "src/main.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4767,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3605,
-								3605
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1670.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/user_interface.c",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4439,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								229,
-								229
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "doxygen/Doxyfile",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 110579,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								65991,
-								65991
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Bash.sublime-syntax",
-							"tab_size": 5,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 33439.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/user_interface.h",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 762,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								288,
-								288
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -668,7 +472,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 224.0,
+	"side_bar_width": 156.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

@@ -7,6 +7,7 @@
 #include "fast_math.h"
 #include "entity.h"
 #include "rect.h"
+#include "fov.h"
 #include "game_map.h"
 
 // Forward declarations of private functions
@@ -62,38 +63,17 @@ u8 MapIsBlocked (u8 x, u8 y)
 {
   return game_map.tiles[y][x].t_flags & BLOCKED;
 }
-//---------------------------------------------------------------------------
+
+/*
+ * \param[in] x,y Map coordinates to query.
+ *
+ * \returns true if tile blocks light.
+ */
 u8 MapBlocksLight (u8 x, u8 y)
 {
   return game_map.tiles[y][x].t_flags & BLOCKS_LIGHT;
 }
-void MapSetNotVisible (u8 origin_x, u8 origin_y, u8 range)
-{
 
-  TRect area;
-
-  // Create a Rect around the origin
-  RectCreate (&area, origin_x - range, origin_y - range,
-    range*2+1, range*2+1);
-
-  if (area.top > 127) area.top = 0;
-  if (area.left > 127) area.left = 0;
-  if (area.bottom > MAP_HEIGHT-1) area.bottom = MAP_HEIGHT-1;
-  if (area.right > MAP_WIDTH-1) area.right = MAP_WIDTH-1;
-
-  for (u8 y=area.top; y < area.bottom; ++y) {
-    for (u8 x=area.left; x < area.right; ++x) {
-      assert (x < MAP_WIDTH && x < 128);
-      assert (y < MAP_HEIGHT && y < 128);
-      game_map.tiles[y][x].t_flags &= ~VISIBLE;
-    }
-  }
-  /*
-  for (u8 y=0; y < MAP_HEIGHT; ++y)
-    for (u8 x=0; x < MAP_WIDTH; ++x)
-      game_map.tiles[y][x].t_flags &= ~VISIBLE;
-*/
-}
 /*!
  * Draws a portion of the map into the viewport. The start coordinates of
  * the subregion in the map to draw are given by *left* and *top*
@@ -136,7 +116,7 @@ void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
     // reference to the current tile
     current_tile = &game_map.tiles[top + y][left + x];
 
-    visible = current_tile->t_flags & VISIBLE;
+    visible = isVisible (left + x, top + y);
     is_wall = current_tile->t_flags & BLOCKED;
     fg_color = bg_color = PEN_CLEAR;
 
@@ -252,8 +232,11 @@ void _InitTiles (u8 width, u8 height)
   game_map.height = height;
 
   // Initialize all tiles as block movement (walls) and block light
-  cpct_memset (game_map.tiles, BLOCKED | BLOCKS_LIGHT & ~VISIBLE,
+  cpct_memset (game_map.tiles, BLOCKED | BLOCKS_LIGHT,
     MAP_WIDTH * MAP_HEIGHT);
+
+  // Initialize the visibility map
+  ClearVisMap ();
 }
 //---------------------------------------------------------------------------
 u8 _InitGrid ()

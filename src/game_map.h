@@ -94,10 +94,6 @@ u8 MapIsBlocked (u8 x, u8 y);
 
 /*!
  * \brief True if specified map coordinates block light (i.e: wall)
- *
- * \param[in] x,y Map coordinates to query.
- *
- * \returns true if tile blocks light.
  */
 u8 MapBlocksLight (u8 x, u8 y);
 
@@ -110,7 +106,3 @@ void MapSetNotVisible (u8 origin_x, u8 origin_y, u8 range);
  */
 void MapDraw (u8 left, u8 right, u8 width, u8 height, TEntity *player);
 void GetView (TEntity* player, u8 *left, u8 *top, u8 width, u8 height);
-
-inline void MapSetVisible (u8 x, u8 y) {
-  game_map.tiles[y][x].t_flags |= VISIBLE;
-}
