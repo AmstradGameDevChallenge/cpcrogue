@@ -7,8 +7,16 @@
 #include "fov.h"
 
 
-// Compute Light of Sight from point constrained to
-// specific range distance
+/*!
+ * Computes Light of Sight from a specific point using basic *ray-casting*.
+ * Imaginary “rays” are casted away from the specified position and sent in
+ * every direction. If they cross a new tile, it is displayed. If this tile
+ * is an obstacle, the rays stop here. Otherwise, it goes through the next
+ * tile, and so on.
+ *
+ * \param origin_x, origin_y Starting point, usually player position
+ * \param range Max distance to compute, usually player's field of view
+ */
 void ComputeLOS (u8 origin_x, u8 origin_y, u8 range)
 {
   TRect area;
@@ -40,6 +48,16 @@ void ComputeLOS (u8 origin_x, u8 origin_y, u8 range)
   }
 }
 
+/*!
+ * Traces a line between two game map points using *Bresenham's* line
+ * algorithm. For each tile the line *touches* the FOV information is
+ * updated. The line is constrained to *range* distance or the first wall
+ * it encounters.
+ *
+ * \param x1,y1 Origin point coordinates
+ * \param x2,y2 Destination point coordinates
+ * \param range Max line Distance (usually FOV radius)
+ */
 void TraceLine (u8 x1, u8 y1, u8 x2, u8 y2, u8 range)
 {
   u8 dx, dy;
