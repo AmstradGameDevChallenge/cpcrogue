@@ -220,10 +220,26 @@
 	},
 	"expanded_folders":
 	[
-		"/home/andriu/repos/cpctelera/cpcrogue"
+		"/home/andriu/repos/cpctelera/cpcrogue",
+		"/home/andriu/repos/cpctelera/cpcrogue/src"
 	],
 	"file_history":
 	[
+		"/home/andriu/repos/cpctelera/cpcrogue/src/conio.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/conio.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/constants.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/main.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/user_interface.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/user_interface.rst",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/conio.rst",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/fov.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/fov.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/Makefile",
+		"/home/andriu/repos/cpctelera/cpcrogue/cfg/Doxyfile",
+		"/home/andriu/repos/cpctelera/cpcrogue/cfg/build_config.mk",
+		"/home/andriu/repos/cpctelera/cpcrogue/cfg/tilemap_conversion.mk",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/doxygen/Doxyfile",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/cpcrogue/src/user_interface.c",
@@ -336,26 +352,11 @@
 		"/home/andriu/repos/cpctelera/cpcrogue/c/agc01/src/rogue.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/c/agc01/src/main.c",
 		"/home/andriu/.profile",
-		"/home/andriu/.gtkrc-2.0.mine",
-		"/home/andriu/repos/cpctelera/cpcrogue/README.md",
-		"/home/andriu/repos/cpctelera/bas_c/cpc_rogue/c/cpcrogue/src/main.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/c/rogue.c",
-		"/home/andriu/repos/cpctelera/base_redo/src/main.s",
-		"/home/andriu/repos/cpctelera/base_redo/src/entity.s",
-		"/home/andriu/repos/cpctelera/base_redo/src/entity.h.s",
-		"/home/andriu/.local/bin/statusbar/internet",
-		"/etc/i3blocks.conf",
-		"/home/andriu/.local/bin/statusbar/iface",
-		"/home/andriu/.bash_profile",
-		"/home/andriu/.xprofile",
-		"/home/andriu/.local/bin/statusbar/volume",
-		"/home/andriu/dwm_rice/.xinitrc",
-		"/home/andriu/.local/bin/dwmbar",
-		"/home/andriu/.local/bin/statusbar/weather"
+		"/home/andriu/.gtkrc-2.0.mine"
 	],
 	"find":
 	{
-		"height": 28.0
+		"height": 41.0
 	},
 	"find_in_files":
 	{
@@ -369,6 +370,20 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"vmem",
+			"pvmem",
+			"cpct_drawCharM1_f",
+			"bg_color",
+			"fg_color",
+			"cpct_",
+			"putchar",
+			"cls",
+			"vis_byte",
+			"NotVisi",
+			"& VISIB",
+			"visible",
+			"MapSetVisible",
+			"Bres"
 		],
 		"highlight": false,
 		"in_selection": false,
@@ -376,6 +391,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"bg_pen",
+			"fg_pen",
+			"cpct_drawCharM1_f",
+			"clrscr"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -434,7 +453,7 @@
 	"project": "cpcrogue.sublime-project",
 	"replace":
 	{
-		"height": 52.0
+		"height": 73.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -472,7 +491,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 156.0,
+	"side_bar_width": 204.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

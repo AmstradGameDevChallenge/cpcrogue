@@ -21,13 +21,25 @@
 #include "conio.h"
 
 
-/****************************************************************************
- * Video fn: LOCATE, INK, PAPER, BORDER, PEN, CLS
- ***************************************************************************/
-inline void cls ()
+/*!
+ * Starting at given memory address (usually video memory) it clears
+ * the specified cols x rows section.
+ *
+ *  \param pvmem Address of the start cell to clear
+ *  \param width Width in bytes of the portion to clear
+ *  \param height Height in characters, not bytes or pixels. There are 25
+ *    rows in Mode 1
+ *  \param color Color pattern to use
+ */
+void clrwin (u8 *pvmem, u8 cols, u8 rows, u8 color)
 {
-  putchar (FF);
+  for (u8 i=0; i != rows; ++i) {
+    for (u8 line=0; line != 8; ++line) {
+      cpct_memset (pvmem+i*0x50+line*0x800, color, cols);
+    }
+  }
 }
+
 void locate (u8 x, u8 y)
 {
    putchar(US);
@@ -53,6 +65,22 @@ inline void border (u8 color1)
 {
   putchar (GS);
   putchar (color1); putchar (color1);
+}
+
+/*
+ * It calls cpct_drawCharM1_f to draw a character very fast at a specified.
+ * In addition, foreground and background colors are used to color the char.
+ *
+ * \param vmem Start of video memory buffer to draw
+ * \param x,y  X,Y coordinates (in characters) where to draw
+ * \param ch   Character to draw
+ * \param fg_pen Foreground color to use to draw the char
+ * \param bg_pen Background color to use to draw the char
+ */
+void putchar_f (void *vmem, u8 x, u8 y, u8 ch, u8 fg_pen, u8 bg_pen)
+{
+  void *pvmem = cpct_getScreenPtr (vmem, x*2, y*8);
+  cpct_drawCharM1_f (pvmem, fg_pen, bg_pen, ch);
 }
 /****************************************************************************
  *                      PrintAt

@@ -94,15 +94,17 @@ u8 MapBlocksLight (u8 x, u8 y)
 //---------------------------------------------------------------------------
 void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
 {
+  //void *pvmem;
   u8 is_wall, visible;
   TTile *current_tile;
-  u8 fg_color, bg_color;
+  u8 fg_pen, bg_pen;
   u8 ch;
 
   /*
    * TODO:
    *  - use width and height to determine drawing area
    *  - take out limit calculation from the 'for' loop
+   *  - Accept vmem start address so we can draw in a secondary buffer
    */
   for (i8 y = player->y-top-FOV_RADIUS-1; y <= player->y-top+FOV_RADIUS+1; ++y) {
   for (i8 x = player->x-left-FOV_RADIUS-1; x <= player->x-left+FOV_RADIUS+1; ++x) {
@@ -118,7 +120,7 @@ void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
 
     visible = isVisible (left + x, top + y);
     is_wall = current_tile->t_flags & BLOCKED;
-    fg_color = bg_color = PEN_CLEAR;
+    fg_pen = bg_pen = PEN_CLEAR;
 
   /*
    * TODO:
@@ -128,50 +130,45 @@ void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
      * Tile VISIBLE
      */
     if (visible) {
-      fg_color = PEN_NORMAL;    // Uses light color
+      fg_pen = PEN_NORMAL;    // Uses light color
 
       if (is_wall) {            // WALL (lighted)
-        bg_color = PEN_BRIGHT;
+        bg_pen = PEN_BRIGHT;
         ch = SPR_WALL;          // Sprite used to draw a WALL
       } // if is_wall
       else {                    // FLOOR (lighted)
-        bg_color = PEN_CLEAR;
+        bg_pen = PEN_CLEAR;
         ch = SPR_FLOOR;         // Sprite used to draw a FLOOR
       } // else
-      locate (VIEW_X + x, VIEW_Y + y);
-      pen (fg_color);
-      paper (bg_color);
-      putchar (ch);              // Draw the tile
-      current_tile->t_flags |= EXPLORED;  // Mark this tile as explored
+
+      // Draw tile
+      putchar_f (VMEM_MAP, x, y, ch, fg_pen, bg_pen);
+
+      // Mark this tile as explored
+      current_tile->t_flags |= EXPLORED;
     } // if visible
 
     /*
      * Tile HIDDEN
      */
     else if (current_tile->t_flags & EXPLORED) {
-      fg_color = PEN_EXPLORED;    // Explored tiles are drawn darker
+      fg_pen = PEN_EXPLORED;    // Explored tiles are drawn darker
 
       if (is_wall) {              // WALL (dark)
-        bg_color = PEN_CLEAR;
+        bg_pen = PEN_CLEAR;
         ch = SPR_WALL;            // Sprite to draw a WALL
       }
       else {
-        bg_color = PEN_CLEAR;
+        bg_pen = PEN_CLEAR;
         ch = SPR_FLOOR;           // FLOOR (dark)
       }
-      locate (VIEW_X + x, VIEW_Y + y);
-      pen (fg_color);
-      paper (bg_color);
-      putchar (ch);
+      putchar_f (VMEM_MAP, x, y, ch, fg_pen, bg_pen);
     } // else if explored
     /*
      * Not visible/unexplored tiles are ignored.
      */
     } // for x
   } // for y
-
-  // Done drawing map, restore background color
-  paper (PEN_CLEAR);
 }
 
 //---------------------------------------------------------------------------

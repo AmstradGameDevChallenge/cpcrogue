@@ -32,7 +32,7 @@ u8 isVisible (u8 x, u8 y);
 void TraceLine (u8 x1, u8 y1, u8 x2, u8 y2, u8 range);
 
 /*! \brief
- * Computes *Light of Sight* from point constrained to a specific
+ * Computes *Light of Sight* from a specific point up to a specific
  * range distance
  */
 void ComputeLOS (u8 from_x, u8 from_y, u8 range);

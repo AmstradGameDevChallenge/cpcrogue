@@ -174,7 +174,7 @@ void PrintStats (TEntity *e)
 void DrawGame (TEntity *player, u8 left, u8 top, u8 draw_flags)
 {
   OffScreen ();
-  if (draw_flags & CLEAR_ALL)     cls();
+  if (draw_flags & CLEAR_ALL)     clrscr(VMEM, 0x0000);
   if (draw_flags & STATUS_MSG)    DisplayLoading ();
   if (draw_flags & DRAW_HUD)      DrawHUD ();
   if (draw_flags & DRAW_STATS)    PrintStats(player);
