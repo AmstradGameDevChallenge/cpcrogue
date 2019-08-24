@@ -15,7 +15,7 @@
 /**@{*/
 
 /*! \brief Draws the HUD decorations */
-void DrawHUD ();
+void DrawHUD (void *pvmem_start);
 
 /*! \brief Draws the *stats* window */
 void PrintStats (TEntity *e);
@@ -24,9 +24,9 @@ void PrintStats (TEntity *e);
 void DisplayLoading ();
 
 /*! \brief
- * Clears the status message window from *start_line* up to *nlines* lines.
+ * Clears the status message window up to *nrows* lines.
  */
-void ClearStatus (u8 start_line, u8 nlines);
+void ClearStatus (u8 nrows);
 
 /*! \brief Draw the visible elements in the game */
 void DrawGame (TEntity *player, u8 left, u8 top, u8 draw_flags);

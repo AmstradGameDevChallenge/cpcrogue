@@ -19,6 +19,15 @@
 #define CONST_H
 
 
+/*!
+ * \brief Firmware colors used in the game
+ */
+#define INK_BLACK         20
+#define INK_DARK_BLUE     04
+#define INK_PASTEL_YELLOW 03
+#define INK_ORANGE        14
+#define INK_PINK          07
+
 /****************************************************************************
  * Special ASCII codes
  ***************************************************************************/
@@ -53,12 +62,13 @@
 // Viewport dimensions
 #define VIEW_WIDTH      28
 #define VIEW_HEIGHT     18
-#define VIEW_X          2
-#define VIEW_Y          2
-#define STATS_X         VIEW_X + MAP_WIDTH -1
-#define STATS_Y         3
-#define STATUS_X        2
-#define STATUS_Y        21
+#define VIEW_X          1
+#define VIEW_Y          1
+#define STATS_X         (VIEW_X + VIEW_WIDTH +1)
+#define STATS_Y         2
+#define STATUS_X        1
+#define STATUS_W        38*2 // in bytes
+#define STATUS_Y        20
 #define LOADING_X       STATUS_X
 #define LOADING_Y       STATUS_Y
 
@@ -80,6 +90,7 @@
 #define   PEN_EXPLORED    1
 #define   PEN_BRIGHT      2
 #define   PEN_NORMAL      3
+#define   PEN_MESSAGES    1
 
 // Cell Flags
 #define   BLOCKED       0x01  // Blocks movement
@@ -112,6 +123,14 @@ typedef enum TState {
 #define VMEM (void*)0xC000
 
 //!< Start of the game map drawing area in the Amstrad CPC video memory
-#define VMEM_MAP (void*)0xC052
+#define VMEM_MAP (void*)(0xC000+VIEW_Y*0x50+VIEW_X*2)
 
+//!< Start of the stats display area in the Amstrad CPC video memory
+#define VMEM_STATS (void*)(0xC000+STATS_Y*0x50+STATS_X*2)
+
+//!< Start of the message log display area in the Amstrad CPC video memory
+#define VMEM_STATUS (void*)(0xC000+ STATUS_Y*0x50+STATUS_X*2)
+
+//!< Bytes/line
+#define ONELINE 80
 #endif

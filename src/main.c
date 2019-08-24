@@ -58,6 +58,8 @@ void main()
   u8 fov_changed = false;
   u8 draw_flags;
 
+  cpct_disableFirmware();
+
   NewGame (&player, &enemy);
   ComputeLOS (player.x, player.y, FOV_RADIUS);
 

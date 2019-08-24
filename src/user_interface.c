@@ -19,18 +19,18 @@
 const u8 hud[122] = {
   // Single Chars
   233, PEN_BRIGHT, 8,
-  1,1, 30,1, 40,1, 1,20, 30,20, 40,20, 1,25, 40,25,
+  0,0, 29,0, 39,0, 0,19, 29,19, 39,19, 0,24, 39,24,
   154, PEN_BRIGHT, 12,
-  2,1, 10,1, 21,1, 29,1, 31,1, 39,1, 2,20, 29,20, 31,20, 39,20, 2,25, 39,25,
+  1,0, 9,0, 20,0, 28,0, 30,0, 38,0, 1,19, 28,19, 30,19, 38,19, 1,24, 38,24,
   149, PEN_BRIGHT, 10,
-  1,2, 30,2, 40,2, 1,19, 1,21, 30,19, 40,19, 40,21, 1,24, 40,24,
-  157, PEN_BRIGHT, 1, 11,1,
-  151, PEN_BRIGHT, 1, 20,1,
-  255,
+  0,1, 29,1, 39,1, 0,18, 0,20, 29,18, 39,18, 39,20, 0,23, 39,23,
+  157, PEN_BRIGHT, 1, 10,0,
+  151, PEN_BRIGHT, 1, 19,0,
+  255, // End of single chars
   // Horizontal Lines
-  154, PEN_NORMAL, true, 6, 3,1,7, 22,1,8, 32,1,7, 3,20,26, 32,20,7, 3,25,36,
+  154, PEN_NORMAL, true, 6, 2,0,7, 21,0,8, 31,0,7, 2,19,26, 31,19,7, 2,24,36,
   // Vertical Lines
-  149, PEN_NORMAL, false, 5, 1,3,16, 30,3,16, 40,3,16, 1,22,2, 40,22,2,
+  149, PEN_NORMAL, false, 5, 0,2,16, 29,2,16, 39,2,16, 0,21,2, 39,21,2,
   255,
 };
 
@@ -40,20 +40,20 @@ const u8* DrawSingleChars ()
   u8 ch, color;
   u8 x,y;
   u8 reps;
+  u8 n;
   const u8 *ptr;
 
   ptr = hud;
   while ( (ch = *ptr++) != 255) {
     color = *ptr++;
     reps = *ptr++;
-    pen(color);
+    //pen(color);
 
-    for (u8 n=0; n<reps; ++n) {
-      x=*ptr++;
-      y=*ptr++;
-
-      locate (x,y);
-      putchar (ch);
+    for (n=0; n<reps; ++n) {
+      x = *ptr++;
+      y = *ptr++;
+      //locate (x,y);
+      putchar_f (VMEM, x,y, ch, color, PEN_CLEAR);
     }
   }
 
@@ -65,7 +65,7 @@ void DrawLine (u8 start, u8 other, u8 reps, u8 ch, u8 color, u8 is_hor)
 {
   u8 x, y;
 
-  pen (color);
+  //pen (color);
   for (u8 var=start; var!= start+reps; ++var) {
     if (is_hor) {
       x = var;
@@ -75,8 +75,8 @@ void DrawLine (u8 start, u8 other, u8 reps, u8 ch, u8 color, u8 is_hor)
       x = other;
       y = var;
     }
-    locate (x,y);
-    putchar (ch);
+    //locate (x,y);
+    putchar_f (VMEM, x,y, ch, color, PEN_CLEAR);
   }
 
 }
@@ -110,53 +110,87 @@ const u8 *DrawLines (const u8 *hud_offset)
 
 }
 
-void DrawHUD ()
+/*!
+ * Draw the HUD decorations at the specified buffer
+ *
+ * \param pvmem_start Start address of video memory buffer to draw
+ */
+void DrawHUD (void *pvmem_start)
 {
+  void *pvdest;
   const u8 *hud_offset;
+
+  pvdest = cpct_getScreenPtr (pvmem_start, 22,0);
 
   hud_offset = DrawSingleChars ();
   DrawLines (hud_offset);
-  PrintAt (12,1, "CPCRogue", PEN_BRIGHT);
+  cpct_drawStringM1_f ("CPCRogue", pvdest, PEN_BRIGHT, PEN_CLEAR);
 }
 
 void DisplayLoading ()
 {
-  ink (1, 20, 14);
-  PrintAt (LOADING_X,LOADING_Y, "Loading...", 1);
+  cpct_drawStringM1_f ("Loading...", VMEM_STATUS,
+    PEN_MESSAGES, PEN_CLEAR);
 }
 
 /*
- * Clears the status message window from *start_line* up to *nlines* lines.
+ * Clears the status message window  up to *nrows* rows.
+ *
+ * \param nrows Number of rows to clear
  */
-void ClearStatus (u8 start_line, u8 nlines)
+void ClearStatus (u8 nrows)
 {
-  for (u8 n=0; n<nlines; ++n) {
-    PrintAt (STATUS_X, start_line+n,
-      "                                      ",
-      PEN_NORMAL);
-  }
+  clrwin (VMEM_STATUS, STATUS_W, nrows, 0x00);
 }
-/****************************************************************************
- *                      Display Entity Stats
- ***************************************************************************/
+/*!
+ * Displays the player's stats in the stats window (right panel). It
+ * receives an *Entitty* parameter so, in theory, it could be used to
+ * display any entity stats. But in the final game, only the player stats
+ * is used when calling this fn.
+ *
+ *  \param e Entity to display *stats*. Usually it will be the player.
+ *  \param TODO: Add drawing address so we can implement backbuffer
+ */
 void PrintStats (TEntity *e)
 {
-  u8 x, y;
+  // All drawing will be done relative to the STATS window start address
+  u8 *pvmem = VMEM_STATS;
 
-  x = 31;
-  y = STATS_Y;
+  cpct_drawStringM1_f (e->name, pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += ONELINE; // Next line
 
-  PrintAt (x,y, e->name, PEN_NORMAL); ++y;
-  PrintAt (x, y, "HP:      ", PEN_NORMAL); PrintU8 (e->hp,    x+3,y, PEN_BRIGHT);
-  PrintAt (x+5, y, "/", PEN_NORMAL); PrintU8 (e->max_hp,x+6,y++, PEN_BRIGHT);
-  ++y;
-  PrintAt (x, y, "STR:",PEN_NORMAL); PrintU8 (e->str,   x+4,y++, PEN_BRIGHT);
-  PrintAt (x, y, "DES:",PEN_NORMAL); PrintU8 (e->des,   x+4,y++, PEN_BRIGHT);
-  PrintAt (x, y, "REF:",PEN_NORMAL); PrintU8 (e->ref,   x+4,y++, PEN_BRIGHT);
+  cpct_drawStringM1_f ("HP:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 6; // 3 chars to the right
+  PrintU8 (pvmem, e->hp, PEN_BRIGHT, PEN_CLEAR);
+  pvmem += 4; // 3 chars to the right
+  cpct_drawStringM1_f ("/", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 2; // 1 chars to the right
+  PrintU8 (pvmem, e->max_hp, PEN_BRIGHT, PEN_CLEAR);
 
-  ++y;
-  PrintAt (x, y, "ATK:",PEN_NORMAL); PrintU8 (e->atk,   x+4,y++, PEN_BRIGHT);
-  PrintAt (x, y, "DEF:",PEN_NORMAL); PrintU8 (e->def,   x+4,y++, PEN_BRIGHT);
+  pvmem += -12+ONELINE*2; // Next line
+  cpct_drawStringM1_f ("STR:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 8;
+  PrintU8 (pvmem, e->str, PEN_BRIGHT, PEN_CLEAR);
+
+  pvmem += ONELINE-8; // Next line
+  cpct_drawStringM1_f ("DES:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 8;
+  PrintU8 (pvmem, e->des, PEN_BRIGHT, PEN_CLEAR);
+
+  pvmem += ONELINE-8; // Next line
+  cpct_drawStringM1_f ("REF:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 8;
+  PrintU8 (pvmem, e->ref, PEN_BRIGHT, PEN_CLEAR);
+
+  pvmem += ONELINE*2-8; // Two lines below
+  cpct_drawStringM1_f ("ATK:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 8;
+  PrintU8 (pvmem, e->atk, PEN_BRIGHT, PEN_CLEAR);
+
+  pvmem += ONELINE-8;
+  cpct_drawStringM1_f ("DEF:", pvmem, PEN_NORMAL, PEN_CLEAR);
+  pvmem += 8;
+  PrintU8 (pvmem, e->def, PEN_BRIGHT, PEN_CLEAR);
 }
 
 /*!
@@ -176,9 +210,9 @@ void DrawGame (TEntity *player, u8 left, u8 top, u8 draw_flags)
   OffScreen ();
   if (draw_flags & CLEAR_ALL)     clrscr(VMEM, 0x0000);
   if (draw_flags & STATUS_MSG)    DisplayLoading ();
-  if (draw_flags & DRAW_HUD)      DrawHUD ();
+  if (draw_flags & DRAW_HUD)      DrawHUD (VMEM);
   if (draw_flags & DRAW_STATS)    PrintStats(player);
-  if (draw_flags & CLEAR_STATUS)  ClearStatus(LOADING_Y, 1);
+  if (draw_flags & CLEAR_STATUS)  ClearStatus(3);
   if (draw_flags & DRAW_MAP)      MapDraw (left, top,
     VIEW_WIDTH, VIEW_HEIGHT, player);
 

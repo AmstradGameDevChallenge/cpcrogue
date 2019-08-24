@@ -44,9 +44,7 @@ void EntityDraw (TEntity *e, u8 left, u8 top)
   spr = e->spr;
 
   if (x > 127 || x > VIEW_WIDTH-1 || y > 127 || y > VIEW_HEIGHT-1) return;
-  pen (color);
-  locate (VIEW_X+x, VIEW_Y+y);
-  putchar (spr);
+  putchar_f (VMEM_MAP, x,y, spr, color, PEN_CLEAR);
 }
 /****************************************************************************
  *                      Move entity to new position
@@ -74,10 +72,12 @@ u8 EntityCalculateDamage (TEntity *e)
 void EntityTakeDamage (TEntity *e, u8 dmg)
 {
   e->hp -= dmg;
+  /*
   PrintAt (STATUS_X,STATUS_Y+1, e->name, PEN_BRIGHT);
   PrintAt (STATUS_X+7,STATUS_Y+1, "takes     ", PEN_NORMAL);
   PrintU8 (dmg, STATUS_X+13,STATUS_Y+1, PEN_BRIGHT);
   PrintAt (STATUS_X+16,STATUS_Y+1, "points of damage", PEN_NORMAL);
+  */
 }
 /****************************************************************************
  *                      Attack 'target'
@@ -86,10 +86,11 @@ void EntityAttack (TEntity *e, TEntity *target)
 {
   u8 dmg;
   // Show action in log window
-
+/*
   PrintAt (STATUS_X,STATUS_Y, e->name, PEN_BRIGHT);
   PrintAt (STATUS_X+8,STATUS_Y, "attacks", PEN_NORMAL);
   PrintAt (STATUS_X+16,STATUS_Y, target->name, PEN_BRIGHT);
+  */
 
   dmg = EntityCalculateDamage (e);
   EntityTakeDamage (target, dmg);

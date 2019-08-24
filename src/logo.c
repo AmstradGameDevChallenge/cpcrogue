@@ -3,6 +3,7 @@
 
 void ShowLogo()
 {
+  /*
   ink (0,0,0); ink (1,0,0); ink (2,0,0);    // Black used palette colors
   cpct_setVideoMode (1);                    // Set Vide Mode 1 (40x25)
   border (1); paper (0); pen (1);
@@ -27,4 +28,5 @@ void ShowLogo()
   while (!cpct_isKeyPressed (Key_Return)) {
     cpct_scanKeyboard ();
   }
+  */
 }
