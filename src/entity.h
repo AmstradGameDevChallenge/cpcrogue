@@ -17,26 +17,31 @@
 //---------------------------------------------------------------------------
 #ifndef ENTITY_H
 #define ENTITY_H
-/****************************************************************************
- *                      ENTITY
- ***************************************************************************/
 
+/*!
+ * \defgroup entity
+ *
+ * \brief A generic object to represent players, enemies, items, etc.
+ *
+ *
+ */
+/**@{*/
 
-typedef struct {
-  u8 x, y;      // Current position
-  u8 px, py;    // Previous position
-  u8 spr;       // ASCII char to draw this entity
-  u8 color;     // Color to draw this entity
-  u8 name[15];  // Name to display in messages
-  u8 blocks;    // TRUE if blocks movement of another entity
+/*!
+ * \struct TEntity
+ *
+ * \brief A generic object to represent players, enemies, items, etc.
+ */
+typedef struct TFighter;
+typedef struct TEntity {
+  u8 x, y;      ///< Current position
+  u8 px, py;    ///< Previous position
+  u8 spr;       ///< ASCII char to draw this entity
+  u8 color;     ///< Color to draw this entity
+  u8 name[15];  ///< Name to display in messages
+  u8 blocks;    ///< TRUE if blocks movement of another entity
 
-  u16 max_hp;   // Max health
-  u16 hp;       // Current health
-  u8  str;      // Current strength
-  u8  des;      // Current dexterity
-  u8  ref;      // Current reflexes
-  u16 atk;      // Current attack
-  u16 def;      // Current defense
+  struct TFighter *fighter; ///< A fighter component for combat
 } TEntity;
 
 /*!
@@ -51,7 +56,7 @@ extern u8 num_entities;
 
 void InitEntities();
 TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
-  u8 blocks, u16 hp, u8 str, u8 destr, u8 refl);
+  u8 blocks, struct TFighter *fighter);
 void EntityMove (TEntity *c, i8 dx, i8 dy);
 void EntityAttack (TEntity *e, TEntity *target);
 TEntity *GetBlockingEntity (u8 x, u8 y);

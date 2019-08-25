@@ -21,6 +21,7 @@
 #include "constants.h"
 #include "conio.h"
 #include "game_map.h"
+#include "components/fighter.h"
 #include "entity.h"
 #include "user_interface.h"
 
@@ -178,6 +179,7 @@ void LogMessage (char *msg, u8 row)
  */
 void PrintStats (TEntity *e)
 {
+  TFighter *f = e->fighter;
   // All drawing will be done relative to the STATS window start address
   u8 *pvmem = VMEM_STATS;
 
@@ -186,36 +188,36 @@ void PrintStats (TEntity *e)
 
   cpct_drawStringM1_f ("HP:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 6; // 3 chars to the right
-  PrintU8 (pvmem, e->hp, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->hp, PEN_BRIGHT, PEN_CLEAR);
   pvmem += 4; // 3 chars to the right
   cpct_drawStringM1_f ("/", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 2; // 1 chars to the right
-  PrintU8 (pvmem, e->max_hp, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->max_hp, PEN_BRIGHT, PEN_CLEAR);
 
   pvmem += -12+ONELINE*2; // Next line
   cpct_drawStringM1_f ("STR:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 8;
-  PrintU8 (pvmem, e->str, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->str, PEN_BRIGHT, PEN_CLEAR);
 
   pvmem += ONELINE-8; // Next line
   cpct_drawStringM1_f ("DES:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 8;
-  PrintU8 (pvmem, e->des, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->des, PEN_BRIGHT, PEN_CLEAR);
 
   pvmem += ONELINE-8; // Next line
   cpct_drawStringM1_f ("REF:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 8;
-  PrintU8 (pvmem, e->ref, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->ref, PEN_BRIGHT, PEN_CLEAR);
 
   pvmem += ONELINE*2-8; // Two lines below
   cpct_drawStringM1_f ("ATK:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 8;
-  PrintU8 (pvmem, e->atk, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->atk, PEN_BRIGHT, PEN_CLEAR);
 
   pvmem += ONELINE-8;
   cpct_drawStringM1_f ("DEF:", pvmem, PEN_NORMAL, PEN_CLEAR);
   pvmem += 8;
-  PrintU8 (pvmem, e->def, PEN_BRIGHT, PEN_CLEAR);
+  PrintU8 (pvmem, f->def, PEN_BRIGHT, PEN_CLEAR);
 }
 
 /*!

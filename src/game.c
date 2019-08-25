@@ -24,16 +24,19 @@
 #include "game_map.h"
 #include "fov.h"
 #include "user_interface.h"
-
+#include "components/fighter.h"
 /*
  *
  */
 void NewGame (TEntity **player)
 {
-  *player = EntityCreate (0, 0,
-    SPR_PLAYER, PEN_BRIGHT,
-    "Thorbag", true,
-     20, 17, 14, 12);
+  // Create the fighter component for the player
+  TFighter *player_fighter = FighterCreate(20, 17, 14, 12);
+
+  // Create the player entity with a fighter component
+  *player = EntityCreate (0, 0, SPR_PLAYER, PEN_BRIGHT,
+    "Thorbag", true, player_fighter);
+
   MapCreate (MAP_WIDTH, MAP_HEIGHT, *player);
 
   ComputeLOS ((*player)->x, (*player)->y, FOV_RADIUS);

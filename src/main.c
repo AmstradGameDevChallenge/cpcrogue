@@ -26,6 +26,7 @@
 #include <stdbool.h>
 #include "constants.h"
 #include "conio.h"
+#include "components/fighter.h"
 #include "entity.h"
 #include "game_map.h"
 #include "input_handler.h"
@@ -58,6 +59,7 @@ void main()
 
   cpct_disableFirmware();
 
+  InitFighterComponents();
   InitEntities();
   NewGame (&player);
 

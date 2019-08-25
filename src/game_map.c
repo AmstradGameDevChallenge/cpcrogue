@@ -22,6 +22,7 @@
 #include "constants.h"
 #include "conio.h"
 #include "fast_math.h"
+#include "components/fighter.h"
 #include "entity.h"
 #include "rect.h"
 #include "fov.h"
@@ -401,8 +402,6 @@ void _CreateTunnel (u8 start, u8 end, u8 other, u8 direction)
   }
 }
 
-
-
 //---------------------------------------------------------------------------
 /*!
  * Places 0 to MAX_MOBS_IN_ROOM enemies in a room
@@ -413,6 +412,7 @@ void _CreateTunnel (u8 start, u8 end, u8 other, u8 direction)
 void _MapPlaceEntities (TRoom *rptr)
 {
   u8 x, y;
+  TFighter *mob_fighter;
 
   // Get a random # of mobs to place
   u8 num_mobs = rand_range (0, MAX_MOBS_IN_ROOM);
@@ -430,13 +430,16 @@ void _MapPlaceEntities (TRoom *rptr)
     // 80% create a goblin
     // 20% create an orc
     if (cpct_rand() < 128) {
+      mob_fighter = FighterCreate (7, 12, 12, 10);
       EntityCreate (x, y, SPR_GOBLIN, PEN_NORMAL, "Goblin", true,
-         7, 12, 12, 10);
-    } // if 80%
+                    mob_fighter);
+    } // if
     else {
+      mob_fighter = FighterCreate (17, 14, 10, 9);
       EntityCreate (x, y, SPR_ORC, PEN_NORMAL, "Orc", true,
-         17, 14, 10, 9);
-    }
+                    mob_fighter);
+         ;
+    } // else
 
   }
 

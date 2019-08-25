@@ -20,7 +20,7 @@
 
 
 /*!
- * \defgroup GameMap
+ * \defgroup game_map
  *
  * \brief Map creation and query routines
  *

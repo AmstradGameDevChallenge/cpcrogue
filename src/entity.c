@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <string.h>
 #include "logo.h"
+#include "components/fighter.h"
 #include "entity.h"
 #include "constants.h"
 #include "conio.h"
@@ -42,32 +43,27 @@ void InitEntities()
  *               Create en entity with given values
  ***************************************************************************/
 TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
-  u8 blocks, u16 hp, u8 str, u8 destr, u8 refl)
+  u8 blocks, TFighter *fighter)
 {
   TEntity *e = NULL;
   // We reached max. allowed entities
   assert (num_entities < MAX_ENTITIES);
 
   // Get a ptr to next available slot in the entities array
-
   e = &entities[num_entities++];
 
-  e->x = e->px = x;  // current posX
-  e->y = e->py = y;  // current posY
-  e->spr =spr;
-  e->color = color;
-  cpct_memcpy (e->name, name, 15);
-  e->blocks = blocks;
+  e->x = e->px = x;                 // current posX
+  e->y = e->py = y;                 // current posY
+  e->spr =spr;                      // char used to draw
+  e->color = color;                 // foreground color
+  cpct_memcpy (e->name, name, 15);  // name
+  e->blocks = blocks;               // blocks other entities?
 
-  e->max_hp = hp;
-  e->hp = hp;
-  e->str = str;
-  e->des = destr;
-  e->ref = refl;
+  if (fighter)
+    fighter->owner = e;             // Set the owner of the component
 
-  e->atk = (str  + destr)>>1;
-  e->def = (destr + refl)>>1;
-
+  e->fighter = fighter;             // Fighter component if it's a combat
+                                    // entity or NULL
   return e;
 }
 /****************************************************************************
@@ -102,18 +98,21 @@ void EntityMove (TEntity *e, i8 dx, i8 dy)
  ***************************************************************************/
 u8 EntityCalculateDamage (TEntity *e)
 {
+/*
   u8 dmg = e->atk >> 2;
   u8 r = (cpct_rand() * 7/255) - 3;
   dmg += r;
   return (dmg < 127 ? dmg : dmg+3);
+*/
 }
 /****************************************************************************
  *           Take dmg points of damage
  ***************************************************************************/
 void EntityTakeDamage (TEntity *e, u8 dmg)
 {
-  e->hp -= dmg;
   /*
+  e->hp -= dmg;
+
   PrintAt (STATUS_X,STATUS_Y+1, e->name, PEN_BRIGHT);
   PrintAt (STATUS_X+7,STATUS_Y+1, "takes     ", PEN_NORMAL);
   PrintU8 (dmg, STATUS_X+13,STATUS_Y+1, PEN_BRIGHT);
@@ -132,10 +131,10 @@ void EntityAttack (TEntity *e, TEntity *target)
   PrintAt (STATUS_X,STATUS_Y, e->name, PEN_BRIGHT);
   PrintAt (STATUS_X+8,STATUS_Y, "attacks", PEN_NORMAL);
   PrintAt (STATUS_X+16,STATUS_Y, target->name, PEN_BRIGHT);
-  */
+
   dmg = EntityCalculateDamage (e);
   EntityTakeDamage (target, dmg);
-
+*/
   strcat (msg, e->name);
   strcat (msg, " attacks ");
   strcat (msg, target->name);
