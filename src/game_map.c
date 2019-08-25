@@ -1,3 +1,20 @@
+//-----------------------------LICENSE NOTICE--------------------------------
+//  This file is part of CPCRogue: An Amstrad CPC rogue like game
+//  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//---------------------------------------------------------------------------
 #include <cpctelera.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -13,11 +30,20 @@
 // Forward declarations of private functions
 void _PlaceRoom (TRoom *r);
 void _InitTiles (u8 width, u8 height);
-u8 _InitGrid ();
+u8   _InitGrid ();
 void _Map2Tiles (TEntity *player, u8 num_rooms);
 void _CreateTunnel (u8 start, u8 end, u8 other, u8 direction);
 void _GetView (u8 *left, u8 *top, TEntity *player);
+void _MapPlaceEntities (TRoom *rptr);
 
+/*
+ ==========================================================================
+   ___  _  _ ___  _    _ ____    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
+   |__] |  | |__] |    | |       |___ |  | |\ | |     |  | |  | |\ | [__
+   |    |__| |__] |___ | |___    |    |__| | \| |___  |  | |__| | \| ___]
+
+ ==========================================================================
+*/
 
 // Instantiate the lobal variables used in this module
 TGridCell grid[GRID_WIDTH * GRID_HEIGHT];
@@ -58,11 +84,16 @@ void MapCreate (u8 width, u8 height, TEntity *player)
   // Transfer room information to the tiles
   _Map2Tiles (player, num_rooms);
 }
+
 //---------------------------------------------------------------------------
+/*! \brief
+ *
+
 u8 MapIsBlocked (u8 x, u8 y)
 {
   return game_map.tiles[y][x].t_flags & BLOCKED;
 }
+*/
 
 /*
  * \param[in] x,y Map coordinates to query.
@@ -189,40 +220,26 @@ void GetView (TEntity* player, u8 *left, u8 *top, u8 width, u8 height)
   *left = l;
   *top = t;
 }
-//---------------------------------------------------------------------------
-void _PlaceRoom (TRoom *r)
-{
-  u8 x,y;
-  for (y = r->rect.top+1; y < r->rect.bottom-1; ++y) {
-    for (x = r->rect.left+1; x < r->rect.right-1; ++x) {
-      game_map.tiles[y][x].t_flags &= ~BLOCKED;
-      game_map.tiles[y][x].t_flags &= ~BLOCKS_LIGHT;
-    }
-  }
-}
+
+/*
+ ===========================================================================
+ ___  ____ _ _  _ ____ ___ ____    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
+ |__] |__/ | |  | |__|  |  |___    |___ |  | |\ | |     |  | |  | |\ | [__
+ |    |  \ |  \/  |  |  |  |___    |    |__| | \| |___  |  | |__| | \| ___]
+
+============================================================================
+*/
 
 //---------------------------------------------------------------------------
-void _CreateTunnel (u8 start, u8 end, u8 other, u8 direction)
-{
-  u8 coord, x, y;
-  u8 start_loop, end_loop;
-  start_loop = min (start, end);
-  end_loop = max (start, end);
-
-  for (coord = start_loop; coord <= end_loop; ++coord) {
-    if (direction) {
-      // true Horizontal tunnel
-      x = coord; y = other;
-    }
-    else {
-      // FALSE Vertical tunnel
-      x = other; y = coord;
-    }
-    game_map.tiles[y][x].t_flags &= ~BLOCKED;
-    game_map.tiles[y][x].t_flags &= ~BLOCKS_LIGHT;
-  }
-}
-//---------------------------------------------------------------------------
+/*! \brief
+ * Initializes the map to a given width and height.
+ *
+ * All the tiles in the map  are set to block movement and light. Also
+ * initializes the visibility map to all cells not visible.
+ *
+ * \param width   Width of the map to initialize
+ * \param height  Height of the map to initialize
+ */
 void _InitTiles (u8 width, u8 height)
 {
   game_map.width = width;
@@ -230,12 +247,28 @@ void _InitTiles (u8 width, u8 height)
 
   // Initialize all tiles as block movement (walls) and block light
   cpct_memset (game_map.tiles, BLOCKED | BLOCKS_LIGHT,
-    MAP_WIDTH * MAP_HEIGHT);
+    sizeof (game_map.tiles));
 
   // Initialize the visibility map
   ClearVisMap ();
 }
+
 //---------------------------------------------------------------------------
+/*! \brief
+ * Initializes the grid system by which the rooms will be placed.
+ *
+ * Each room is placed in a single grid cell, thus we ensure no rooms
+ * overlap. This fn. does the following:
+ *
+ *  - Zero all rooms data
+ *  - Create a rnd # of rooms of rnd size
+ *  - Set the top,left coordinate of each grid cell
+ *  - Place a room in a rnd grid cell
+ *
+ * After this function is called each tile has a room id assigned to it.
+ * But the room tiles are not yet "carved"on the map. That's the role of
+ * \ref _Map2Tiles which is called next.
+ */
 u8 _InitGrid ()
 {
   TRoom *rptr;            // Room to place
@@ -283,16 +316,22 @@ u8 _InitGrid ()
   }
   return num_rooms;
 }
+
 //---------------------------------------------------------------------------
+/*! \brief
+ * "Carve" rooms, places entities in and connects them.
+ */
 void _Map2Tiles (TEntity *player, u8 num_rooms)
 {
   TRoom *rptr;
   u8 i;
   u8 new_x, new_y, prev_x, prev_y;
-
   new_x = new_y = prev_x = prev_y = 0;
+
+  // For each room...
   for (i=0,rptr = rooms; rptr != &rooms[num_rooms]; ++rptr, ++i) {
-    // Fill room with floor
+
+    // Fill room with floor tiles
     _PlaceRoom (rptr);
 
     // Center coords of this room for later use
@@ -302,17 +341,103 @@ void _Map2Tiles (TEntity *player, u8 num_rooms)
     if (i == 0) {
       player->x = new_x;
       player->y = new_y;
-    }
+    } // if
+
     // All rooms after the first:
     // connect it to the previous room with a tunnel
     else {
       _CreateTunnel (prev_x, new_x, prev_y, true);
       _CreateTunnel (prev_y, new_y, new_x, false);
-    }
+
+      // Add enemies to this room
+      _MapPlaceEntities (rptr);
+    } // else
+
+    // Save this room coords. to create a tunnel to the next room.
     prev_x = new_x;
     prev_y = new_y;
-    }
+  } // for
 
   // TODO: Add doors
+}
+
+//--------------------------------------------------------------------------
+/*! \brief
+ *  Fill a room with corresponding tiles and set not blocking flags.
+ *
+ *  \param r Pointer to room to place
+ *
+ */
+void _PlaceRoom (TRoom *r)
+{
+  u8 x,y;
+  for (y = r->rect.top+1; y < r->rect.bottom-1; ++y) {
+    for (x = r->rect.left+1; x < r->rect.right-1; ++x) {
+      game_map.tiles[y][x].t_flags &= ~BLOCKED;
+      game_map.tiles[y][x].t_flags &= ~BLOCKS_LIGHT;
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void _CreateTunnel (u8 start, u8 end, u8 other, u8 direction)
+{
+  u8 coord, x, y;
+  u8 start_loop, end_loop;
+  start_loop = min (start, end);
+  end_loop = max (start, end);
+
+  for (coord = start_loop; coord <= end_loop; ++coord) {
+    if (direction) {
+      // true Horizontal tunnel
+      x = coord; y = other;
+    }
+    else {
+      // FALSE Vertical tunnel
+      x = other; y = coord;
+    }
+    game_map.tiles[y][x].t_flags &= ~BLOCKED;
+    game_map.tiles[y][x].t_flags &= ~BLOCKS_LIGHT;
+  }
+}
+
+
+
+//---------------------------------------------------------------------------
+/*!
+ * Places 0 to MAX_MOBS_IN_ROOM enemies in a room
+ *
+ * \param rptr Pointer to room to place the enemies
+ *
+ */
+void _MapPlaceEntities (TRoom *rptr)
+{
+  u8 x, y;
+
+  // Get a random # of mobs to place
+  u8 num_mobs = rand_range (0, MAX_MOBS_IN_ROOM);
+
+  for (u8 i=0; i<num_mobs; ++i) {
+
+    // If there are no more memory for another mob, just exit
+    if (num_entities == MAX_ENTITIES) return;
+
+    assert (num_entities < MAX_ENTITIES);
+    // Choose a random position in room
+    x = rand_range (rptr->rect.left+1, rptr->rect.right-1);
+    y = rand_range (rptr->rect.top+1, rptr->rect.bottom-1);
+
+    // 80% create a goblin
+    // 20% create an orc
+    if (cpct_rand() < 128) {
+      EntityCreate (x, y, SPR_GOBLIN, PEN_NORMAL, "Goblin", true,
+         7, 12, 12, 10);
+    } // if 80%
+    else {
+      EntityCreate (x, y, SPR_ORC, PEN_NORMAL, "Orc", true,
+         17, 14, 10, 9);
+    }
+
+  }
 
 }

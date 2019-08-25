@@ -1,6 +1,6 @@
-//-------------------------LICENSE NOTICE------------------------------------
-//  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//-----------------------------LICENSE NOTICE--------------------------------
+//  This file is part of CPCRogue: An Amstrad CPC rogue like game
+//  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//-----------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 /**********************************
  *  CPC ROGUE
@@ -46,54 +46,36 @@ void main()
 {
   TAction action;           // Action taken by player
   TState state;             // Current state in game
-  TEntity *target;          // Used when searching entities
   u8 left, top;             // Map coords. we want to start drawing
-// Temporary new positions
-  u8 new_x, new_y;
   // Player displacement
   i8 dx, dy;
-  TEntity player, enemy;            // Entities to be placed
+  TEntity *player=NULL;     // Player entity
   u8 ei = 0;
   u8 view_updated = false;
   u8 fov_changed = false;
   u8 draw_flags;
+  u8 log_is_full = false;
 
   cpct_disableFirmware();
 
-  NewGame (&player, &enemy);
-  ComputeLOS (player.x, player.y, FOV_RADIUS);
+  InitEntities();
+  NewGame (&player);
 
   //ShowLogo();
-  GetView (&player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
 
+  GetView (player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
   // Draw everything
   draw_flags = CLEAR_ALL | STATUS_MSG | CLEAR_STATUS |
     DRAW_HUD | DRAW_MAP | DRAW_STATS;
-  DrawGame (&player, left, top, draw_flags);
+  DrawGame (player, left, top, draw_flags);
 
-  // It's Player's turn
+  // It's duck season!
   state = PLAYER_TURN;
 
   do {
-    // Check if we need to recompute field of view
-    if (fov_changed) {
-      ComputeLOS (player.x, player.y, FOV_RADIUS);
-      MapDraw (left, top, VIEW_WIDTH, VIEW_HEIGHT, &player);
-      fov_changed = false;
-    }
-    // Draw all
-    // Check if we should update viewport
-    if (player.x <= left || player.y <=top ||
-      player.x > left+VIEW_WIDTH-1 || player.y > top+VIEW_HEIGHT-1) {
-      view_updated = true;
-    }
-    if (view_updated) {
-      view_updated = false;
-      ComputeLOS (player.x, player.y, FOV_RADIUS);
-      GetView (&player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
-      DrawGame (&player, left, top, draw_flags);
-    }
-    EntityDrawEntities(entities, left, top);
+
+    // Draw game and update fov if required
+    GameDraw (player, &fov_changed, &view_updated, &left, &top, draw_flags);
 
     // Get keyboard state
     cpct_scanKeyboard();
@@ -102,41 +84,38 @@ void main()
     dx=0; dy=0;
     action = HandleKeyboard (&dx, &dy);
 
-    new_x = player.x+dx;
-    new_y = player.y+dy;
-
     if (action == NEW_LEVEL) {
-      MapCreate (MAP_WIDTH, MAP_HEIGHT, &player);
-      ComputeLOS(player.x, player.y, FOV_RADIUS);
-      GetView (&player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
+      //InitEntities();
+      //NewGame (&player);
+      //ComputeLOS (player->x, player->y, FOV_RADIUS);
+      GetView (player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
+      DrawGame (player, left, top, draw_flags);
+    }
 
-      DrawGame (&player, left, top, draw_flags);
-    }
     if (action == PLAYER_MOVE && state == PLAYER_TURN) {
-      if (!MapIsBlocked (new_x, new_y)) {
-        if (GetBlockingEntity (entities, &target, new_x, new_y) &&
-          target != &player) {
-          // Attack!
-          EntityAttack (&player, target);
-        }
-        else {
-          // Reset tile visibility around player's FOV
-          ClearVisMap ();
-          EntityMove (&player, dx, dy);
-          fov_changed = true;
-        }
+      // Clear the log window if needed when the player moves
+      if (log_is_full) {
+        ClearStatus (3);
+        log_is_full = false;
+      } // if (log_is_full)
+
+      GameDoPlayerTurn (player, dx, dy, left, top,
+        &log_is_full, &view_updated, &fov_changed);
+
+        // It's rabbit season!
         state = ENEMY_TURN;
-      }
-    }
+    } // if (action == PLAYER_MOVE)
+
     if (state == ENEMY_TURN) {
       // Enemy actions
+      /*
       new_x = enemy.x + edx[ei];
       new_y = enemy.y;
       if (!MapIsBlocked (new_x, new_y)) {
-        if (GetBlockingEntity (entities, &target, new_x, new_y) &&
+        if (GetBlockingEntity (target, new_x, new_y) &&
           target != &enemy) {
           EntityAttack (&enemy, target);
-          PrintStats(&player);
+          PrintStats(player);
         }
         else {
           EntityMove (&enemy, edx[ei++], 0);
@@ -145,7 +124,9 @@ void main()
       else ++ei;
       if (ei > 9) ei = 0;
       // It's Player's turn
+*/
+      // It's duck season!
       state = PLAYER_TURN;
-    }
+    } // if (state == ENEMY_TURN)
   } while (1);
 }

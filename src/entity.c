@@ -1,21 +1,57 @@
+//-----------------------------LICENSE NOTICE--------------------------------
+//  This file is part of CPCRogue: An Amstrad CPC rogue like game
+//  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//---------------------------------------------------------------------------
 #include <cpctelera.h>
 #include <stdio.h>
 #include <stdbool.h>
-//#include <string.h>
+#include <assert.h>
+#include <string.h>
 #include "logo.h"
 #include "entity.h"
 #include "constants.h"
 #include "conio.h"
-
+#include "fov.h"
+#include "user_interface.h"
 
 // List of entities in our game
-TEntity *entities[MAX_ENTITIES];  // List of entities in game
+TEntity entities[MAX_ENTITIES];  // List of entities in game
+u8 num_entities;
+
+void InitEntities()
+{
+  cpct_memset (entities, 0, sizeof (entities));
+  num_entities = 0;
+}
+
+
 /****************************************************************************
  *               Create en entity with given values
  ***************************************************************************/
-void EntityInit (TEntity *e, u8 x, u8 y, u8 spr, u8 color, u8 name[],
+TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
   u8 blocks, u16 hp, u8 str, u8 destr, u8 refl)
 {
+  TEntity *e = NULL;
+  // We reached max. allowed entities
+  assert (num_entities < MAX_ENTITIES);
+
+  // Get a ptr to next available slot in the entities array
+
+  e = &entities[num_entities++];
+
   e->x = e->px = x;  // current posX
   e->y = e->py = y;  // current posY
   e->spr =spr;
@@ -31,9 +67,11 @@ void EntityInit (TEntity *e, u8 x, u8 y, u8 spr, u8 color, u8 name[],
 
   e->atk = (str  + destr)>>1;
   e->def = (destr + refl)>>1;
+
+  return e;
 }
 /****************************************************************************
- *                    Draw/Erase a single entity
+ *                    Draw a single entity
  ***************************************************************************/
 void EntityDraw (TEntity *e, u8 left, u8 top)
 {
@@ -44,7 +82,10 @@ void EntityDraw (TEntity *e, u8 left, u8 top)
   spr = e->spr;
 
   if (x > 127 || x > VIEW_WIDTH-1 || y > 127 || y > VIEW_HEIGHT-1) return;
-  putchar_f (VMEM_MAP, x,y, spr, color, PEN_CLEAR);
+
+  // Draw the entity only if it's visible
+  if (isVisible (e->x,e->y))
+    putchar_f (VMEM_MAP, x,y, spr, color, PEN_CLEAR);
 }
 /****************************************************************************
  *                      Move entity to new position
@@ -85,41 +126,45 @@ void EntityTakeDamage (TEntity *e, u8 dmg)
 void EntityAttack (TEntity *e, TEntity *target)
 {
   u8 dmg;
+  u8 msg[38] = "";
   // Show action in log window
 /*
   PrintAt (STATUS_X,STATUS_Y, e->name, PEN_BRIGHT);
   PrintAt (STATUS_X+8,STATUS_Y, "attacks", PEN_NORMAL);
   PrintAt (STATUS_X+16,STATUS_Y, target->name, PEN_BRIGHT);
   */
-
   dmg = EntityCalculateDamage (e);
   EntityTakeDamage (target, dmg);
+
+  strcat (msg, e->name);
+  strcat (msg, " attacks ");
+  strcat (msg, target->name);
+  LogMessage (msg, 0);
 }
 /****************************************************************************
  *           Get first blocking entity at given position
  ***************************************************************************/
-u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y)
+TEntity *GetBlockingEntity (u8 x, u8 y)
 {
-  TEntity *e;
-  u8 j = 22;
-
-  while ( (e=*entities++) != NULL) {
-    if (e->blocks && e->x == x && e->y == y) {
-      *out_e = e;
-      return true;
-    }
-  }
-  return false;
+  // For each entity created so far...
+  for (u8 n=0; n < num_entities; ++n) {
+    // If it's a blocking entity and it's @ the query position,
+    // we have a match.
+    if (entities[n].blocks &&
+      entities[n].x == x && entities[n].y == y) {
+      return &entities[n];
+    } // if
+  } // for
+  return NULL;
 }
 /****************************************************************************
  *                      Draw all entities in array
  ***************************************************************************/
-void EntityDrawEntities (TEntity *entities[], u8 left, u8 top)
+void EntityDrawEntities (u8 left, u8 top)
 {
-  TEntity *e;
-  u8 i=0;
-  while ( (e=entities[i]) ) {
+  TEntity *e = &entities[0];
+
+  for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
     EntityDraw (e, left, top);
-    ++i;
   }
 }

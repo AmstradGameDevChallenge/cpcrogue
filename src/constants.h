@@ -31,17 +31,20 @@
 /****************************************************************************
  * Special ASCII codes
  ***************************************************************************/
-#define US  0x1f        // LOCATE
+/*#define US  0x1f        // LOCATE
 #define FS  0x1c        // INK
 #define GS  0x1d        // BORDER
 #define SO  0x0e        // PAPER
 #define SI  0x0f        // PEN
 #define FF  0x0c        // CLS
-
+*/
 
 
 // Max allowed entities in game
-#define MAX_ENTITIES 5
+#define MAX_ENTITIES 32
+
+// Max mobs in a room
+#define MAX_MOBS_IN_ROOM  3
 
 // Map dimensions
 #define MAP_WIDTH       64
@@ -77,6 +80,7 @@
 #define   SPR_FLOOR   144
 #define   SPR_PLAYER  '@'
 #define   SPR_GOBLIN  'g'
+#define   SPR_ORC     'o'
 
 // Sprite Colors
 #define   INK_BG          0
@@ -129,7 +133,7 @@ typedef enum TState {
 #define VMEM_STATS (void*)(0xC000+STATS_Y*0x50+STATS_X*2)
 
 //!< Start of the message log display area in the Amstrad CPC video memory
-#define VMEM_STATUS (void*)(0xC000+ STATUS_Y*0x50+STATUS_X*2)
+#define VMEM_STATUS (0xC000+ STATUS_Y*0x50+STATUS_X*2)
 
 //!< Bytes/line
 #define ONELINE 80

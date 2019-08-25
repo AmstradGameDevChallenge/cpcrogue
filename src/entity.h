@@ -1,3 +1,20 @@
+//-----------------------------LICENSE NOTICE--------------------------------
+//  This file is part of CPCRogue: An Amstrad CPC rogue like game
+//  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//---------------------------------------------------------------------------
 #ifndef ENTITY_H
 #define ENTITY_H
 /****************************************************************************
@@ -22,15 +39,24 @@ typedef struct {
   u16 def;      // Current defense
 } TEntity;
 
-extern TEntity *entities[];
+/*!
+ * \var List of all entities. This is fixed to MAX_ENTITIES
+ */
+extern TEntity entities[];
 
-void EntityInit (TEntity *c, u8 x, u8 y, u8 spr, u8 color, u8 name[],
+/*!
+ * \var Current number of entities
+ */
+extern u8 num_entities;
+
+void InitEntities();
+TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
   u8 blocks, u16 hp, u8 str, u8 destr, u8 refl);
 void EntityMove (TEntity *c, i8 dx, i8 dy);
 void EntityAttack (TEntity *e, TEntity *target);
-u8 GetBlockingEntity (TEntity *entities[], TEntity **out_e, u8 x, u8 y);
+TEntity *GetBlockingEntity (u8 x, u8 y);
 void EntityDraw (TEntity *e, u8 left, u8 top);
-void EntityDrawEntities(TEntity *entities[], u8 left, u8 top);
+void EntityDrawEntities(u8 left, u8 top);
 void EntityPrintStats (TEntity *e);
 
 #endif
