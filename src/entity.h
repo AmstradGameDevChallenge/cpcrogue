@@ -62,6 +62,7 @@ void EntityAttack (TEntity *e, TEntity *target);
 TEntity *GetBlockingEntity (u8 x, u8 y);
 void EntityDraw (TEntity *e, u8 left, u8 top);
 void EntityDrawEntities(u8 left, u8 top);
+void EntityEraseEntities(u8 left, u8 top);
 void EntityPrintStats (TEntity *e);
 
 #endif

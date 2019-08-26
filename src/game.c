@@ -61,7 +61,9 @@ void GameDraw (TEntity *player,
     GetView (player, left, top, VIEW_WIDTH, VIEW_HEIGHT);
     DrawGame (player, *left, *top, draw_flags);
   }
+  EntityEraseEntities(*left, *top);
   EntityDrawEntities(*left, *top);
+
 }
 
 void

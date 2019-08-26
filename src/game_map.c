@@ -106,6 +106,58 @@ u8 MapBlocksLight (u8 x, u8 y)
   return game_map.tiles[y][x].t_flags & BLOCKS_LIGHT;
 }
 
+void MapDrawTile (TTile *current_tile,
+  u8 view_x, u8 view_y, u8 tile_x, u8 tile_y,
+  u8 visible, u8 is_wall)
+{
+  u8 fg_pen, bg_pen;
+  u8 ch;
+  fg_pen = bg_pen = PEN_CLEAR;
+
+  if (visible) {
+  /*
+   * Tile VISIBLE
+   */
+    fg_pen = PEN_NORMAL;    // Uses light color
+
+    if (is_wall) {            // WALL (lighted)
+      bg_pen = PEN_BRIGHT;
+      ch = SPR_WALL;          // Sprite used to draw a WALL
+    } // if is_wall
+    else {
+                              // FLOOR (lighted)
+      bg_pen = PEN_CLEAR;
+      ch = SPR_FLOOR;         // Sprite used to draw a FLOOR
+    } // else (!is_wall)
+
+    // Draw tile
+    if (!MapHasEntity (tile_x, tile_y))
+      putchar_f (VMEM_MAP, view_x, view_y, ch, fg_pen, bg_pen);
+
+    // Mark this tile as explored
+    current_tile->t_flags |= EXPLORED;
+
+  } // if visible
+  /*
+   * Tile HIDDEN
+   */
+  else if (current_tile->t_flags & EXPLORED) {
+    fg_pen = PEN_EXPLORED;    // Explored tiles are drawn darker
+
+    if (is_wall) {              // WALL (dark)
+      bg_pen = PEN_CLEAR;
+      ch = SPR_WALL;            // Sprite to draw a WALL
+    }
+    else {
+      bg_pen = PEN_CLEAR;
+      ch = SPR_FLOOR;           // FLOOR (dark)
+    }
+    putchar_f (VMEM_MAP, view_x, view_y, ch, fg_pen, bg_pen);
+  } // else if explored
+  /*
+   * Not visible/unexplored tiles are ignored.
+ */
+}
 /*!
  * Draws a portion of the map into the viewport. The start coordinates of
  * the subregion in the map to draw are given by *left* and *top*
@@ -129,8 +181,8 @@ void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
   //void *pvmem;
   u8 is_wall, visible;
   TTile *current_tile;
-  u8 fg_pen, bg_pen;
-  u8 ch;
+  u8 tile_x, tile_y;  // Coords of the map tile to draw
+
 
   /*
    * TODO:
@@ -147,58 +199,15 @@ void MapDraw (u8 left, u8 top, u8 width, u8 height, TEntity *player)
     if (x> VIEW_WIDTH-1) break;
     if (y> VIEW_HEIGHT-1) break;
 
+    tile_x = left + x;
+    tile_y = top + y;
     // reference to the current tile
-    current_tile = &game_map.tiles[top + y][left + x];
+    current_tile = &game_map.tiles[tile_y][tile_x];
 
-    visible = isVisible (left + x, top + y);
+    visible = isVisible (tile_x, tile_y);
     is_wall = current_tile->t_flags & BLOCKED;
-    fg_pen = bg_pen = PEN_CLEAR;
 
-  /*
-   * TODO:
-   *  - shorter version avoid if - else - if?
-   */
-    /*
-     * Tile VISIBLE
-     */
-    if (visible) {
-      fg_pen = PEN_NORMAL;    // Uses light color
-
-      if (is_wall) {            // WALL (lighted)
-        bg_pen = PEN_BRIGHT;
-        ch = SPR_WALL;          // Sprite used to draw a WALL
-      } // if is_wall
-      else {                    // FLOOR (lighted)
-        bg_pen = PEN_CLEAR;
-        ch = SPR_FLOOR;         // Sprite used to draw a FLOOR
-      } // else
-
-      // Draw tile
-      putchar_f (VMEM_MAP, x, y, ch, fg_pen, bg_pen);
-
-      // Mark this tile as explored
-      current_tile->t_flags |= EXPLORED;
-    } // if visible
-
-    /*
-     * Tile HIDDEN
-     */
-    else if (current_tile->t_flags & EXPLORED) {
-      fg_pen = PEN_EXPLORED;    // Explored tiles are drawn darker
-
-      if (is_wall) {              // WALL (dark)
-        bg_pen = PEN_CLEAR;
-        ch = SPR_WALL;            // Sprite to draw a WALL
-      }
-      else {
-        bg_pen = PEN_CLEAR;
-        ch = SPR_FLOOR;           // FLOOR (dark)
-      }
-      putchar_f (VMEM_MAP, x, y, ch, fg_pen, bg_pen);
-    } // else if explored
-    /*
-     * Not visible/unexplored tiles are ignored.
-     */
+    MapDrawTile (current_tile, x, y, tile_x, tile_y, visible, is_wall);
     } // for x
   } // for y
 }
@@ -342,6 +351,9 @@ void _Map2Tiles (TEntity *player, u8 num_rooms)
     if (i == 0) {
       player->x = new_x;
       player->y = new_y;
+
+      // Flag this tile is now occupied
+      game_map.tiles[new_y][new_x].t_flags |= HAS_ENTITY;
     } // if
 
     // All rooms after the first:

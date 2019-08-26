@@ -113,6 +113,19 @@ inline u8 MapIsBlocked (u8 x, u8 y)
 }
 
 /*!
+ * \brief True if there's an entity @ the specified map coordinates
+ *
+ * \param[in] x,y Map coordinates to query.
+ *
+ * \returns true if there's an entity there. Note that you don't know what
+ * entity is, only that there's an entity there.
+ */
+inline u8 MapHasEntity (u8 x, u8 y)
+{
+  return game_map.tiles[y][x].t_flags & HAS_ENTITY;
+}
+
+/*!
  * \brief True if specified map coordinates block light (i.e: wall)
  */
 u8 MapBlocksLight (u8 x, u8 y);
@@ -120,6 +133,14 @@ u8 MapBlocksLight (u8 x, u8 y);
 /*! \brief Sets area around origin_x/_y to not visible
  */
 void MapSetNotVisible (u8 origin_x, u8 origin_y, u8 range);
+
+/*!
+ * \brief Draws a single tile in the correponding char and colour
+ */
+void
+MapDrawTile (TTile *current_tile,
+             u8 view_x, u8 view_y, u8 tile_x, u8 tile_y,
+             u8 visible, u8 is_wall);
 
 /*!
  * \brief Draws a visible portion of the map centered around the player

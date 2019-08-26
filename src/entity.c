@@ -27,6 +27,7 @@
 #include "conio.h"
 #include "fov.h"
 #include "user_interface.h"
+#include "game_map.h"
 
 // List of entities in our game
 TEntity entities[MAX_ENTITIES];  // List of entities in game
@@ -64,6 +65,9 @@ TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
 
   e->fighter = fighter;             // Fighter component if it's a combat
                                     // entity or NULL
+
+  // Mark this tile as occupied
+  game_map.tiles[y][x].t_flags |= HAS_ENTITY;
   return e;
 }
 /****************************************************************************
@@ -83,15 +87,41 @@ void EntityDraw (TEntity *e, u8 left, u8 top)
   if (isVisible (e->x,e->y))
     putchar_f (VMEM_MAP, x,y, spr, color, PEN_CLEAR);
 }
+
+void EntityErase (TEntity *e, u8 left, u8 top)
+{
+  u8 px, py, view_x, view_y;
+  TTile *erasing_tile;
+  u8 is_wall, visible;
+
+  px = e->px;
+  py = e->py;
+  if (px < left || py < top) return;
+  view_x = px - left;
+  view_y = py - top;
+
+  erasing_tile = &game_map.tiles[py][px];
+  visible = isVisible (px, py);
+  is_wall = erasing_tile->t_flags & BLOCKED;
+
+  // The previous tile we are "erasing" no longer has an entity
+  game_map.tiles[py][px].t_flags &= ~HAS_ENTITY;
+  MapDrawTile (erasing_tile, view_x, view_y, px, py, visible, is_wall);
+}
 /****************************************************************************
  *                      Move entity to new position
  ***************************************************************************/
 void EntityMove (TEntity *e, i8 dx, i8 dy)
 {
+  // The old position is now free
+  //game_map.tiles[e->y][e->x].t_flags &= ~HAS_ENTITY;
   e->px = e->x;     // Save old positions
   e->py = e->y;
   e->x  = e->x+dx;   // Update to new position
   e->y  = e->y+dy;
+
+  // The new position is now occupied
+  game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
 }
 /****************************************************************************
  *           Get Damage points from entity stats
@@ -165,5 +195,14 @@ void EntityDrawEntities (u8 left, u8 top)
 
   for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
     EntityDraw (e, left, top);
+  }
+}
+void EntityEraseEntities (u8 left, u8 top)
+{
+  TEntity *e = &entities[0];
+
+  for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
+    if (e->px != e->x || e->py != e->y)
+    EntityErase (e, left, top);
   }
 }

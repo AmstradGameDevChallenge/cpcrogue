@@ -83,11 +83,11 @@
 #define   SPR_ORC     'o'
 
 // Sprite Colors
-#define   INK_BG          0
+/*#define   INK_BG          0
 #define   INK_DARK        1
 #define   INK_BRIGHT      25
 #define   INK_NORMAL      16
-
+*/
 #define   PEN_ENTITY      3
 #define   PEN_CLEAR       0
 #define   PEN_TILE        3
@@ -97,18 +97,18 @@
 #define   PEN_MESSAGES    1
 
 // Cell Flags
-#define   BLOCKED       0x01  // Blocks movement
-#define   BLOCKS_LIGHT  0x02  // Light does not pass through this cell
-#define   EXPLORED      0x04  // Has been explored by player
-//#define   VISIBLE       0x08  // Is visible by player
+#define   BLOCKED       0x01  ///< Blocks movement
+#define   BLOCKS_LIGHT  0x02  ///< Light does not pass through this cell
+#define   EXPLORED      0x04  ///< Has been explored by player
+#define   HAS_ENTITY    0x08  ///< There's an entity in the cell
 
 // Flags for drawing UI
-#define   CLEAR_ALL     0x01  // Clear whole screen before drawing anything
-#define   DRAW_MAP      0x02  // Draw map viewport
-#define   CLEAR_STATUS  0x04  // Clear status after finishing drawing
-#define   DRAW_STATS    0x08  // Draw stats section
-#define   STATUS_MSG    0x10  // Display a status message
-#define   DRAW_HUD      0x20  // Draw HUD decoration
+#define   CLEAR_ALL     0x01  ///< Clear whole screen before drawing anything
+#define   DRAW_MAP      0x02  ///< Draw map viewport
+#define   CLEAR_STATUS  0x04  ///< Clear status after finishing drawing
+#define   DRAW_STATS    0x08  ///< Draw stats section
+#define   STATUS_MSG    0x10  ///< Display a status message
+#define   DRAW_HUD      0x20  ///< Draw HUD decoration
 
 // LOS constants
 #define   FOV_RADIUS    5     // Max distance player can see
