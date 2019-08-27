@@ -33,10 +33,11 @@
  *
  * \brief Combat related component
  */
-// Forward declaration of TEntity;
-typedef struct TEntity;
+
+#include "entity.h"
+
 typedef struct TFighter {
-  struct TEntity *owner;  ///< Entity that owns this component
+  TEntity *owner;  ///< Entity that owns this component
   i16 max_hp;     ///< Max health
   i16 hp;         ///< Current health
   u8 str;         ///< Current strength
@@ -46,13 +47,49 @@ typedef struct TFighter {
   u8 def;         ///< Current defense
 } TFighter;
 
-/*
- ==========================================================================
-   ___  _  _ ___  _    _ ____    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
-   |__] |  | |__] |    | |       |___ |  | |\ | |     |  | |  | |\ | [__
-   |    |__| |__] |___ | |___    |    |__| | \| |___  |  | |__| | \| ___]
-
- ==========================================================================
-*/
+/***
+ *       ___  _  _ ___  _    _ ____
+ *       |__] |  | |__] |    | |
+ *       |    |__| |__] |___ | |___
+ *    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
+ *    |___ |  | |\ | |     |  | |  | |\ | [__
+ *    |    |__| | \| |___  |  | |__| | \| ___]
+ *
+ */
 void InitFighterComponents();
 TFighter *FighterCreate (i16 hp, u8 str, u8 destr, u8 refl);
+
+/*! \brief
+ *
+ * Take dmg points of damage
+ *
+ * \returns true if fighter 'hp' <= 0
+ */
+u8 FighterTakeDamage (TFighter *fighter, u8 dmg);
+
+/*! \brief
+ *
+ *  Perform an attack action to an entity!
+ *
+ * \returns true if fighter 'hp' <= 0
+ */
+u8 FighterAttack (TFighter *e, struct TEntity *target);
+
+/***
+ *       ___  ____ _ _  _ ____ ___ ____
+ *       |__] |__/ | |  | |__|  |  |___
+ *       |    |  \ |  \/  |  |  |  |___
+ *    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
+ *    |___ |  | |\ | |     |  | |  | |\ | [__
+ *    |    |__| | \| |___  |  | |__| | \| ___]
+ *
+ */
+
+/*! \brief
+ *
+ *  Calculate damage points from fighter stats
+ */
+u8 EntityCalculateDamage (TFighter *fighter);
+
+
+

@@ -26,8 +26,8 @@
 #include "constants.h"
 #include "conio.h"
 #include "fov.h"
-#include "user_interface.h"
 #include "game_map.h"
+#include "user_interface.h"
 
 // List of entities in our game
 TEntity entities[MAX_ENTITIES];  // List of entities in game
@@ -76,6 +76,7 @@ TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
 void EntityDraw (TEntity *e, u8 left, u8 top)
 {
   u8 x, y, color, spr;
+
   x = e->x - left;
   y = e->y - top;
   color = e->color;
@@ -93,6 +94,8 @@ void EntityErase (TEntity *e, u8 left, u8 top)
   u8 px, py, view_x, view_y;
   TTile *erasing_tile;
   u8 is_wall, visible;
+
+  assert (!e->dead);
 
   px = e->px;
   py = e->py;
@@ -113,6 +116,7 @@ void EntityErase (TEntity *e, u8 left, u8 top)
  ***************************************************************************/
 void EntityMove (TEntity *e, i8 dx, i8 dy)
 {
+  if (e->dead) return;
   // The old position is now free
   //game_map.tiles[e->y][e->x].t_flags &= ~HAS_ENTITY;
   e->px = e->x;     // Save old positions
@@ -123,53 +127,7 @@ void EntityMove (TEntity *e, i8 dx, i8 dy)
   // The new position is now occupied
   game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
 }
-/****************************************************************************
- *           Get Damage points from entity stats
- ***************************************************************************/
-u8 EntityCalculateDamage (TEntity *e)
-{
-/*
-  u8 dmg = e->atk >> 2;
-  u8 r = (cpct_rand() * 7/255) - 3;
-  dmg += r;
-  return (dmg < 127 ? dmg : dmg+3);
-*/
-}
-/****************************************************************************
- *           Take dmg points of damage
- ***************************************************************************/
-void EntityTakeDamage (TEntity *e, u8 dmg)
-{
-  /*
-  e->hp -= dmg;
 
-  PrintAt (STATUS_X,STATUS_Y+1, e->name, PEN_BRIGHT);
-  PrintAt (STATUS_X+7,STATUS_Y+1, "takes     ", PEN_NORMAL);
-  PrintU8 (dmg, STATUS_X+13,STATUS_Y+1, PEN_BRIGHT);
-  PrintAt (STATUS_X+16,STATUS_Y+1, "points of damage", PEN_NORMAL);
-  */
-}
-/****************************************************************************
- *                      Attack 'target'
- ***************************************************************************/
-void EntityAttack (TEntity *e, TEntity *target)
-{
-  u8 dmg;
-  u8 msg[38] = "";
-  // Show action in log window
-/*
-  PrintAt (STATUS_X,STATUS_Y, e->name, PEN_BRIGHT);
-  PrintAt (STATUS_X+8,STATUS_Y, "attacks", PEN_NORMAL);
-  PrintAt (STATUS_X+16,STATUS_Y, target->name, PEN_BRIGHT);
-
-  dmg = EntityCalculateDamage (e);
-  EntityTakeDamage (target, dmg);
-*/
-  strcat (msg, e->name);
-  strcat (msg, " attacks ");
-  strcat (msg, target->name);
-  LogMessage (msg, 0);
-}
 /****************************************************************************
  *           Get first blocking entity at given position
  ***************************************************************************/
@@ -202,7 +160,33 @@ void EntityEraseEntities (u8 left, u8 top)
   TEntity *e = &entities[0];
 
   for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
-    if (e->px != e->x || e->py != e->y)
+    if ((e->px != e->x || e->py != e->y))
     EntityErase (e, left, top);
   }
+}
+
+/*!
+ *
+ */
+void EntityKillMob (TEntity *e)
+{
+
+  u8 msg[38] = "";
+  sprintf (msg, "The %s dies", e->name);
+  LogMessage (msg, 2);
+  e->spr      = '%';    // Dead sprite
+  e->blocks   = false;  // Other entities can walk over his dead body!
+  e->fighter  = NULL;   // No fighter component in a dead mob
+  e->dead     = true;   // Entity is dead!
+
+  // Mark it on the map as well.
+  game_map.tiles[e->y][e->x].t_flags |= HAS_DEAD_ENTITY;
+
+  sprintf (msg, "remains of %s", e->name);
+
+  // Delete the entity by copying the last entity into
+  // the slot occupied by this one
+  cpct_memcpy (e, &entities[--num_entities], sizeof (TEntity));
+  //strcpy (e->name, msg);
+  //LogMessage (e->name, 3);
 }

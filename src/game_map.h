@@ -113,6 +113,18 @@ inline u8 MapIsBlocked (u8 x, u8 y)
 }
 
 /*!
+ * \brief True if specified map coordinates has a dead entity
+ *
+ * \param[in] x,y Map coordinates to query.
+ *
+ * \returns true if tile blocks movement.
+ */
+inline u8 MapHasDeadEntity (u8 x, u8 y)
+{
+  return game_map.tiles[y][x].t_flags & HAS_DEAD_ENTITY;
+}
+
+/*!
  * \brief True if there's an entity @ the specified map coordinates
  *
  * \param[in] x,y Map coordinates to query.

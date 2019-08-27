@@ -39,7 +39,8 @@ typedef struct TEntity {
   u8 spr;       ///< ASCII char to draw this entity
   u8 color;     ///< Color to draw this entity
   u8 name[15];  ///< Name to display in messages
-  u8 blocks;    ///< TRUE if blocks movement of another entity
+  u8 blocks;    ///< true if blocks movement of another entity
+  u8 dead;      ///< true if the entity is dead
 
   struct TFighter *fighter; ///< A fighter component for combat
 } TEntity;
@@ -58,11 +59,17 @@ void InitEntities();
 TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
   u8 blocks, struct TFighter *fighter);
 void EntityMove (TEntity *c, i8 dx, i8 dy);
-void EntityAttack (TEntity *e, TEntity *target);
+
 TEntity *GetBlockingEntity (u8 x, u8 y);
 void EntityDraw (TEntity *e, u8 left, u8 top);
 void EntityDrawEntities(u8 left, u8 top);
 void EntityEraseEntities(u8 left, u8 top);
 void EntityPrintStats (TEntity *e);
+
+/*! \brief
+ *
+ *  Kills a monster entity.
+ */
+void EntityKillMob (TEntity *e);
 
 #endif

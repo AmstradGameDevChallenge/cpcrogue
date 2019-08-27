@@ -87,7 +87,15 @@ GameDoPlayerTurn (TEntity *player, u8 dx, u8 dy, u8 left, u8 top,
        *
        */
       assert (target);
-      if (target != player) EntityAttack (player, target);
+      if (target != player)
+        // Attack target
+        if (FighterAttack (player->fighter, target)) {
+
+          // Destroy mob if hp < 0
+          assert (target != player);
+          EntityKillMob (target);
+          *fov_changed = true;
+        }
       *log_is_full = true;
     } // if (GetBlockingEntity)
 

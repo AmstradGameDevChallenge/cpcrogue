@@ -39,6 +39,7 @@
 
 // Enemy displacement
 const i8 edx[10] = {1,1,1,1,1,-1,-1,-1,-1,-1};
+TEntity *player=NULL;     // Player entity
 
 /****************************************************************************
  *                      MAIN
@@ -50,7 +51,7 @@ void main()
   u8 left, top;             // Map coords. we want to start drawing
   // Player displacement
   i8 dx, dy;
-  TEntity *player=NULL;     // Player entity
+
   u8 ei = 0;
   u8 view_updated = false;
   u8 fov_changed = false;

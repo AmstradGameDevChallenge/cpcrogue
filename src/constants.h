@@ -101,6 +101,7 @@
 #define   BLOCKS_LIGHT  0x02  ///< Light does not pass through this cell
 #define   EXPLORED      0x04  ///< Has been explored by player
 #define   HAS_ENTITY    0x08  ///< There's an entity in the cell
+#define   HAS_DEAD_ENTITY 0x10  ///< There's an entity in the cell
 
 // Flags for drawing UI
 #define   CLEAR_ALL     0x01  ///< Clear whole screen before drawing anything
