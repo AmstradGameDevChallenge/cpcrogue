@@ -59,7 +59,7 @@ void GameDraw (TEntity *player,
     *view_updated = false;
     ComputeLOS (player->x, player->y, FOV_RADIUS);
     GetView (player, left, top, VIEW_WIDTH, VIEW_HEIGHT);
-    DrawGame (player, *left, *top, draw_flags);
+    UI_Draw (player, *left, *top, draw_flags);
   }
   EntityEraseEntities(*left, *top);
   EntityDrawEntities(*left, *top);

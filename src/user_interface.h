@@ -51,4 +51,4 @@ void ClearStatus (u8 nrows);
 void LogMessage (char *msg, u8 row);
 
 /*! \brief Draw the visible elements in the game */
-void DrawGame (TEntity *player, u8 left, u8 top, u8 draw_flags);
+void UI_Draw (TEntity *player, u8 left, u8 top, u8 draw_flags);

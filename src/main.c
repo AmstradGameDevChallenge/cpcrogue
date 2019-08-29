@@ -70,7 +70,7 @@ void main()
   // Draw everything
   draw_flags = CLEAR_ALL | STATUS_MSG | CLEAR_STATUS |
     DRAW_HUD | DRAW_MAP | DRAW_STATS;
-  DrawGame (player, left, top, draw_flags);
+  UI_Draw (player, left, top, draw_flags);
 
   // It's duck season!
   state = PLAYER_TURN;
@@ -92,7 +92,7 @@ void main()
       //NewGame (&player);
       //ComputeLOS (player->x, player->y, FOV_RADIUS);
       GetView (player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
-      DrawGame (player, left, top, draw_flags);
+      UI_Draw (player, left, top, draw_flags);
     }
 
     if (action == PLAYER_MOVE && state == PLAYER_TURN) {

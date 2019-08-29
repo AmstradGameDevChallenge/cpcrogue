@@ -232,7 +232,7 @@ void PrintStats (TEntity *e)
  * \param left,top Top/left tile from the game map subregion to draw
  * \param draw_flags Bitmask to select what to draw and extra actions to do.
  */
-void DrawGame (TEntity *player, u8 left, u8 top, u8 draw_flags)
+void UI_Draw (TEntity *player, u8 left, u8 top, u8 draw_flags)
 {
   OffScreen ();
   if (draw_flags & CLEAR_ALL)     clrscr(VMEM, 0x0000);
