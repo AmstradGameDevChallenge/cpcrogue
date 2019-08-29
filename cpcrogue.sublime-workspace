@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"BasicA",
+				"BasicAI_TakeTurn\tabc"
+			],
+			[
 				"HAS",
 				"HAS_DEAD_ENTITY\t(constants.h)"
 			],
@@ -276,22 +280,30 @@
 	},
 	"expanded_folders":
 	[
-		"/home/andriu/repos/cpctelera/cpcrogue"
+		"/home/andriu/repos/cpctelera/cpcrogue",
+		"/home/andriu/repos/cpctelera/cpcrogue/src",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/components"
 	],
 	"file_history":
 	[
-		"/home/andriu/repos/cpctelera/cpcrogue/src/components/fighter.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/game.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/entity.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/constants.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/main.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.c",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/components/fighter.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/entity.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/components/ai.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/components/ai.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/constants.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/components/fighter.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/user_interface.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/conio.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/cpcrogue.map",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/components/fighter.rst",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/components/ai.rst",
+		"/home/andriu/repos/cpctelera/cpcrogue/obj/components/ai.rel",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/components/fighter.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/user_interface.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/entity.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/entity.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/conio.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/fov.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/input_handler.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/game.h",
@@ -311,7 +323,6 @@
 		"/home/andriu/.local/cpctelera/cpctelera/src/strings/strings.h",
 		"/home/andriu/.local/cpctelera/cpctelera/src/cpctelera.h",
 		"/home/andriu/.local/cpctelera/cpctelera/src/video/videomode.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/obj/cpcrogue.map",
 		"/home/andriu/repos/cpctelera/cpcrogue/obj/game.lst",
 		"/home/andriu/repos/cpctelera/cpcrogue/obj/input_handler.rst",
 		"/home/andriu/.config/sublime-text-3/Packages/ClangAutoComplete/ClangAutoComplete.sublime-settings",
@@ -402,12 +413,7 @@
 		"/home/andriu/repos/cpctelera/tests/src/entity.h",
 		"/home/andriu/repos/cpctelera/tests/obj/entity.lst",
 		"/home/andriu/repos/cpctelera/tests/src/fast_math.h",
-		"/home/andriu/repos/cpctelera/tests/src/path_finding.c",
-		"/home/andriu/repos/cpctelera/tests/src/path_finding.h",
-		"/home/andriu/repos/cpctelera/tests/src/tile.h",
-		"/home/andriu/repos/cpctelera/tests/src/fast_math.c",
-		"/home/andriu/repos/cpctelera/tests/obj/main.lst",
-		"/home/andriu/repos/cpctelera/tests/src/tile.c"
+		"/home/andriu/repos/cpctelera/tests/src/path_finding.c"
 	],
 	"find":
 	{
@@ -426,6 +432,12 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"assert",
+			"fighter",
+			"MAX_FIGHTERS",
+			"fighter",
+			"TFighter",
+			"DrawGame",
 			"block",
 			"e",
 			"left + x",
@@ -603,7 +615,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 207.0,
+	"side_bar_width": 206.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

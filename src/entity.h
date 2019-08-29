@@ -33,6 +33,8 @@
  * \brief A generic object to represent players, enemies, items, etc.
  */
 typedef struct TFighter;
+typedef struct Type_AI;
+
 typedef struct TEntity {
   u8 x, y;      ///< Current position
   u8 px, py;    ///< Previous position
@@ -43,6 +45,7 @@ typedef struct TEntity {
   u8 dead;      ///< true if the entity is dead
 
   struct TFighter *fighter; ///< A fighter component for combat
+  struct Type_AI  *ai;      ///< An AI component if intelligent
 } TEntity;
 
 /*!

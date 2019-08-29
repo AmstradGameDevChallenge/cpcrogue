@@ -40,8 +40,16 @@
 */
 
 
-// Max allowed entities in game
+///< Max allowed entities in game
 #define MAX_ENTITIES 32
+
+///< How many fighter components we allocate, by default we allocate as many
+/// as max entities
+#define MAX_FIGHTER_COMPONENTS  MAX_ENTITIES
+
+///< How many AI components we allocate, by default we allocate as many
+/// as max entities
+#define MAX_AI_COMPONENTS  MAX_ENTITIES
 
 // Max mobs in a room
 #define MAX_MOBS_IN_ROOM  3

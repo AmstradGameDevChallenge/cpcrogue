@@ -15,14 +15,13 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-#ifndef GAME_H
-#define GAME_H
 
-void
-NewGame (TEntity **player);
+typedef struct Type_AI {
+  u8 *owner;
+  void (*TakeTurn)(struct Type_AI *);
+} TAI;
 
-void
-GameDraw (TEntity *player, u8 *left, u8 *top,
-  u8 draw_flags, u8 *fov_changed);
+void InitAIComponents();
+TAI *BasicAI_Create ();
+void BasicAI_TakeTurn (TAI *this);
 
-#endif

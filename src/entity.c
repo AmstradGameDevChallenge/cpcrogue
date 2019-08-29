@@ -22,6 +22,7 @@
 #include <string.h>
 #include "logo.h"
 #include "components/fighter.h"
+#include "components/ai.h"
 #include "entity.h"
 #include "constants.h"
 #include "conio.h"
@@ -116,16 +117,32 @@ void EntityErase (TEntity *e, u8 left, u8 top)
  ***************************************************************************/
 void EntityMove (TEntity *e, i8 dx, i8 dy)
 {
-  if (e->dead) return;
-  // The old position is now free
-  //game_map.tiles[e->y][e->x].t_flags &= ~HAS_ENTITY;
-  e->px = e->x;     // Save old positions
-  e->py = e->y;
-  e->x  = e->x+dx;   // Update to new position
-  e->y  = e->y+dy;
+  TEntity *target = NULL; // Used when searching entities
 
-  // The new position is now occupied
-  game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
+  // Do nothing if this entity is dead
+  if (e->dead) return;
+
+  // If the tile @ new position blocks movement (i.e: wall) do nothing
+  if (!MapIsBlocked (e->x+dx, e->y+dy)) {
+
+    // ATTACK if there's another entity there
+    if ((target = GetBlockingEntity(e->x+dx, e->y+dy) )) {
+      assert (target);
+      if (target != e)  // Ensure we are not attacking ourselves!
+        // Attack target
+        FighterAttack (e->fighter, target);
+    } // if (GetBlockingEntity)
+    else {
+      // No blocking entity, MOVE to the new position
+      e->px = e->x;     // Save old positions
+      e->py = e->y;
+      e->x  = e->x+dx;  // Update to new position
+      e->y  = e->y+dy;
+
+      // The new position is now occupied
+      game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
+    } // else (GetBlockingEntity)
+  } // if (!MapIsBlocked)
 }
 
 /****************************************************************************

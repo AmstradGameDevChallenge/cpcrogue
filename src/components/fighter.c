@@ -24,10 +24,6 @@
 #include "user_interface.h"
 
 
-///< How many fighter components we allocate, by default we allocate as many
-/// as max entities
-#define MAX_FIGHTER_COMPONENTS  MAX_ENTITIES
-
 ///< Count of how many fighters we allocated
 u8 num_fighters;
 
@@ -115,9 +111,12 @@ u8 FighterTakeDamage (TFighter *fighter, u8 dmg)
   u8 msg[38] = "";
   fighter->hp -= dmg;
 
-  if (fighter->hp <= 0)
+  if (fighter->hp <= 0) {
+    // Destroy mob if hp < 0
+    //assert (target != player);
+    EntityKillMob (fighter->owner);
     return true;
-
+  }
   sprintf (msg, "and hits for %d damage", dmg);
   LogMessage (msg, 1);
 

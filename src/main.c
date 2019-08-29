@@ -27,6 +27,7 @@
 #include "constants.h"
 #include "conio.h"
 #include "components/fighter.h"
+#include "components/ai.h"
 #include "entity.h"
 #include "game_map.h"
 #include "input_handler.h"
@@ -36,10 +37,6 @@
 #include "game.h"
 #include "fast_math.h"
 
-
-// Enemy displacement
-const i8 edx[10] = {1,1,1,1,1,-1,-1,-1,-1,-1};
-TEntity *player=NULL;     // Player entity
 
 /****************************************************************************
  *                      MAIN
@@ -51,9 +48,11 @@ void main()
   u8 left, top;             // Map coords. we want to start drawing
   // Player displacement
   i8 dx, dy;
+  TEntity *player=NULL;     // Player entity
+  TEntity *e;               // Entity to traverse the entities array
+  TAI     *ai;              // AI component of the current entity
 
   u8 ei = 0;
-  u8 view_updated = false;
   u8 fov_changed = false;
   u8 draw_flags;
   u8 log_is_full = false;
@@ -77,11 +76,8 @@ void main()
 
   do {
 
-    // Draw game and update fov if required
-    GameDraw (player, &fov_changed, &view_updated, &left, &top, draw_flags);
-
-    // Get keyboard state
-    cpct_scanKeyboard();
+    // Reset to "no action" performed by player
+    action = NONE;
 
     // Get move displacements (if any) according to keys
     dx=0; dy=0;
@@ -95,41 +91,32 @@ void main()
       UI_Draw (player, left, top, draw_flags);
     }
 
-    if (action == PLAYER_MOVE && state == PLAYER_TURN) {
+    if (action == PLAYER_MOVE) {
       // Clear the log window if needed when the player moves
       if (log_is_full) {
         ClearStatus (3);
         log_is_full = false;
       } // if (log_is_full)
 
-      GameDoPlayerTurn (player, dx, dy, left, top,
-        &log_is_full, &view_updated, &fov_changed);
-
-        // It's rabbit season!
-        state = ENEMY_TURN;
+      EntityMove (player, dx, dy);
+      fov_changed = true;
     } // if (action == PLAYER_MOVE)
 
-    if (state == ENEMY_TURN) {
-      // Enemy actions
-      /*
-      new_x = enemy.x + edx[ei];
-      new_y = enemy.y;
-      if (!MapIsBlocked (new_x, new_y)) {
-        if (GetBlockingEntity (target, new_x, new_y) &&
-          target != &enemy) {
-          EntityAttack (&enemy, target);
-          PrintStats(player);
-        }
-        else {
-          EntityMove (&enemy, edx[ei++], 0);
-        }
+    e = entities+num_entities;
+    while (e != entities) {
+      if (e->ai) {
+        ai = e->ai;
+        ai->TakeTurn(ai);
       }
-      else ++ei;
-      if (ei > 9) ei = 0;
-      // It's Player's turn
-*/
-      // It's duck season!
-      state = PLAYER_TURN;
-    } // if (state == ENEMY_TURN)
+      --e;
+    }
+
+  // Check if we need to recompute field of view
+  if (fov_changed)
+    ComputeLOS (player->x, player->y, FOV_RADIUS);
+
+  // Draw game and update fov if required
+  GameDraw (player, &left, &top, draw_flags, &fov_changed);
+
   } while (1);
 }

@@ -25,6 +25,9 @@
  ***************************************************************************/
 TAction HandleKeyboard (i8 *dx, i8 *dy)
 {
+  // Get keyboard state
+  cpct_scanKeyboard();
+
   if (cpct_isKeyPressed (Key_I)) {  // i: UP
     *dx = 0; *dy = -1; return PLAYER_MOVE;
   }
@@ -40,7 +43,7 @@ TAction HandleKeyboard (i8 *dx, i8 *dy)
   if (cpct_isKeyPressed (Key_S)) {  // s: WAIT
     return PLAYER_MOVE;
   }
-  if (cpct_isKeyPressed (Key_N)) {  // s: WAIT
+  if (cpct_isKeyPressed (Key_N)) {  // s: NEW LEVEL
     return NEW_LEVEL;
   }
   return NONE;

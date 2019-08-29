@@ -81,6 +81,8 @@ void ComputeLOS (u8 origin_x, u8 origin_y, u8 range)
   TRect area;
   u8 range_sqr = range*range;
 
+  ClearVisMap ();
+
   // Start point is visible by definition
   SetVisible (origin_x, origin_y);
 

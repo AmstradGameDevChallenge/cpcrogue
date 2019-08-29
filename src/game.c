@@ -45,83 +45,29 @@ void NewGame (TEntity **player)
 /*
  *
  */
-void GameDraw (TEntity *player,
-  u8 *fov_changed, u8 *view_updated, u8 *left, u8 *top, u8 draw_flags)
+void GameDraw (TEntity *player, u8 *left, u8 *top, u8 draw_flags,
+  u8 *fov_changed)
 {
-  // Check if we need to recompute field of view
-  if (*fov_changed) {
+  // If player is on viewport limits, we should redraw the whole viewport:
+  //  - Compute new field of view
+  //  - Get a new viewport
+  //  - Draw the whole elements in the game
+  if (player->x <= *left || player->y <= *top ||
+    player->x > *left+VIEW_WIDTH-1 ||
+    player->y > *top+VIEW_HEIGHT-1) {
+
     ComputeLOS (player->x, player->y, FOV_RADIUS);
+    GetView (player, left, top, VIEW_WIDTH, VIEW_HEIGHT);
+    UI_Draw (player, *left, *top, draw_flags);
+  } // if
+
+  // If only field of view changed, we need to redraw the map
+  else if (*fov_changed) {
     MapDraw (*left, *top, VIEW_WIDTH, VIEW_HEIGHT, player);
     *fov_changed = false;
   }
 
-  if (*view_updated) {
-    *view_updated = false;
-    ComputeLOS (player->x, player->y, FOV_RADIUS);
-    GetView (player, left, top, VIEW_WIDTH, VIEW_HEIGHT);
-    UI_Draw (player, *left, *top, draw_flags);
-  }
   EntityEraseEntities(*left, *top);
   EntityDrawEntities(*left, *top);
-
 }
 
-void
-GameDoPlayerTurn (TEntity *player, u8 dx, u8 dy, u8 left, u8 top,
-  u8 *log_is_full, u8 *view_updated, u8 *fov_changed)
-{
-  TEntity *target = NULL; // Used when searching entities
-  u8 new_x, new_y;        // Temporary new positions
-
-  new_x = player->x+dx;
-  new_y = player->y+dy;
-
-  // If the tile @ new position blocks movement (i.e: wall) do nothing
-  if (!MapIsBlocked (new_x, new_y)) {
-
-    // If it's free, check if there's a blocking entity there
-    if ( (target = GetBlockingEntity (new_x, new_y)) ) {
-      /*
-       * Blocking entity in the new position
-       * Attack it!
-       *
-       */
-      assert (target);
-      if (target != player)
-        // Attack target
-        if (FighterAttack (player->fighter, target)) {
-
-          // Destroy mob if hp < 0
-          assert (target != player);
-          EntityKillMob (target);
-          *fov_changed = true;
-        }
-      *log_is_full = true;
-    } // if (GetBlockingEntity)
-
-    else {
-      /*
-       * Not blocking entity in the new position
-       *
-       * Before moving, check if we are on the viewport limits
-       *
-       */
-      if (new_x <= left || new_y <= top ||
-        new_x > left+VIEW_WIDTH-1 ||
-        new_y > top+VIEW_HEIGHT-1) {
-
-        // We are on viewport limits, we should redraw the whole viewport
-        *view_updated = true;
-      } // if
-
-      // The new player position invalidates the fov map, so reset it
-      ClearVisMap ();
-
-      // Now we can move the player to the new position
-      EntityMove (player, dx, dy);
-
-      // And flag the fov is invalid and needs to be re-calculated
-      *fov_changed = true;
-    } // else (GetBlockingEntity)
-  } // if (!MapIsBlocked)
-}
