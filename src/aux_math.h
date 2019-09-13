@@ -15,19 +15,16 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-typedef struct TEntity;
+inline u8 abs (i8 value)
+{
+  return value < 0 ? -value : value;
+}
 
-typedef struct TAI {
-  struct TEntity *owner;
-  void (*take_turn)(struct TAI *);
-};
+inline i8 sign (i8 value)
+{
+  return value < 0 ? -1 : 1;
+}
 
-extern struct TAI ai_components[];
-extern u8 num_ai_components;
-
-
-void init_ai();
-
-struct TAI *basic_ai_create();
-
-void basic_ai_take_turn (struct TAI *ai);
+inline u16 distance_sqr (i8 x1, i8 y1, i8 x2, i8 y2) {
+  return ((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+}

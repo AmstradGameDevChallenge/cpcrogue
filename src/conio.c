@@ -3,8 +3,8 @@
 //  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
 //
 //  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
+//  it under the terms of the GNU Lesser General Public License as published
+//  by the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
 //  This program is distributed in the hope that it will be useful,
@@ -16,25 +16,17 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
-#include <stdio.h>
-#include "constants.h"
 #include "conio.h"
+#include "consts.h"
+//#include <stdio.h>
+
+//TConMsg con_messages[];
+u8 num_messages;
 
 
-/*!
- * \brief palette used to black out the screen.
- *
- * This palette is used when we black the whole screen. Basically it sets
- * all four colours to black but index 1 so we can display messages in
- * the status window if we want to.
- */
-const u8 black_palette[] = {
-  INK_BLACK, INK_PASTEL_YELLOW, INK_BLACK, INK_BLACK
-};
-
-const u8 in_game_palette[] = {
-  INK_BLACK, INK_DARK_BLUE, INK_PASTEL_YELLOW, INK_PINK
-};
+void clr_log() {
+  clrwin ((void*)VMEM_LOG, LOG_W, 4, PEN_CLEAR);
+}
 
 /*!
  * Starting at given memory address (usually video memory) it clears
@@ -53,42 +45,8 @@ void clrwin (u8 *pvmem_start, u8 cols, u8 rows, u8 color)
       cpct_memset (pvmem_start+i*0x50+line*0x800, color, cols);
     }
   }
+  num_messages = 0;
 }
-
-/*
- *       ------ THESE ARE NO LONGER REQUIRED ------
- *
-void locate (u8 x, u8 y)
-{
-   putchar(US);
-   putchar (x); putchar (y);
-}
-
-void ink (u8 tinta, u8 color1, u8 color2)
-{
-   putchar (FS);
-   putchar (tinta); putchar (color1); putchar (color2);
-}
-
-void paper (u8 color1)
-{
-   putchar (SO);
-   putchar (color1);
-}
-
-void pen (u8 tinta)
-{
-   putchar (SI);
-   putchar (tinta);
-}
-
-/*
-inline void border (u8 color1)
-{
-  putchar (GS);
-  putchar (color1); putchar (color1);
-}
-*/
 
 /*
  * It calls cpct_drawCharM1_f to draw a character very fast at a specified.
@@ -103,45 +61,32 @@ inline void border (u8 color1)
 void putchar_f (void *pvmem_start, u8 x, u8 y, u8 ch, u8 fg_pen, u8 bg_pen)
 {
   void *pvdest = cpct_getScreenPtr (pvmem_start, x*2, y*8);
+
   cpct_drawCharM1_f (pvdest, fg_pen, bg_pen, ch);
 }
 
-/****************************************************************************
- *                      PrintAt
- ***************************************************************************/
-/*void PrintAt (u8 x, u8 y, char text[], u8 color)
+void log_msg (char *msg)
 {
-  u8 i = 0, ch;
+  if (num_messages>2) {
+    cpct_drawStringM1_f ("Press RETURN", (void*)(VMEM_LOG+3*0x50),
+    PEN_CLEAR, PEN_BRIGHT);
 
-  locate (x, y);
-  if (color != 0xff) pen (color);
-  while ( (ch=text[i++]) )
-    putchar(ch);
+    wait_for_key (Key_Return);
+    clr_log();
 
+    num_messages = 0;
+  } // if
+
+  cpct_drawStringM1_f (msg, (void*)(VMEM_LOG+num_messages*0x50),
+    PEN_BRIGHT, PEN_CLEAR);
+  num_messages++;
 }
-*/
-/****************************************************************************
- *                      PrintU8
- ***************************************************************************/
-void PrintU8 (void *pvmem, u8 num, u8 fg_pen, u8 bg_pen)
-{
-  u8 str[4];
-  sprintf (str, "%d", num);
-  cpct_drawStringM1_f (str, pvmem, fg_pen, bg_pen);
-}
-/****************************************************************************
- *  OffScreen
- ***************************************************************************/
-void OffScreen ()
-{
-  cpct_setPalette (black_palette, 4);
-  cpct_setBorder (INK_BLACK);
-}
-/****************************************************************************
- *
- ***************************************************************************/
-void OnScreen ()
-{
-  cpct_setPalette (in_game_palette, 4);
-  cpct_setBorder (INK_BLACK);
+
+void wait_for_key(cpct_keyID key) {
+
+  cpct_scanKeyboard();
+  while (!cpct_isKeyPressed(key)) {
+    cpct_scanKeyboard();
+  }
+  //cpctm_produceHalts (100);
 }

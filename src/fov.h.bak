@@ -15,19 +15,43 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-typedef struct TEntity;
+/*!
+ * \defgroup fov
+ *
+ * \brief Field of View information and management
+ *
+ * This module keeps track of the visible tiles from a specific position.
+ * Most of the work in this module is to perform *LOS* calculation and
+ * updating the visibility map information. This information is later used
+ * by the \ref user_interface module to draw the map accordingly.
+ *
+ */
+/**@{*/
 
-typedef struct TAI {
-  struct TEntity *owner;
-  void (*take_turn)(struct TAI *);
-};
+/*! \brief
+ * Resets the visibility map to everything *not visible*
+ */
+void init_vismap ();
 
-extern struct TAI ai_components[];
-extern u8 num_ai_components;
+/*! \brief
+ * Sets a specific tile in the visibility map as visible
+ */
+void set_visible (i8 x, i8 y);
+
+/*! \brief
+ * Queries a specific visibility map coordinate for visibility
+ */
+bool is_visible (i8 x, i8 y);
+
+/*! \brief
+ * Traces a line between two game map points and updates the FOV visibility.
+ */
+void trace_line (i8 x1, i8 y1, i8 x2, i8 y2, u8 range);
+
+/*! \brief
+ * Computes *Light of Sight* from player up to FOV_RADIUS distance
+ */
+void compute_fov ();
 
 
-void init_ai();
-
-struct TAI *basic_ai_create();
-
-void basic_ai_take_turn (struct TAI *ai);
+void draw_vismap ();

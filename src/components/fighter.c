@@ -3,8 +3,8 @@
 //  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
 //
 //  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
+//  it under the terms of the GNU Lesser General Public License as published
+//  by the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
 //  This program is distributed in the hope that it will be useful,
@@ -16,19 +16,21 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
-#include <assert.h>
 #include <stdio.h>
-#include <stdbool.h>
-#include "constants.h"
+#include <stdlib.h>
+#include <string.h>
 #include "fighter.h"
-#include "user_interface.h"
+#include "consts.h"
+#include "entity.h"
+#include "conio.h"
 
+extern u8 msg[];
 
 ///< Count of how many fighters we allocated
 u8 num_fighters;
 
 ///< Array of fighter components so we use them as we need them
-TFighter fighters[MAX_FIGHTER_COMPONENTS];
+struct TFighter fighters[MAX_FIGHTER_COMPONENTS];
 
 //===========================================================================
 //===========================================================================
@@ -43,7 +45,7 @@ TFighter fighters[MAX_FIGHTER_COMPONENTS];
  */
 //===========================================================================
 //===========================================================================
-void InitFighterComponents()
+void init_fighters()
 {
   cpct_memset (fighters, 0, sizeof (fighters));
   num_fighters = 0;
@@ -51,28 +53,27 @@ void InitFighterComponents()
 
 /*!
  */
-TFighter *FighterCreate (i16 hp, u8 str, u8 destr, u8 refl)
+struct TFighter *fighter_create (i8 hp,
+  void (*death_fn) (struct TEntity *))
 {
-  TFighter *fighter = NULL;
+  struct TFighter *fighter = NULL;
 
   if (num_fighters < MAX_FIGHTER_COMPONENTS)
   {
     // Get an empty slot from the fighters array
+#ifdef DEBUG
     assert (num_fighters < MAX_FIGHTER_COMPONENTS);
+#endif
     fighter = &fighters[num_fighters++];
 
     // Set the combat attributes
     fighter->max_hp = hp;
     fighter->hp = hp;
-    fighter->str = str;
-    fighter->des = destr;
-    fighter->ref = refl;
 
-    fighter->atk = (str  + destr)>>1;
-    fighter->def = (destr + refl)>>1;
-
-    // Return the fighter ptr as our new allocated fighter
+    // Set the death fn. to call when the entity dies
+    fighter->death_fn = death_fn;
   }
+  // Return the fighter ptr as our new allocated fighter
   return fighter;
 }
 
@@ -86,63 +87,45 @@ TFighter *FighterCreate (i16 hp, u8 str, u8 destr, u8 refl)
  *  \param fighter Fighter component that will perform the attack
  *  \param target  Entity that will be attacked
  */
-u8 FighterAttack (TFighter *fighter, struct TEntity *target)
+void fighter_attack (struct TFighter *fighter, struct TEntity *target)
 {
-  u8 dmg;
-  u8 msg[38] = "";
-
-  dmg = EntityCalculateDamage (fighter);
-
-  /*strcat (msg, fighter->owner->name);
-  strcat (msg, " attacks ");
-  strcat (msg, target->name);
-  */
   sprintf (msg, "%s attacks %s", fighter->owner->name, target->name);
-  LogMessage (msg, 0);
+  log_msg (msg);
 
-  return FighterTakeDamage (target->fighter, dmg);
+  fighter_take_damage (target->fighter, 5);
 }
 
 /*!
  *
  */
-u8 FighterTakeDamage (TFighter *fighter, u8 dmg)
+void fighter_take_damage (struct TFighter *fighter, i8 dmg)
 {
-  u8 msg[38] = "";
   fighter->hp -= dmg;
 
-  if (fighter->hp <= 0) {
-    // Destroy mob if hp < 0
-    //assert (target != player);
-    EntityKillMob (fighter->owner);
-    return true;
-  }
-  sprintf (msg, "and hits for %d damage", dmg);
-  LogMessage (msg, 1);
+  sprintf (msg, "%s HP: %d/%d",
+    fighter->owner->name, fighter->hp, fighter->max_hp);
+  log_msg (msg);
 
-  return false;
+  // kill entity if hp <= 0
+  if (fighter->hp <= 0) {
+    if (fighter->death_fn) {
+      fighter->death_fn (fighter->owner);
+    }
+  }
 }
 
-//===========================================================================
-//===========================================================================
-/***
- *       ___  ____ _ _  _ ____ ___ ____
- *       |__] |__/ | |  | |__|  |  |___
- *       |    |  \ |  \/  |  |  |  |___
- *    ____ _  _ _  _ ____ ___ _ ____ _  _ ____
- *    |___ |  | |\ | |     |  | |  | |\ | [__
- *    |    |__| | \| |___  |  | |__| | \| ___]
- *
- */
-//===========================================================================
-//===========================================================================
+
 /*!
- *
+ * On death, most mobs stop moving.
  */
-u8 EntityCalculateDamage (TFighter *fighter)
-{
-  u8 dmg = fighter->atk >> 2;
-  u8 r = (cpct_rand() * 7/255) - 3;
-  dmg += r;
-  return (dmg < 127 ? dmg : dmg+3);
+void kill_mob (struct TEntity *mob) {
+
+  sprintf (msg, "%s is dead!", mob->name);
+  log_msg (msg);
+
+  mob->fighter  = NULL;
+  mob->ai       = NULL;
+  sprintf (msg, "dead %s", mob->name);
+  strcpy (mob->name, msg);
+  mob->spr      = SPR_REMAINS;
 }

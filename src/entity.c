@@ -3,8 +3,8 @@
 //  Copyright (C) 2019 Andrés Mata Bretón (@FlautinesMata)
 //
 //  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
+//  it under the terms of the GNU Lesser General Public License as published
+//  by the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
 //  This program is distributed in the hope that it will be useful,
@@ -16,40 +16,54 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <assert.h>
 #include <string.h>
-#include "logo.h"
+#include "game_map.h"
+#include "entity.h"
 #include "components/fighter.h"
 #include "components/ai.h"
-#include "entity.h"
-#include "constants.h"
+#include "components/container.h"
+#include "components/items.h"
+#include "consts.h"
 #include "conio.h"
-#include "fov.h"
-#include "game_map.h"
-#include "user_interface.h"
+#include "draw.h"
 
+#ifdef DEBUG
+  #include <assert.h>
+#endif
 // List of entities in our game
-TEntity entities[MAX_ENTITIES];  // List of entities in game
+struct TEntity entities[MAX_ENTITIES];  // List of entities in game
 u8 num_entities;
 
-void InitEntities()
-{
-  cpct_memset (entities, 0, sizeof (entities));
+//---------------------------------------------------------------------------
+void init_entities() {
+  cpct_memset (entities, 0x00, sizeof (entities));
   num_entities = 0;
 }
 
+//---------------------------------------------------------------------------
+void entity_draw(struct TEntity *e) {
+  putchar_f ((void*)VMEM_MAP, e->x,e->y, e->spr, e->color, PEN_CLEAR);
+}
 
-/****************************************************************************
- *               Create en entity with given values
- ***************************************************************************/
-TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
-  u8 blocks, TFighter *fighter)
+//---------------------------------------------------------------------------
+//void entity_erase (struct TEntity *e) {
+//  draw_tile (e->px, e->py, PEN_BRIGHT, PEN_CLEAR);
+//}
+
+//---------------------------------------------------------------------------
+struct TEntity *entity_create (i8 x, i8 y, u8 spr, u8 color, u8 name[],
+  struct TFighter   *fighter,
+  struct TAI        *ai,
+  struct TContainer *container,
+  struct TItem      *item,
+  bool              is_gold)
 {
-  TEntity *e = NULL;
-  // We reached max. allowed entities
+  struct TEntity *e = NULL;
+
+// If DEBUG ensure we didn't reached # entities limit
+#ifdef DEBUG
   assert (num_entities < MAX_ENTITIES);
+#endif
 
   // Get a ptr to next available slot in the entities array
   e = &entities[num_entities++];
@@ -58,152 +72,136 @@ TEntity *EntityCreate (u8 x, u8 y, u8 spr, u8 color, u8 name[],
   e->y = e->py = y;                 // current posY
   e->spr =spr;                      // char used to draw
   e->color = color;                 // foreground color
-  cpct_memcpy (e->name, name, 15);  // name
-  e->blocks = blocks;               // blocks other entities?
+  cpct_memcpy (e->name, name, strlen(name));  // name
 
-  if (fighter)
-    fighter->owner = e;             // Set the owner of the component
+  if (fighter)                      // Set the owner of the component
+    fighter->owner = e;             // Fighter component if it's a combat
+  e->fighter = fighter;             // entity or NULL
 
-  e->fighter = fighter;             // Fighter component if it's a combat
-                                    // entity or NULL
+  if (ai)                           // Set owner of the ai
+    ai->owner = e;                  // AI component if set for intelligent
+  e->ai = ai;                       // creatures or NULL
 
-  // Mark this tile as occupied
-  game_map.tiles[y][x].t_flags |= HAS_ENTITY;
+  if (container) {                  // Set owner of the container and
+    init_container (container);     // ...initialize it
+    container->owner = e;           //
+  }
+  e->container = container;         // Container if can collect items or NULL
+
+  if (item)                         // Set owner of the item
+    init_item (item, e, is_gold);   // Item component if pickable
+  e->item = item;                   // or NULL
+
+  // A new created entity is assumed to be in the world
+  e->in_world = true;
+
   return e;
 }
-/****************************************************************************
- *                    Draw a single entity
- ***************************************************************************/
-void EntityDraw (TEntity *e, u8 left, u8 top)
-{
-  u8 x, y, color, spr;
 
-  x = e->x - left;
-  y = e->y - top;
-  color = e->color;
-  spr = e->spr;
+//---------------------------------------------------------------------------
+void entity_move (struct TEntity *e, i8 dx, i8 dy)  {
 
-  if (x > 127 || x > VIEW_WIDTH-1 || y > 127 || y > VIEW_HEIGHT-1) return;
-
-  // Draw the entity only if it's visible
-  if (isVisible (e->x,e->y))
-    putchar_f (VMEM_MAP, x,y, spr, color, PEN_CLEAR);
-}
-
-void EntityErase (TEntity *e, u8 left, u8 top)
-{
-  u8 px, py, view_x, view_y;
-  TTile *erasing_tile;
-  u8 is_wall, visible;
-
-  assert (!e->dead);
-
-  px = e->px;
-  py = e->py;
-  if (px < left || py < top) return;
-  view_x = px - left;
-  view_y = py - top;
-
-  erasing_tile = &game_map.tiles[py][px];
-  visible = isVisible (px, py);
-  is_wall = erasing_tile->t_flags & BLOCKED;
-
-  // The previous tile we are "erasing" no longer has an entity
-  game_map.tiles[py][px].t_flags &= ~HAS_ENTITY;
-  MapDrawTile (erasing_tile, view_x, view_y, px, py, visible, is_wall);
-}
-/****************************************************************************
- *                      Move entity to new position
- ***************************************************************************/
-void EntityMove (TEntity *e, i8 dx, i8 dy)
-{
-  TEntity *target = NULL; // Used when searching entities
+  struct TEntity *target = NULL; // Used when searching entities
 
   // Do nothing if this entity is dead
   if (e->dead) return;
 
-  // If the tile @ new position blocks movement (i.e: wall) do nothing
-  if (!MapIsBlocked (e->x+dx, e->y+dy)) {
+#ifdef DEBUG
+  assert(!e->dead);
+#endif
 
-    // ATTACK if there's another entity there
-    if ((target = GetBlockingEntity(e->x+dx, e->y+dy) )) {
+  // If the tile @ new position blocks movement (i.e: wall) do nothing
+  if (!tile_blocks_movement (e->x+dx, e->y+dy)) {
+
+    // ATTACK if there's fighter entity there
+    if ((target = get_fighter_at(e->x+dx, e->y+dy) )) {
+#ifdef DEBUG
       assert (target);
+#endif
       if (target != e)  // Ensure we are not attacking ourselves!
         // Attack target
-        FighterAttack (e->fighter, target);
-    } // if (GetBlockingEntity)
+        fighter_attack (e->fighter, target);
+    } // if get_fighter_at
     else {
       // No blocking entity, MOVE to the new position
       e->px = e->x;     // Save old positions
       e->py = e->y;
       e->x  = e->x+dx;  // Update to new position
       e->y  = e->y+dy;
-
       // The new position is now occupied
-      game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
-    } // else (GetBlockingEntity)
-  } // if (!MapIsBlocked)
+//      game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
+//      // The previous tile we are "erasing" no longer has an entity
+//      game_map.tiles[e->py][e->px].t_flags &= ~HAS_ENTITY;
+    } // else get_fighter_at
+  } // if (!tile_blocks_movement)
 }
 
-/****************************************************************************
- *           Get first blocking entity at given position
- ***************************************************************************/
-TEntity *GetBlockingEntity (u8 x, u8 y)
+//---------------------------------------------------------------------------
+/*! \brief
+ * Gets the first blocking entity in a tile
+ *
+ * \param[in] x,y tile position to check for pressence of entity
+ */
+struct TEntity *get_fighter_at (i8 x, i8 y)
 {
   // For each entity created so far...
   for (u8 n=0; n < num_entities; ++n) {
     // If it's a blocking entity and it's @ the query position,
     // we have a match.
-    if (entities[n].blocks &&
+    if (entities[n].fighter &&
       entities[n].x == x && entities[n].y == y) {
       return &entities[n];
     } // if
   } // for
   return NULL;
 }
-/****************************************************************************
- *                      Draw all entities in array
- ***************************************************************************/
-void EntityDrawEntities (u8 left, u8 top)
-{
-  TEntity *e = &entities[0];
 
-  for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
-    EntityDraw (e, left, top);
-  }
-}
-void EntityEraseEntities (u8 left, u8 top)
-{
-  TEntity *e = &entities[0];
-
-  for (u8 eid = 0; eid < num_entities; ++eid, ++e) {
-    if ((e->px != e->x || e->py != e->y))
-    EntityErase (e, left, top);
-  }
-}
-
-/*!
+//---------------------------------------------------------------------------
+/*! \brief
+ * Gets the first item entity in a tile
  *
+ * \param[in] x,y tile position to check for pressence of entity
  */
-void EntityKillMob (TEntity *e)
+struct TEntity *get_item_at (i8 x, i8 y)
 {
+  // For each entity created so far...
+  for (u8 n=0; n < num_entities; ++n) {
+    // If it's a blocking entity and it's @ the query position,
+    // we have a match.
+    if (entities[n].in_world && entities[n].item &&
+      entities[n].x == x && entities[n].y == y) {
+      return &entities[n];
+    } // if
+  } // for
+  return NULL;
+}
 
-  u8 msg[38] = "";
-  sprintf (msg, "The %s dies", e->name);
-  LogMessage (msg, 2);
-  e->spr      = '%';    // Dead sprite
-  e->blocks   = false;  // Other entities can walk over his dead body!
-  e->fighter  = NULL;   // No fighter component in a dead mob
-  e->dead     = true;   // Entity is dead!
+//---------------------------------------------------------------------------
+void add_to_world (struct TEntity *e, i8 x, i8 y) {
 
-  // Mark it on the map as well.
-  game_map.tiles[e->y][e->x].t_flags |= HAS_DEAD_ENTITY;
+#ifdef DEBUG
+  assert (num_entities < MAX_ENTITIES-1);
+#endif
 
-  sprintf (msg, "remains of %s", e->name);
+  e->x = x;
+  e->y = y;
+  e->in_world = true;
+  //num_entities++;
+}
 
-  // Delete the entity by copying the last entity into
-  // the slot occupied by this one
-  cpct_memcpy (e, &entities[--num_entities], sizeof (TEntity));
-  //strcpy (e->name, msg);
-  //LogMessage (e->name, 3);
+//---------------------------------------------------------------------------
+void remove_from_world (struct TEntity *e) {
+
+#ifdef DEBUG
+  // First entity is the player. We should never remove it!
+  assert (num_entities > 1);
+#endif
+
+  e->in_world = false;
+  //num_entities--;
+}
+//---------------------------------------------------------------------------
+void del_entity (struct TEntity *e) {
+  cpct_memcpy (e, entities+num_entities-1, sizeof (struct TEntity));
+  num_entities--;
 }

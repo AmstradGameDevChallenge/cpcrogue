@@ -15,19 +15,21 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-typedef struct TEntity;
+//typedef struct TEntity;
 
-typedef struct TAI {
+struct TContainer
+{
   struct TEntity *owner;
-  void (*take_turn)(struct TAI *);
+  struct TEntity *inventory[MAX_INVENTORY_ITEMS];
+  u8 num_items;
+
+  u8 pad[3];  // padding to 8 bytes
 };
 
-extern struct TAI ai_components[];
-extern u8 num_ai_components;
+void init_container (struct TContainer *container);
 
+void append_to_container (
+  struct TContainer *container, struct TEntity *entity);
 
-void init_ai();
-
-struct TAI *basic_ai_create();
-
-void basic_ai_take_turn (struct TAI *ai);
+void remove_from_container (
+  struct TContainer *container, struct TEntity *entity);

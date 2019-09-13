@@ -15,108 +15,120 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-
-/**********************************
- *  CPC ROGUE
- *  Jul 2019 by Andres Mata
- **********************************/
 #include <cpctelera.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
-#include "constants.h"
-#include "conio.h"
-#include "components/fighter.h"
-#include "components/ai.h"
+#include "consts.h"
+#include "input.h"
+#include "draw.h"
 #include "entity.h"
+#include "components/ai.h"
+#include "components/fighter.h"
+#include "components/container.h"
+#include "components/items.h"
 #include "game_map.h"
-#include "input_handler.h"
-#include "logo.h"
-#include "user_interface.h"
-#include "fov.h"
-#include "game.h"
-#include "fast_math.h"
+#include "conio.h"
+
+// globals
+bool fov_changed;
+struct TEntity *player;
+struct TContainer inv_player;
+struct TItem item_g, item_orc, pgold, igold, igold2;
+u8 msg[38];
 
 
-/****************************************************************************
- *                      MAIN
- ***************************************************************************/
-void main()
-{
-  TAction action;           // Action taken by player
-  TState state;             // Current state in game
-  u8 left, top;             // Map coords. we want to start drawing
-  // Player displacement
+//---------------------------------------------------------------------------
+void game_loop() {
+
   i8 dx, dy;
-  TEntity *player=NULL;     // Player entity
-  TEntity *e;               // Entity to traverse the entities array
-  TAI     *ai;              // AI component of the current entity
+  struct TEntity *e;
+  struct TAI *ai;
+  TAction player_action = NONE;
 
-  u8 ei = 0;
-  u8 fov_changed = false;
-  u8 draw_flags;
-  u8 log_is_full = false;
+  while (1) {
 
-  cpct_disableFirmware();
+    // Handle player input
+    dx = dy = 0;
+    fov_changed = false;
+    player_action = handle_keys(&dx, &dy);
 
-  InitFighterComponents();
-  InitEntities();
-  NewGame (&player);
-
-  //ShowLogo();
-
-  GetView (player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
-  // Draw everything
-  draw_flags = CLEAR_ALL | STATUS_MSG | CLEAR_STATUS |
-    DRAW_HUD | DRAW_MAP | DRAW_STATS;
-  UI_Draw (player, left, top, draw_flags);
-
-  // It's duck season!
-  state = PLAYER_TURN;
-
-  do {
-
-    // Reset to "no action" performed by player
-    action = NONE;
-
-    // Get move displacements (if any) according to keys
-    dx=0; dy=0;
-    action = HandleKeyboard (&dx, &dy);
-
-    if (action == NEW_LEVEL) {
-      //InitEntities();
-      //NewGame (&player);
-      //ComputeLOS (player->x, player->y, FOV_RADIUS);
-      GetView (player, &left, &top, VIEW_WIDTH, VIEW_HEIGHT);
-      UI_Draw (player, left, top, draw_flags);
-    }
-
-    if (action == PLAYER_MOVE) {
-      // Clear the log window if needed when the player moves
-      if (log_is_full) {
-        ClearStatus (3);
-        log_is_full = false;
-      } // if (log_is_full)
-
-      EntityMove (player, dx, dy);
-      fov_changed = true;
+    if (player_action != NONE) clr_log();
+    if (player_action == PLAYER_MOVE) {
+      entity_move (player, dx, dy);
     } // if (action == PLAYER_MOVE)
 
-    e = entities+num_entities;
-    while (e != entities) {
-      if (e->ai) {
-        ai = e->ai;
-        ai->TakeTurn(ai);
-      }
-      --e;
-    }
+    // Calculate fov (only if needed)
+    //compute_fov();
 
-  // Check if we need to recompute field of view
-  if (fov_changed)
-    ComputeLOS (player->x, player->y, FOV_RADIUS);
+    if (player_action != NONE) {
+      e = entities + num_entities;
+      while(--e != entities) {
+        if (e->ai) {
+          ai = e->ai;
+          ai->take_turn(ai);
+        } // if (e->ai)
+      } // while (e != entities)
+    } // if (player_action != NONE)
 
-  // Draw game and update fov if required
-  GameDraw (player, &left, &top, draw_flags, &fov_changed);
+    // Draw the game
+    draw_game(fov_changed);
+  } // while (1)
+} // game_loop
 
-  } while (1);
+//---------------------------------------------------------------------------
+void game_init() {
+  struct TEntity *e, *e2, *e3, *egold, *egold2;
+  struct TFighter *mob_f1, *mob_f2, *mob_f3, *pl_fig;
+  struct TAI *mob_ai, *mob_ai2, *mob_ai3;
+
+  init_entities();
+  init_ai();
+  init_fighters();
+
+  map_create (MAP_WIDTH, MAP_HEIGHT);
+
+  // Create the player entity with a fighter component
+  pl_fig = fighter_create(10, NULL);
+  player = entity_create(11, 10, SPR_PLAYER, PEN_BRIGHT,
+    "Thorbag", pl_fig, NULL, &inv_player, &pgold, false);
+  player->in_world = false;
+
+  mob_ai = basic_ai_create ();
+  mob_f1 = fighter_create(8, kill_mob);
+  e = entity_create(5, 3, SPR_GOBLIN, PEN_NORMAL,
+    "Goblin", mob_f1, mob_ai, NULL, &item_g, false);
+
+  mob_ai2 = basic_ai_create ();
+  mob_f2 = fighter_create(12, kill_mob);
+  e2 = entity_create(8, 6, SPR_ORC, PEN_BRIGHT,
+    "Orc", mob_f2, mob_ai2, NULL, &item_orc, false);
+/*
+  mob_ai3 = basic_ai_create ();;
+  mob_f3 = fighter_create(14, kill_mob);
+  e3 = entity_create(13, 8, SPR_ORC, PEN_NORMAL,
+    "Orc", true, mob_f3, mob_ai3, NULL, NULL);
+
+*/
+// Gold
+  egold = entity_create(15,8, SPR_GOLD, 1,
+    "gold", NULL, NULL, NULL, &igold, true);
+  egold2 = entity_create(19,10, SPR_GOLD, 1,
+    "gold", NULL, NULL, NULL, &igold2, true);
+
+  fov_changed = false;
+
+  // first time need to draw the game manually
+  draw_game(true);
+}
+
+/*             _______________________________________________
+ *    ________|    _     _               __        __   ___   |_______
+ *    \       |   / '   / \   |\    /|  |__  |    |  |   |    |      /
+ *     \      |   \_.  | - |  |  \/  |  |__  |__  |__|   |    |     /
+ *     /      |_______________________________________________|     \
+ *    /__________)                                        (__________\
+ */
+void main(void) {
+  game_init();
+  game_loop();
 }

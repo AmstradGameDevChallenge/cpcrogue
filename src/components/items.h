@@ -16,18 +16,19 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 typedef struct TEntity;
+typedef struct TContainer;
 
-typedef struct TAI {
-  struct TEntity *owner;
-  void (*take_turn)(struct TAI *);
+struct TItem
+{
+  struct TEntity    *owner;
+  struct TContainer *container;
+  bool              is_gold;
+  u16               gold_ammount;
+
+  u8 padding;       // pad to 8 bytes
 };
 
-extern struct TAI ai_components[];
-extern u8 num_ai_components;
-
-
-void init_ai();
-
-struct TAI *basic_ai_create();
-
-void basic_ai_take_turn (struct TAI *ai);
+void init_item(struct TItem *item, struct TEntity *owner, bool is_gold);
+void pick_up (struct TItem *item, struct TEntity *entity);
+void drop (struct TItem *item, i8 x, i8 y);
+void take_gold(struct TItem *item_gold);

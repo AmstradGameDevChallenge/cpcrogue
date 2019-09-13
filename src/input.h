@@ -15,19 +15,5 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-typedef struct TEntity;
 
-typedef struct TAI {
-  struct TEntity *owner;
-  void (*take_turn)(struct TAI *);
-};
-
-extern struct TAI ai_components[];
-extern u8 num_ai_components;
-
-
-void init_ai();
-
-struct TAI *basic_ai_create();
-
-void basic_ai_take_turn (struct TAI *ai);
+TAction handle_keys (i8 *dx, i8 *dy);
