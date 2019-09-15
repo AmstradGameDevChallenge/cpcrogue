@@ -35,9 +35,7 @@
 bool fov_changed, stats_changed;
 struct TEntity *player;
 struct TContainer inv_player;
-struct TItem item_g, item_orc, pgold, igold, igold2, ipotion;
 u8 msg[38];
-
 
 //---------------------------------------------------------------------------
 void game_loop() {
@@ -82,46 +80,54 @@ void game_init() {
   struct TEntity *e, *e2, *e3, *egold, *egold2, *heal_potion;
   struct TFighter *mob_f1, *mob_f2, *mob_f3, *pl_fig;
   struct TAI *mob_ai, *mob_ai2, *mob_ai3;
+  struct TItem *item_g, *item_orc, *pgold, *igold, *igold2, *ipotion;
 
   init_entities();
   init_ai();
   init_fighters();
+  init_items();
 
   map_create (MAP_WIDTH, MAP_HEIGHT);
 
   // Create the player entity with a fighter component
   pl_fig = fighter_create(10, 0, NULL);
+  pgold = item_create (false);
   player = entity_create(11, 10, SPR_PLAYER, PEN_BRIGHT,
-    "Thorbag", pl_fig, NULL, &inv_player, &pgold, false);
+    "Thorbag", pl_fig, NULL, &inv_player, pgold);
   player->in_world = false;
   player->xp_level = 1;
 
   mob_ai = basic_ai_create ();
   mob_f1 = fighter_create(8, 25, kill_mob);
+  item_g = item_create (false);
   e = entity_create(5, 3, SPR_GOBLIN, PEN_NORMAL,
-    "Goblin", mob_f1, mob_ai, NULL, &item_g, false);
+    "Goblin", mob_f1, mob_ai, NULL, item_g);
 
   mob_ai2 = basic_ai_create ();
   mob_f2 = fighter_create(12, 50, kill_mob);
+  item_orc = item_create (false);
   e2 = entity_create(8, 6, SPR_ORC, PEN_BRIGHT,
-    "Orc", mob_f2, mob_ai2, NULL, &item_orc, false);
+    "Orc", mob_f2, mob_ai2, NULL, item_orc);
 
   mob_ai3 = basic_ai_create ();;
   mob_f3 = fighter_create(7, 20, kill_mob);
   e3 = entity_create(13, 8, SPR_BAT, PEN_NORMAL,
-    "Bat", mob_f3, mob_ai3, NULL, NULL, false);
+    "Bat", mob_f3, mob_ai3, NULL, NULL);
 
 // Gold
+  igold = item_create (true);
   egold = entity_create(15,8, SPR_GOLD, PEN_GOLD,
-    "gold", NULL, NULL, NULL, &igold, true);
+    "gold", NULL, NULL, NULL, igold);
+  igold2 = item_create (true);
   egold2 = entity_create(19,10, SPR_GOLD, 1,
-    "gold", NULL, NULL, NULL, &igold2, true);
+    "gold", NULL, NULL, NULL, igold2);
 
 // Heal potion
+  ipotion = item_create (false);
   heal_potion = entity_create (25, 9, SPR_POTION, PEN_POTION,
-    "Heal Potion", NULL, NULL, NULL, &ipotion, false);
-  ipotion.value = 5;
-  ipotion.use_fn = cast_heal;
+    "Heal Potion", NULL, NULL, NULL, ipotion);
+  ipotion->value = 5;
+  ipotion->use_fn = cast_heal;
 
   fov_changed = false;
   stats_changed = true;

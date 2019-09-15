@@ -1,4 +1,5 @@
 #include <cpctelera.h>
+#include <stdbool.h>
 #include "consts.h"
 #include "entity.h"
 #include "container.h"

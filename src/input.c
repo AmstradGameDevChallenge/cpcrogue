@@ -17,6 +17,7 @@
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "consts.h"
 #include "input.h"
 #include "entity.h"

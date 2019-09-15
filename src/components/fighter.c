@@ -16,6 +16,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,9 +62,6 @@ struct TFighter *fighter_create (i8 hp, u16 xp,
   if (num_fighters < MAX_FIGHTER_COMPONENTS)
   {
     // Get an empty slot from the fighters array
-#ifdef DEBUG
-    assert (num_fighters < MAX_FIGHTER_COMPONENTS);
-#endif
     fighter = &fighters[num_fighters++];
 
     // Set the combat attributes

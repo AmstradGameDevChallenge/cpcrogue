@@ -44,8 +44,7 @@ struct TEntity *entity_create (i8 x, i8 y, u8 spr, u8 color, u8 name[],
   struct TFighter   *fighter,
   struct TAI        *ai,
   struct TContainer *container,
-  struct TItem      *item,
-  bool              is_gold);
+  struct TItem      *item);
 //void entity_erase (struct TEntity *e);
 void entity_draw  (struct TEntity *e);
 void entity_move (struct TEntity *e, i8 dx, i8 dy);

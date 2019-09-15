@@ -17,13 +17,14 @@
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
 #include <string.h>
-#include "game_map.h"
+#include <stdbool.h>
+#include "consts.h"
 #include "entity.h"
 #include "components/fighter.h"
 #include "components/ai.h"
 #include "components/container.h"
 #include "components/items.h"
-#include "consts.h"
+#include "game_map.h"
 #include "conio.h"
 #include "draw.h"
 
@@ -55,8 +56,7 @@ struct TEntity *entity_create (i8 x, i8 y, u8 spr, u8 color, u8 name[],
   struct TFighter   *fighter,
   struct TAI        *ai,
   struct TContainer *container,
-  struct TItem      *item,
-  bool              is_gold)
+  struct TItem      *item)
 {
   struct TEntity *e = NULL;
 
@@ -72,7 +72,8 @@ struct TEntity *entity_create (i8 x, i8 y, u8 spr, u8 color, u8 name[],
   e->y = e->py = y;                 // current posY
   e->spr =spr;                      // char used to draw
   e->color = color;                 // foreground color
-  cpct_memcpy (e->name, name, strlen(name));  // name
+  cpct_memcpy (e->name, name,       // name
+    strlen(name));
 
   if (fighter)                      // Set the owner of the component
     fighter->owner = e;             // Fighter component if it's a combat
@@ -89,7 +90,7 @@ struct TEntity *entity_create (i8 x, i8 y, u8 spr, u8 color, u8 name[],
   e->container = container;         // Container if can collect items or NULL
 
   if (item)                         // Set owner of the item
-    init_item (item, e, is_gold);   // Item component if pickable
+    item->owner = e;                // Item component if pickable
   e->item = item;                   // or NULL
 
   // A new created entity is assumed to be in the world

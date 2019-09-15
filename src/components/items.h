@@ -31,7 +31,8 @@ struct TItem {
   u16               value;
 };
 
-void init_item(struct TItem *item, struct TEntity *owner, bool is_gold);
+void init_items();
+struct TItem *item_create(bool is_gold);
 void pick_up(struct TItem *item, struct TEntity *entity);
 void drop(struct TItem *item, i8 x, i8 y);
 void take_gold(struct TItem *item_gold);

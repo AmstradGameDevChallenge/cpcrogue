@@ -1,4 +1,6 @@
 #include <cpctelera.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include "ai.h"
 #include "consts.h"
 #include "entity.h"
