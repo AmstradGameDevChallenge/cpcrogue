@@ -19,31 +19,33 @@ typedef struct TEntity;
 
 struct TFighter{
   struct TEntity *owner;  ///< Entity that owns this component
-  i8 max_hp;             ///< Max health
-  i8 hp;                 ///< Current health
+  i8 max_hp;              ///< Max health
+  i8 hp;                  ///< Current health
+  u16 xp;                 ///< Experience
 
   ///< Death fn. to call when entity dies
   void (*death_fn)(struct TEntity *);
 };
 
 void init_fighters();
-struct TFighter *fighter_create (i8 hp,
+struct TFighter *fighter_create (i8 hp, u16 xp,
   void (*death_fn) (struct TEntity *));
 
 /*! \brief
  *
  * Take dmg points of damage
  *
- * \returns true if fighter 'hp' <= 0
  */
-void fighter_take_damage (struct TFighter *fighter, i8 dmg);
+void fighter_take_damage (struct TFighter *fighter,
+                          struct TEntity *attacker,
+                          i8 dmg);
 
 /*! \brief
  *
  *  Perform an attack action to an entity!
  *
- * \returns true if fighter 'hp' <= 0
  */
-void fighter_attack (struct TFighter *fighter, struct TEntity *target);
+void fighter_attack (struct TFighter *fighter,
+                     struct TEntity *target);
 
 void kill_mob (struct TEntity *mob);

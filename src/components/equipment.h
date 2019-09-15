@@ -15,7 +15,11 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-void draw_game(bool needs_redraw);
-void draw_map();
-void draw_tile (i8 x, i8 y, u8 fg_color, u8 bg_color);
-void draw_stats();
+typedef struct TEntity;
+
+struct TEquipment {
+  struct TEntity *owner;  ///< Entity that owns this component
+  bool is_equipped;       ///< Are we wearing/welding this equipment?
+
+  u8  padding;            // Pad to 4 bytes
+};

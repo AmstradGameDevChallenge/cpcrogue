@@ -31,6 +31,7 @@ void clrwin (u8 *pvmem_start, u8 cols, u8 rows, u8 color);
 /*! \brief
  * Clears the log area */
 void clr_log();
+void clr_stats();
 
 /*! \brief
  * Draws a character to the specified position in a screen buffer.*/

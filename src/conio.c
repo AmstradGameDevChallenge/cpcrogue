@@ -28,14 +28,18 @@ void clr_log() {
   clrwin ((void*)VMEM_LOG, LOG_W, 4, PEN_CLEAR);
 }
 
+void clr_stats() {
+  clrwin ((void*)VMEM_STATS_XP, STATS_W, 10, PEN_CLEAR);
+}
+
 /*!
  * Starting at given memory address (usually video memory) it clears
  * the specified cols x rows section.
  *
- *  \param pvmem_start Address of the start cell to clear
- *  \param width Width in bytes of the portion to clear
- *  \param height Height in characters, not bytes or pixels. There are 25
- *    rows in Mode 1
+ *  \param pvmem_start  Address of the start cell to clear
+ *  \param cols         Width in bytes of the portion to clear
+ *  \param rows         Height in characters, not bytes or pixels.
+ *                      There are 25 rows in Mode 1
  *  \param color Color pattern to use as byte pattern, not pen color
  */
 void clrwin (u8 *pvmem_start, u8 cols, u8 rows, u8 color)

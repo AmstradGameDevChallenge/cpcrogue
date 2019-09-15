@@ -28,12 +28,14 @@
 #include "components/items.h"
 #include "game_map.h"
 #include "conio.h"
+#include "potions.h"
+
 
 // globals
-bool fov_changed;
+bool fov_changed, stats_changed;
 struct TEntity *player;
 struct TContainer inv_player;
-struct TItem item_g, item_orc, pgold, igold, igold2;
+struct TItem item_g, item_orc, pgold, igold, igold2, ipotion;
 u8 msg[38];
 
 
@@ -77,7 +79,7 @@ void game_loop() {
 
 //---------------------------------------------------------------------------
 void game_init() {
-  struct TEntity *e, *e2, *e3, *egold, *egold2;
+  struct TEntity *e, *e2, *e3, *egold, *egold2, *heal_potion;
   struct TFighter *mob_f1, *mob_f2, *mob_f3, *pl_fig;
   struct TAI *mob_ai, *mob_ai2, *mob_ai3;
 
@@ -88,34 +90,41 @@ void game_init() {
   map_create (MAP_WIDTH, MAP_HEIGHT);
 
   // Create the player entity with a fighter component
-  pl_fig = fighter_create(10, NULL);
+  pl_fig = fighter_create(10, 0, NULL);
   player = entity_create(11, 10, SPR_PLAYER, PEN_BRIGHT,
     "Thorbag", pl_fig, NULL, &inv_player, &pgold, false);
   player->in_world = false;
+  player->xp_level = 1;
 
   mob_ai = basic_ai_create ();
-  mob_f1 = fighter_create(8, kill_mob);
+  mob_f1 = fighter_create(8, 25, kill_mob);
   e = entity_create(5, 3, SPR_GOBLIN, PEN_NORMAL,
     "Goblin", mob_f1, mob_ai, NULL, &item_g, false);
 
   mob_ai2 = basic_ai_create ();
-  mob_f2 = fighter_create(12, kill_mob);
+  mob_f2 = fighter_create(12, 50, kill_mob);
   e2 = entity_create(8, 6, SPR_ORC, PEN_BRIGHT,
     "Orc", mob_f2, mob_ai2, NULL, &item_orc, false);
-/*
-  mob_ai3 = basic_ai_create ();;
-  mob_f3 = fighter_create(14, kill_mob);
-  e3 = entity_create(13, 8, SPR_ORC, PEN_NORMAL,
-    "Orc", true, mob_f3, mob_ai3, NULL, NULL);
 
-*/
+  mob_ai3 = basic_ai_create ();;
+  mob_f3 = fighter_create(7, 20, kill_mob);
+  e3 = entity_create(13, 8, SPR_BAT, PEN_NORMAL,
+    "Bat", mob_f3, mob_ai3, NULL, NULL, false);
+
 // Gold
-  egold = entity_create(15,8, SPR_GOLD, 1,
+  egold = entity_create(15,8, SPR_GOLD, PEN_GOLD,
     "gold", NULL, NULL, NULL, &igold, true);
   egold2 = entity_create(19,10, SPR_GOLD, 1,
     "gold", NULL, NULL, NULL, &igold2, true);
 
+// Heal potion
+  heal_potion = entity_create (25, 9, SPR_POTION, PEN_POTION,
+    "Heal Potion", NULL, NULL, NULL, &ipotion, false);
+  ipotion.value = 5;
+  ipotion.use_fn = cast_heal;
+
   fov_changed = false;
+  stats_changed = true;
 
   // first time need to draw the game manually
   draw_game(true);

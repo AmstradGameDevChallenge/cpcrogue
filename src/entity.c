@@ -103,13 +103,6 @@ void entity_move (struct TEntity *e, i8 dx, i8 dy)  {
 
   struct TEntity *target = NULL; // Used when searching entities
 
-  // Do nothing if this entity is dead
-  if (e->dead) return;
-
-#ifdef DEBUG
-  assert(!e->dead);
-#endif
-
   // If the tile @ new position blocks movement (i.e: wall) do nothing
   if (!tile_blocks_movement (e->x+dx, e->y+dy)) {
 
@@ -121,18 +114,14 @@ void entity_move (struct TEntity *e, i8 dx, i8 dy)  {
       if (target != e)  // Ensure we are not attacking ourselves!
         // Attack target
         fighter_attack (e->fighter, target);
-    } // if get_fighter_at
+    } // if (get_fighter_at)
     else {
       // No blocking entity, MOVE to the new position
       e->px = e->x;     // Save old positions
       e->py = e->y;
       e->x  = e->x+dx;  // Update to new position
       e->y  = e->y+dy;
-      // The new position is now occupied
-//      game_map.tiles[e->y][e->x].t_flags |= HAS_ENTITY;
-//      // The previous tile we are "erasing" no longer has an entity
-//      game_map.tiles[e->py][e->px].t_flags &= ~HAS_ENTITY;
-    } // else get_fighter_at
+    } // else (get_fighter_at)
   } // if (!tile_blocks_movement)
 }
 
@@ -201,7 +190,16 @@ void remove_from_world (struct TEntity *e) {
   //num_entities--;
 }
 //---------------------------------------------------------------------------
-void del_entity (struct TEntity *e) {
-  cpct_memcpy (e, entities+num_entities-1, sizeof (struct TEntity));
-  num_entities--;
+void check_level()
+{
+  extern struct TEntity *player;
+  u16 level_up_xp = LEVEL_UP_BASE + player->xp_level * LEVEL_UP_FACTOR;
+
+  // See if the player's experience is enough to level up
+  if (player->fighter->xp >= level_up_xp) {
+    player->xp_level += 1;
+    player->fighter->xp -= level_up_xp;
+    player->fighter->max_hp += 10;
+    player->fighter->hp = player->fighter->max_hp;
+  }
 }

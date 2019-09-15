@@ -31,7 +31,7 @@ void init_item(struct TItem *item, struct TEntity *owner, bool is_gold) {
   item->owner = owner;
   item->is_gold = is_gold;
   if (is_gold) {
-    item->gold_ammount = 25;
+    item->value = 25;
   }
 }
 
@@ -68,9 +68,21 @@ void drop (struct TItem *item, i8 x, i8 y) {
 
 void take_gold(struct TItem *item_gold) {
   extern struct TEntity *player;
+  extern bool stats_changed;
 
-  player->item->gold_ammount += item_gold->gold_ammount;
-  sprintf (msg, "You got %d gold", item_gold->gold_ammount);
+  player->item->value += item_gold->value;
+  sprintf (msg, "You got %d gold", item_gold->value);
   log_msg (msg);
-  del_entity (item_gold->owner);
+  remove_from_world (item_gold->owner);
+  stats_changed = true;
+}
+
+// Use an item by producing an effect and removing it.
+void use(struct TItem *item) {
+
+  if (item->use_fn) {
+    item->use_fn(item->container->owner, item->value);
+    remove_from_container (item->container, item->owner);
+  }
+
 }

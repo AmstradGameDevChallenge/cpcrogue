@@ -28,3 +28,7 @@ inline i8 sign (i8 value)
 inline u16 distance_sqr (i8 x1, i8 y1, i8 x2, i8 y2) {
   return ((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 }
+
+inline u8 min (u8 a, u8 b) {
+  return a < b ? a : b;
+}

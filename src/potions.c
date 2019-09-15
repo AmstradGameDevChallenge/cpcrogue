@@ -15,7 +15,29 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
-void draw_game(bool needs_redraw);
-void draw_map();
-void draw_tile (i8 x, i8 y, u8 fg_color, u8 bg_color);
-void draw_stats();
+#include <cpctelera.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "potions.h"
+#include "aux_math.h"
+#include "conio.h"
+#include "entity.h"
+#include "components/fighter.h"
+
+void cast_heal(struct TEntity *target, u8 value) {
+  extern u8 msg[];
+  extern struct TEntity *player;
+  extern bool stats_changed;
+
+  target->fighter->hp = min (target->fighter->hp + value,
+                              target->fighter->max_hp);
+
+  sprintf (msg, "%s healed for %d hp", target->name, value);
+  log_msg (msg);
+  sprintf (msg, "%s HP: %d/%d",
+    target->name, target->fighter->hp, target->fighter->max_hp);
+  log_msg (msg);
+
+  if (target == player)
+    stats_changed = true;
+}

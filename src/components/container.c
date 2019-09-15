@@ -32,6 +32,6 @@ void remove_from_container (struct TContainer *container,
   }
   if (found) {
     cpct_memcpy (&container->inventory[i],
-      &container->inventory[container->num_items--], 2);
+      &container->inventory[--container->num_items], 2);
   }
 }

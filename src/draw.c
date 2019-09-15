@@ -17,22 +17,26 @@
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "draw.h"
 #include "entity.h"
+#include "components/fighter.h"
+#include "components/items.h"
 #include "game_map.h"
 #include "conio.h"
 #include "aux_math.h"
 #ifdef DEBUG
   #include <assert.h>
 #endif
-//#include <stdio.h>
 
-// forward declaration private fn.
-void draw_axis();
-
+#ifdef DEBUG
+  // forward declaration private fn.
+  void draw_axis();
+#endif
 
 void draw_game(bool needs_redraw) {
 
+  extern bool stats_changed;
   extern struct TEntity *player;
   struct TEntity *e;
 
@@ -55,6 +59,14 @@ void draw_game(bool needs_redraw) {
     entity_draw (player);
 
   } // if needs_redraw
+
+  // Draw stats if needed
+  if (stats_changed) {
+    clr_stats();
+    draw_stats();
+    stats_changed = false;
+  }
+
 }
 
 void draw_map() {
@@ -94,6 +106,26 @@ void draw_tile (i8 x, i8 y, u8 fg_color, u8 bg_color) {
     // Draw floor
     putchar_f ((void*)VMEM_MAP, x,y, '.', fg_color, bg_color);
   }
+}
+
+void draw_stats() {
+  extern u8 msg[];
+  extern struct TEntity *player;
+
+  sprintf (msg, "Level %d/%d",
+    player->xp_level, player->fighter->xp);
+  cpct_drawStringM1_f (msg, (void*)(VMEM_STATS_XP),
+    PEN_BRIGHT, PEN_CLEAR);
+
+  sprintf (msg, "HP: %d/%d",
+    player->fighter->hp, player->fighter->max_hp);
+  cpct_drawStringM1_f (msg, (void*)(VMEM_STATS_HP),
+    PEN_BRIGHT, PEN_CLEAR);
+
+  sprintf (msg, "Gold: %d",
+    player->item->value);
+  cpct_drawStringM1_f (msg, (void*)(VMEM_STATS_GOLD),
+    PEN_BRIGHT, PEN_CLEAR);
 }
 
 

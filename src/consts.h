@@ -36,7 +36,7 @@
 #define MAX_AI_COMPONENTS  MAX_ENTITIES
 
 // Map dimensions
-#define MAP_WIDTH       32
+#define MAP_WIDTH       28
 #define MAP_HEIGHT      18
 
 // Pen Colors
@@ -47,6 +47,8 @@
 #define   PEN_BRIGHT      2
 #define   PEN_NORMAL      3
 #define   PEN_MESSAGES    1
+#define   PEN_GOLD        1
+#define   PEN_POTION      2
 
 // Game Sprites
 #define   SPR_WALL    207
@@ -54,8 +56,10 @@
 #define   SPR_PLAYER  '@'
 #define   SPR_GOBLIN  'g'
 #define   SPR_ORC     'o'
+#define   SPR_BAT     'B'
 #define   SPR_REMAINS '%'
 #define   SPR_GOLD    '$'
+#define   SPR_POTION  175 // ¡
 
 // Where the visible areas start, these offsets are added to
 // everything we draw so they appear in the correct playable coordinates
@@ -64,6 +68,8 @@
 #define LOG_W             38*2  // in bytes
 #define LOG_X             1     // X log messages area
 #define LOG_Y             20    // Y log messages area
+#define STATS_Y           5
+#define STATS_W           80-MAP_WIDTH*2-4
 
 // Cell Flags
 #define   BLOCKED         0x01  ///< Blocks movement
@@ -75,6 +81,10 @@
 // Inventory and items
 #define   MAX_INVENTORY_ITEMS 16  ///< Inventory capacity
 
+// Experience and level-ups
+#define   LEVEL_UP_BASE   10//100
+#define   LEVEL_UP_FACTOR 15// 75
+
 // LOS constants
 #define   FOV_RADIUS    4     // Max distance player can see
 #define   FOV_R2    FOV_RADIUS*FOV_RADIUS // Max distance player can see
@@ -85,6 +95,10 @@
 #define VMEM_MAP (0xC000+VIEW_Y*0x50+VIEW_X*2)
 //!< Start of the message log display area in the Amstrad CPC video memory
 #define VMEM_LOG (0xC000+ LOG_Y*0x50+LOG_X*2)
+//!< Start of the stats drawing area in the Amstrad CPC video memory
+#define VMEM_STATS_XP (0xC000+STATS_Y*0x50+(MAP_WIDTH+VIEW_X+1)*2)
+#define VMEM_STATS_HP (0xC000+(STATS_Y+1)*0x50+(MAP_WIDTH+VIEW_X+1)*2)
+#define VMEM_STATS_GOLD (0xC000+(STATS_Y+2)*0x50+(MAP_WIDTH+VIEW_X+1)*2)
 
 
 // Available actions for player

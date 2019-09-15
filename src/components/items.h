@@ -18,17 +18,21 @@
 typedef struct TEntity;
 typedef struct TContainer;
 
-struct TItem
-{
+struct TItem {
+/* 2B owner:      Entity that owns this item
+ * 2B container:  Container (if any) that contains the item
+ * 2B use_fn:     Function to call for cmd 'use'
+ * 1B is_bold:    Is this item gold?
+ * 2B value:      gold ammount, heal, dmg, protection value, etc. */
   struct TEntity    *owner;
   struct TContainer *container;
+  void (*use_fn)(struct TEntity*, u8);
   bool              is_gold;
-  u16               gold_ammount;
-
-  u8 padding;       // pad to 8 bytes
+  u16               value;
 };
 
 void init_item(struct TItem *item, struct TEntity *owner, bool is_gold);
-void pick_up (struct TItem *item, struct TEntity *entity);
-void drop (struct TItem *item, i8 x, i8 y);
+void pick_up(struct TItem *item, struct TEntity *entity);
+void drop(struct TItem *item, i8 x, i8 y);
 void take_gold(struct TItem *item_gold);
+void use(struct TItem *item);

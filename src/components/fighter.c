@@ -53,7 +53,7 @@ void init_fighters()
 
 /*!
  */
-struct TFighter *fighter_create (i8 hp,
+struct TFighter *fighter_create (i8 hp, u16 xp,
   void (*death_fn) (struct TEntity *))
 {
   struct TFighter *fighter = NULL;
@@ -67,8 +67,8 @@ struct TFighter *fighter_create (i8 hp,
     fighter = &fighters[num_fighters++];
 
     // Set the combat attributes
-    fighter->max_hp = hp;
-    fighter->hp = hp;
+    fighter->max_hp = fighter->hp = hp;
+    fighter->xp = xp;
 
     // Set the death fn. to call when the entity dies
     fighter->death_fn = death_fn;
@@ -84,30 +84,49 @@ struct TFighter *fighter_create (i8 hp,
  * attack. Note that an attack is performed between a *fighter component*
  * and a target *entity*.
  *
- *  \param fighter Fighter component that will perform the attack
- *  \param target  Entity that will be attacked
+ *  \param fighter  Fighter component that will perform the attack
+ *  \param target   Entity that will be attacked
  */
-void fighter_attack (struct TFighter *fighter, struct TEntity *target)
+void fighter_attack (struct TFighter *fighter,
+                     struct TEntity *target)
 {
   sprintf (msg, "%s attacks %s", fighter->owner->name, target->name);
   log_msg (msg);
 
-  fighter_take_damage (target->fighter, 5);
+  fighter_take_damage (target->fighter, fighter->owner, 5);
 }
 
 /*!
  *
  */
-void fighter_take_damage (struct TFighter *fighter, i8 dmg)
+void fighter_take_damage (struct TFighter *fighter,
+                          struct TEntity *attacker,
+                          i8 dmg)
 {
+  extern struct TEntity *player;
+  extern bool stats_changed;
+
   fighter->hp -= dmg;
 
   sprintf (msg, "%s HP: %d/%d",
     fighter->owner->name, fighter->hp, fighter->max_hp);
   log_msg (msg);
 
+  // Update stats if player took damage
+  if (fighter->owner == player)
+    stats_changed = true;
+
   // kill entity if hp <= 0
   if (fighter->hp <= 0) {
+
+    // yield xp to player for killing this mob
+    if (fighter->owner != player && attacker == player) {
+      player->fighter->xp += fighter->xp;
+      check_level();
+      stats_changed = true;
+    }
+
+    // Execute the death action
     if (fighter->death_fn) {
       fighter->death_fn (fighter->owner);
     }

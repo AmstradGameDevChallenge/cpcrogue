@@ -78,10 +78,7 @@ TAction handle_keys (i8 *dx, i8 *dy)
 
     if (entity) {
       pick_up (entity->item, player);
-      //sprintf (msg, "You got %s", entity->name);
-      //log_msg (msg);
     }
-    cpctm_produceHalts (50);
   }
 
   // d: DROP
@@ -92,7 +89,6 @@ TAction handle_keys (i8 *dx, i8 *dy)
       drop (player->container->inventory[player->container->num_items-1]->item,
         player->x, player->y);
     }
-    cpctm_produceHalts (50);
   }
 
   // i: INVENTORY
@@ -101,10 +97,18 @@ TAction handle_keys (i8 *dx, i8 *dy)
       sprintf (msg, "%c - %s", 'a'+i, player->container->inventory[i]->name);
       log_msg (msg);
     }
-    sprintf (msg, "%d gold", player->item->gold_ammount);
-    log_msg (msg);
-    cpctm_produceHalts (50);
   }
 
+  // u: USE
+  if (cpct_isKeyPressed (Key_U)) {
+    if (player->container->num_items > 0) {
+      struct TEntity *e;
+      e= player->container->inventory[player->container->num_items-1];
+      use (e->item);
+    }
+  }
+
+  if (cpct_isAnyKeyPressed_f())
+    cpctm_produceHalts (50);
   return NONE;
 }

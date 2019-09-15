@@ -21,20 +21,18 @@ typedef struct TContainer;
 typedef struct TItem;
 
 struct TEntity {
-  i8 x, y;      ///< Current position
-  i8 px, py;    ///< Previous position
-  u8 spr;       ///< ASCII char to draw this entity
-  u8 color;     ///< Color to draw this entity
-  u8 name[15];  ///< Name to display in messages
+  i8 x, y;        ///< Current position
+  i8 px, py;      ///< Previous position
+  u8 spr;         ///< ASCII char to draw this entity
+  u8 color;       ///< Color to draw this entity
+  u8 name[15];    ///< Name to display in messages
   bool in_world;  ///< true if it's in the world
-  u8 dead;      ///< true if the entity is dead
+  u8 xp_level;    ///< Experience level
 
   struct TFighter   *fighter;   ///< A fighter component for combat
   struct TAI        *ai;        ///< An AI component if intelligent
   struct TContainer *container; ///< Container if carries items
   struct TItem      *item;      ///< Item if pickable
-
-  u8 pad; // padding to 32 bytes
 };
 
 extern struct TEntity entities[];
@@ -55,4 +53,4 @@ struct TEntity *get_fighter_at (i8 x, i8 y);
 struct TEntity *get_item_at (i8 x, i8 y);
 void add_to_world (struct TEntity *e, i8 x, i8 y);
 void remove_from_world (struct TEntity *e);
-void del_entity (struct TEntity *e);
+void check_level();
