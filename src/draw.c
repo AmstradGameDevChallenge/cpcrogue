@@ -18,6 +18,7 @@
 #include <cpctelera.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include "consts.h"
 #include "draw.h"
 #include "entity.h"
 #include "components/fighter.h"
@@ -99,12 +100,12 @@ void draw_tile (i8 x, i8 y, u8 fg_color, u8 bg_color) {
 
   if (current_tile->t_flags & BLOCKED) {
     // Draw wall
-    putchar_f ((void*)VMEM_MAP, x,y, '#', fg_color, bg_color);
+    putchar_f ((void*)VMEM_MAP, x,y, SPR_WALL, fg_color, bg_color);
   } // if (blocked)
 
   else {
     // Draw floor
-    putchar_f ((void*)VMEM_MAP, x,y, '.', fg_color, bg_color);
+    putchar_f ((void*)VMEM_MAP, x,y, SPR_FLOOR, fg_color, bg_color);
   }
 }
 
