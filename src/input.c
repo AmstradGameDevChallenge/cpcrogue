@@ -95,8 +95,9 @@ TAction handle_keys (i8 *dx, i8 *dy)
   // i: INVENTORY
   if (cpct_isKeyPressed (Key_I)) {
     for (u8 i=0; i<player->container->num_items; ++i) {
-      sprintf (msg, "%c - %s", 'a'+i, player->container->inventory[i]->name);
-      log_msg (msg);
+      sprintf (msg, "\477\11\10%c\477\12\10 - %s",
+        'a'+i, player->container->inventory[i]->name);
+      log_msg_ext (msg);
     }
   }
 

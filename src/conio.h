@@ -37,6 +37,7 @@ void clr_stats();
  * Draws a character to the specified position in a screen buffer.*/
 void putchar_f (void *pvmem_start, u8 x, u8 y, u8 ch, u8 fg_pen, u8 bg_pen);
 
-void log_msg (char *msg);
+//void log_msg (char *msg);
+void log_msg_ext (char *text);
 
-void wait_for_key(cpct_keyID key);
+//void wait_for_key(cpct_keyID key);

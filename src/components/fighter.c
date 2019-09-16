@@ -88,8 +88,9 @@ struct TFighter *fighter_create (i8 hp, u16 xp,
 void fighter_attack (struct TFighter *fighter,
                      struct TEntity *target)
 {
-  sprintf (msg, "%s attacks %s", fighter->owner->name, target->name);
-  log_msg (msg);
+  sprintf(msg,"\477\13\11%s\477\11\10 attacks \477\10\12%s",
+    fighter->owner->name, target->name);
+  log_msg_ext (msg);
 
   fighter_take_damage (target->fighter, fighter->owner, 5);
 }
@@ -106,9 +107,9 @@ void fighter_take_damage (struct TFighter *fighter,
 
   fighter->hp -= dmg;
 
-  sprintf (msg, "%s HP: %d/%d",
+  sprintf (msg, "\477\11\10%s HP: \477\10\11%d\477\11\10/%d",
     fighter->owner->name, fighter->hp, fighter->max_hp);
-  log_msg (msg);
+  log_msg_ext (msg);
 
   // Update stats if player took damage
   if (fighter->owner == player)
@@ -137,8 +138,8 @@ void fighter_take_damage (struct TFighter *fighter,
  */
 void kill_mob (struct TEntity *mob) {
 
-  sprintf (msg, "%s is dead!", mob->name);
-  log_msg (msg);
+  sprintf (msg, "\477\11\10%s \477\13\11is dead!", mob->name);
+  log_msg_ext (msg);
 
   mob->fighter  = NULL;
   mob->ai       = NULL;

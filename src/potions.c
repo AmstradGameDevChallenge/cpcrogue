@@ -32,11 +32,10 @@ void cast_heal(struct TEntity *target, u8 value) {
   target->fighter->hp = min (target->fighter->hp + value,
                               target->fighter->max_hp);
 
-  sprintf (msg, "%s healed for %d hp", target->name, value);
-  log_msg (msg);
-  sprintf (msg, "%s HP: %d/%d",
-    target->name, target->fighter->hp, target->fighter->max_hp);
-  log_msg (msg);
+  sprintf (msg, "\477\11\10%s healed for \477\12\10%d \477\11\10hp",
+    target->name, value);
+  log_msg_ext (msg);
+
 
   if (target == player)
     stats_changed = true;

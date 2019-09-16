@@ -62,11 +62,12 @@ void pick_up (struct TItem *item, struct TEntity *entity)
   else {
     if (entity->container) {
         if (entity->container->num_items+1 > MAX_INVENTORY_ITEMS)
-          log_msg ("Inventory full!");
+          log_msg_ext ("\477\11\10Inventory full!");
 
       else {
-        sprintf (msg, "Picking up %s", item->owner->name);
-        log_msg (msg);
+        sprintf (msg, "\477\11\10Picking up \477\10\11%s",
+          item->owner->name);
+        log_msg_ext (msg);
         append_to_container (entity->container, item->owner);
         remove_from_world (item->owner);
         item->container = entity->container;
@@ -82,8 +83,9 @@ void drop (struct TItem *item, i8 x, i8 y) {
   add_to_world (item->owner, x,y);
   remove_from_container (item->container, item->owner);
 
-  sprintf (msg, "Item %s dropped", item->owner->name);
-  log_msg (msg);
+  sprintf (msg, "\477\11\10Item \477\10\11%s\477\11\10 dropped",
+    item->owner->name);
+  log_msg_ext (msg);
 }
 
 //---------------------------------------------------------------------------
@@ -92,8 +94,9 @@ void take_gold(struct TItem *item_gold) {
   extern bool stats_changed;
 
   player->item->value += item_gold->value;
-  sprintf (msg, "You got %d gold", item_gold->value);
-  log_msg (msg);
+  sprintf (msg, "\477\11\10You got \477\10\11%d\477\11\10 gold",
+    item_gold->value);
+  log_msg_ext (msg);
   remove_from_world (item_gold->owner);
   stats_changed = true;
 }

@@ -16,6 +16,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <cpctelera.h>
+#include <string.h>
 #include "conio.h"
 #include "consts.h"
 //#include <stdio.h>
@@ -68,7 +69,7 @@ void putchar_f (void *pvmem_start, u8 x, u8 y, u8 ch, u8 fg_pen, u8 bg_pen)
 
   cpct_drawCharM1_f (pvdest, fg_pen, bg_pen, ch);
 }
-
+/*
 void log_msg (char *msg)
 {
   if (num_messages>2) {
@@ -85,12 +86,32 @@ void log_msg (char *msg)
     PEN_BRIGHT, PEN_CLEAR);
   num_messages++;
 }
+*/
+void log_msg_ext (char *text) {
+  char *pch;
+  u8 fg, bg, col=0;
 
+  pch=strtok (text,"\477");
+
+  while (pch != NULL) {
+    fg = *pch++;
+    bg = *pch++;
+    fg -= 8;
+    bg -= 8;
+    cpct_drawStringM1_f (pch, (void*)(VMEM_LOG+num_messages*0x50+col),
+      fg, bg);
+    col += strlen(pch)<<1;
+    pch = strtok (NULL, "\477");
+  }
+  num_messages++;
+}
+
+/*
 void wait_for_key(cpct_keyID key) {
 
   cpct_scanKeyboard();
   while (!cpct_isKeyPressed(key)) {
     cpct_scanKeyboard();
   }
-  //cpctm_produceHalts (100);
 }
+*/

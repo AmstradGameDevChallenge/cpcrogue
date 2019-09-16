@@ -30,7 +30,6 @@
  *
  */
 /**@{*/
-//#include "consts.h"
 
 /*!
  * \struct  TTile
