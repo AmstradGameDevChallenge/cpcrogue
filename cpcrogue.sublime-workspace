@@ -155,6 +155,24 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "src/game_map.c",
+			"settings":
+			{
+				"buffer_size": 14039,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/constants.h",
+			"settings":
+			{
+				"buffer_size": 4740,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -286,6 +304,9 @@
 	],
 	"file_history":
 	[
+		"/home/andriu/repos/cpctelera/cpcrogue/src/rect.c",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/rect.h",
+		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/main.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/components/ai.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/components/ai.h",
@@ -297,7 +318,6 @@
 		"/home/andriu/repos/cpctelera/cpcrogue/obj/components/ai.rst",
 		"/home/andriu/repos/cpctelera/cpcrogue/obj/components/ai.rel",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/components/fighter.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/game_map.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/game.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/user_interface.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/entity.c",
@@ -307,10 +327,8 @@
 		"/home/andriu/repos/cpctelera/cpcrogue/src/fov.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/input_handler.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/game.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/rect.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/fov.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/conio.h",
-		"/home/andriu/repos/cpctelera/cpcrogue/src/rect.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/logo.h",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/logo.c",
 		"/home/andriu/repos/cpctelera/cpcrogue/src/input_handler.h",
@@ -432,6 +450,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"grid_id",
+			"num_rooms",
 			"assert",
 			"fighter",
 			"MAX_FIGHTERS",
@@ -520,13 +540,72 @@
 		"show_context": true,
 		"use_buffer2": true,
 		"whole_word": false,
-		"wrap": false
+		"wrap": true
 	},
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/game_map.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 14039,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10232,
+								10232
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C Improved/C Improved.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5011.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/constants.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4740,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2232,
+								2232
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 702.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -573,7 +652,7 @@
 	"project": "cpcrogue.sublime-project",
 	"replace":
 	{
-		"height": 69.0
+		"height": 48.0
 	},
 	"save_all_on_build": true,
 	"select_file":
